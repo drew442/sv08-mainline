@@ -46,7 +46,7 @@ class Factory(unittest.TestCase):
         ref=dict(source='fixture',id=bed['id'],version=bed['version'],sha256=digest(bed),commit='a'*40)
         changed=select_definition(c,d,ref,{'fixture::'+bed['id']+'@'+bed['version']:bed})
         closure,_=validate_plan(changed['definition_plan'],c)
-        self.assertIn('builtin::sv08.factory@0.3.0',closure);self.assertNotIn('builtin::sv08-main.bed_assembly@0.2.0',closure)
+        self.assertIn('builtin::sv08.factory@0.4.0',closure);self.assertNotIn('builtin::sv08-main.bed_assembly@0.2.0',closure)
         self.assertEqual(len(changed['devices']),24)
         for x in changed['devices']:
             if x['name'] not in ('bed_sensor','heater_bed','probe'):self.assertEqual(x,prior[x['name']])
@@ -106,7 +106,7 @@ class Factory(unittest.TestCase):
         source='fixture';snap={source+'::'+x['id']+'@'+x['version']:x for x in (bed,bundle)}
         ref=dict(source=source,id=bundle['id'],version=bundle['version'],sha256=digest(bundle),commit='a'*40)
         result=select_definition(c,d,ref,snap);closure,_=validate_plan(result['definition_plan'],c)
-        self.assertEqual(len(result['devices']),24);self.assertIn('builtin::sv08.factory@0.3.0',closure);self.assertIn('fixture::bundle-bed@0.2.0',closure)
+        self.assertEqual(len(result['devices']),24);self.assertIn('builtin::sv08.factory@0.4.0',closure);self.assertIn('fixture::bundle-bed@0.2.0',closure)
         self.assertNotIn('builtin::sv08-main.bed_assembly@0.2.0',closure)
         # Whole-kit bed selection invalidates the probe offset too.
         self.assertNotIn('z_offset',next(x for x in result['devices'] if x['name']=='probe')['settings'])

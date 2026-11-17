@@ -17,7 +17,7 @@ from sv08_printer_calibration import KLIPPER_REVISION
 from sv08_printer_definitions import builtins,validate_definition
 from sv08_printer_firmware import (EXTENSION,release_assignment,validate_assignment,
                                    applied_boards,status,observe,installed_assignment)
-from test_printer_configuration import sensor_draft,full_draft
+from test_printer_configuration import sensor_draft,full_draft,primary_source
 from test_data_budget import fixture_budget,fixture_root
 from sv08_state import Store,fingerprint,atomic_json
 
@@ -126,7 +126,7 @@ class Firmware(unittest.TestCase):
         view=self.root/'config-view';view.symlink_to(Path(boot['generation'])/'config')
         service=PrinterStore(store,context,view,self.catalog,privileged=lambda:True,
                              publication_admit=lambda:True,publication_validate=lambda p,r:dict(validated=True),
-                             native_source=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))/'upstream/klipper')
+                             native_source=primary_source('upstream/klipper/klippy/configfile.py').parents[1])
         version='v1-1-g'+KLIPPER_REVISION
         with patch('sv08_printer_firmware.observe',return_value={'mcu':{'mcu_version':version},'mcu tool':{'mcu_version':version}}):
             loaded=service.request({'action':'status'})

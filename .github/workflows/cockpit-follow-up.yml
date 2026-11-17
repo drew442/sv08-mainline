@@ -103,6 +103,12 @@ jobs:
           fixture_pid=''
           cleanup() {
             if [ -n "$fixture_pid" ]; then kill "$fixture_pid" 2>/dev/null || true; wait "$fixture_pid" 2>/dev/null || true; fi
+            mkdir -p build/ci-auto/evidence
+            for artifact in browser.log browser-startup.json; do
+              if [ -f "$profile_root/result/$artifact" ]; then
+                tail -c 65536 "$profile_root/result/$artifact" > "build/ci-auto/evidence/$artifact"
+              fi
+            done
             rm -rf -- "$profile_root"
           }
           trap cleanup EXIT
@@ -116,3 +122,12 @@ jobs:
           test -f build/ci-auto/fixture/server.json
           "$SV08_NODE" tests/auto_policy_browser.mjs "$SV08_CHROMIUM" build/ci-auto/fixture "$profile_root/result"
           /usr/bin/python3 -c 'import json,sys; assert json.load(open(sys.argv[1]))["status"] == "PASS"' "$profile_root/result/result.json"
+
+      - name: Retain bounded browser startup evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cockpit-startup-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/ci-auto/evidence/
+          if-no-files-found: warn
+          retention-days: 7

@@ -2,20 +2,17 @@
 import fs from 'node:fs';
 const {WebSocket} = globalThis;
 if (typeof WebSocket !== 'function') throw new Error('Automatic policy browser requires Node.js 22 or newer with native WebSocket support.');
-import {spawn} from 'node:child_process';
+import {startBrowser} from './browser_runtime.mjs';
 import {setTimeout as delay} from 'node:timers/promises';
 import assert from 'node:assert/strict';
 const [chrome, fixture, output] = process.argv.slice(2);
 const {url} = JSON.parse(fs.readFileSync(fixture+'/server.json'));
 assert.match(url, /^http:\/\/127\.0\.0\.1:\d+$/);
-fs.mkdirSync(output); const profile = output+'/profile';
-const log = fs.openSync(output+'/browser.log','w');
-const child = spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--no-first-run','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{detached:true,stdio:['ignore',log,log]});
+fs.mkdirSync(output);
+const browser=startBrowser({chrome,output,timeoutMs:10000});
 let socket;
 try {
- let port;
- for(let i=0;i<100;i++){try{port=fs.readFileSync(profile+'/DevToolsActivePort','utf8').split('\n')[0];break;}catch{await delay(100);}}
- assert(port);
+ const port=await browser.ready;
  const tabs=await(await fetch(`http://127.0.0.1:${port}/json/list`)).json();
  socket=new WebSocket(tabs.find(t=>t.type==='page').webSocketDebuggerUrl);
  await new Promise((resolve,reject)=>{socket.onopen=resolve;socket.onerror=reject;});
@@ -65,4 +62,4 @@ try {
  fs.writeFileSync(output+'/result.json',JSON.stringify({status:'PASS',automatic_policy:saved,manual_review_options_bound:true,upload_review_options_bound:true,draft_survives_poll:true,printer:false},null,2));
  console.log('Automatic policy browser PASS');
 
-}finally{socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);}
+}finally{socket?.close();await browser.stop();}

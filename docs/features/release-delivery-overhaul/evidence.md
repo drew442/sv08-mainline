@@ -102,3 +102,40 @@ physical printer access, flashing, host setup, deployment or merge. No monetary,
 model-quality, token-saving or schedule-saving claim. Existing PR17/H12/H13 and
 package/notice evidence is reused only at its recorded scope; the supported
 candidate/clean-owner path and attended release qualification remain outstanding.
+
+## PR38 CI repair continuation
+
+Head0580be3 passed the agent/workflow and package/release CI jobs, but two other
+jobs exposed test infrastructure issues. Preserve those failed logs rather than
+relabel them as successful product acceptance:
+
+- The firmware publication test used a workstation-specific parser source path.
+  As root, the original fixture passes with that path available and reproduces
+  unknown when it is absent. The product correctly refused to infer a match.
+  The fixture now uses the existing checked-out pinned-source preference helper;
+  root firmware9 pass and checkout-preference coverage passes.
+- Two factory closure assertions still expected0.3.0 after the required immutable
+  assembly bump to0.4.0. Corrected expectations retain component counts, retained
+  unrelated components and calibration invalidation. Root factory10pass, one
+  explicit existing native-parser opt-in skip; not claimed as native execution.
+- The standalone automatic-policy browser failed before DevTools port readiness
+  in CI and had no retained startup receipt/log. Its original form passes locally;
+  the original CI Chrome cause is not established. Replace duplicate lifecycle
+  handling with the existing tested browser_runtime helper, retaining the same
+  ten-second readiness and all policy assertions. Bounded startup diagnostics are
+  retained even after CI failure; profiles/state/credentials are not uploaded.
+  The full repaired browser journey passes locally, with ready/exit0/cleanup
+  complete. Existing launcher and PR9 checks each pass3tests. This does not claim
+  that local success proves the runner environment; final CI is checked separately.
+
+The attempted local automatic-policy fixture in the group-writable project path
+correctly refused allocation ancestry. A new private local clone with restrictive
+umask fixes the disposable invocation; no project permissions or production guard
+were changed. Both fixture processes were stopped. Initial test-pattern and scope
+renewal errors are retained in logs/history. No new images or installed tools.
+
+All previous source/leases/attempts carry forward, including5f848f2 and0580be3.
+Conservative cumulative charge is revised to3600process-seconds/896MiB within the
+same7200seconds/1GiB primary allowance; it includes failed CI/fixture work, extra
+private source checkout, browser profiles and publication reserve. No reset or
+measured savings claim. The earlier2400seconds/768MiB was an interim estimate.
