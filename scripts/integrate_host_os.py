@@ -101,7 +101,7 @@ def stage(work, manifest, refresh=False, owner_key=None, *, supported_profile=No
     supported = supported_profile is not None
     validate(manifest, supported=supported)
     if supported:
-        from supported_candidate import profile_check, public_certificate
+        from supported_candidate import profile_check, public_certificate, regular
         if manifest != profile_check(supported_profile) or owner_key is not None:
             raise ValueError('Supported integration requires exact profile and no baked owner access key')
         public_certificate(release_certificate)
@@ -233,6 +233,11 @@ def stage(work, manifest, refresh=False, owner_key=None, *, supported_profile=No
     if supported:
         # Recovery supplies the owner's hash. Do not force a first-login write
         # to the read-only derived shadow, or ship an inherited owner password.
+        policy = (REPO/'configs/host-os/supported/owner-password-policy.conf').read_bytes()
+        password_stack = root/'etc/pam.d/common-password'
+        vendor = regular(root, 'etc/pam.d/common-password')
+        if not vendor.startswith(policy):
+            password_stack.write_bytes(policy+vendor)
         shadow = root/'etc/shadow'
         rows = [line.split(':') for line in shadow.read_text().splitlines()]
         if any(len(row) != 9 for row in rows): raise ValueError('Invalid supported slot shadow')
@@ -298,8 +303,8 @@ def stage(work, manifest, refresh=False, owner_key=None, *, supported_profile=No
             for directory in units.glob('*.wants'):
                 (directory/(name+'.service')).unlink(missing_ok=True)
         (units/'sv08-klipper.service.d').mkdir(exist_ok=True)
-        (units/'sv08-klipper.service.d/supported-commissioning.conf').write_text(
-            '[Service]\nExecStartPre=+/usr/bin/python3 /usr/lib/sv08/sv08_commissioning.py check\n')
+        shutil.copyfile(REPO/'configs/host-os/systemd/sv08-klipper.service.d/supported-commissioning.conf',
+                        units/'sv08-klipper.service.d/supported-commissioning.conf')
     # Physical printer services remain separately gated; no printer.cfg is seeded.
     (work / 'integration-staged.json').write_text(json.dumps(manifest, indent=2)+'\n')
 

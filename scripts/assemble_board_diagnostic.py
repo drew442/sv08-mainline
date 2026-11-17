@@ -117,6 +117,8 @@ def compose(a, *, supported_profile=None):
     if supported:
         from supported_candidate import profile_check
         profile_check(supported_profile)
+        from finalize_supported_host import source_check
+        source_check(supported_profile)
     work = work_path(a.work)
     if work.exists(): raise ValueError('Fresh output required')
     sources = {name: work_path(getattr(a, name)) for name in ('host', 'recovery', 'data', 'spl')}
@@ -161,6 +163,11 @@ def compose(a, *, supported_profile=None):
     check_board_artifacts(root, profile)
     recovery = sources['recovery']
     record = json.loads((recovery / 'build.json').read_text())
+    if supported:
+        from recovery_image import integration_inputs
+        if (record.get('integration_inputs') != integration_inputs() or
+                (record.get('release_manifest') or {}).get('project_source_revision') != supported_profile['project_source_revision']):
+            raise ValueError('Supported recovery requires current source, notices and runtime inputs')
     if record['board_profile'] != profile or record['envelope'] != inventory(recovery / 'envelope'):
         raise ValueError('Recovery build changed')
     if sha(recovery / 'recovery.ext4') != record['image_sha256']:

@@ -1,4 +1,4 @@
-"""Private persistent owner enrollment and a slot-local, ephemeral PAM shadow.
+"""Private owner enrollment and slot-local PAM shadow preparation.
 
 Only recovery enrollment writes the persistent record. Public images retain a
 locked account; boot never creates or repairs an enrollment. Password rotation is
@@ -128,3 +128,48 @@ def prepare_shadow(root, data, root_uid=0):
         with os.fdopen(fd, 'w') as stream:
             stream.write(raw); stream.flush(); os.fsync(stream.fileno())
     return directory/'owner-shadow'
+
+
+def merge_shadow(root, data, root_uid=0):
+    """Atomically merge the owner hash into a writable slot's regular shadow.
+
+    Early boot calls this after remounting the selected root writable, before
+    account consumers start. No bind mount or shared whole-shadow copy remains;
+    package tools can subsequently replace the slot-local file normally.
+    """
+    root = Path(root)
+    owner = Owner(data, root_uid)
+    enrolled, owner_stamp = owner.load()
+    with opened(root/'etc/passwd', flags=os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK) as fd:
+        info = os.fstat(fd)
+        require(stat.S_ISREG(info.st_mode) and info.st_size <= 1024*1024, 'Invalid slot account file.')
+        passwd = os.read(fd, 1024*1024+1).decode()
+    with opened(root/'etc') as directory:
+        fd = os.open('shadow', os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=directory)
+        try:
+            before = os.fstat(fd)
+            require(stat.S_ISREG(before.st_mode) and before.st_nlink == 1 and before.st_uid == root_uid and
+                    stat.S_IMODE(before.st_mode) in (0o600, 0o640) and
+                    before.st_size <= 1024*1024, 'Invalid writable slot shadow.')
+            original = os.read(fd, 1024*1024+1).decode()
+            require(identity(os.fstat(fd)) == identity(before), 'Slot shadow changed while reading.')
+        finally: os.close(fd)
+        raw = shadow_text(original, passwd, enrolled['password_hash'] if enrolled else None)
+        if raw == original: return False
+        temporary = '.sv08-owner-shadow-'+uuid.uuid4().hex
+        fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=directory)
+        try:
+            with os.fdopen(fd, 'w') as stream:
+                stream.write(raw); stream.flush()
+                os.fchown(stream.fileno(), before.st_uid, before.st_gid)
+                os.fchmod(stream.fileno(), stat.S_IMODE(before.st_mode))
+                os.fsync(stream.fileno())
+            require(identity(os.stat('shadow', dir_fd=directory, follow_symlinks=False)) == identity(before),
+                    'Slot shadow changed; refuse owner merge.')
+            require(owner.load() == (enrolled, owner_stamp), 'Owner enrollment changed; refuse slot merge.')
+            os.replace(temporary, 'shadow', src_dir_fd=directory, dst_dir_fd=directory)
+            os.fsync(directory)
+        finally:
+            try: os.unlink(temporary, dir_fd=directory)
+            except FileNotFoundError: pass
+    return True

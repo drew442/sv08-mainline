@@ -18,20 +18,39 @@ FIELDS = {'format_version', 'purpose', 'hardware_profile', 'release',
           'expected_cid_sha256', 'board_mmc_device_index', 'klipper_commit'}
 
 
-def profile_check(value):
+def profile_check(value, *, repo=REPO):
     from integrate_host_os import validate
-    from sv08_printer_calibration import KLIPPER_REVISION
-    if (not isinstance(value, dict) or set(value) != FIELDS or
+    repo = Path(repo)
+    lock = json.loads((repo/'upstream-lock.json').read_text())
+    klipper_revision = next(item['commit'] for item in lock['submodules']
+                            if item['path'] == 'upstream/klipper')
+    if (not isinstance(value, dict) or set(value) not in (FIELDS, FIELDS | {'feed'}) or
+            any(not isinstance(value[key], str) for key in
+                ('release','project_source_revision','expected_cid_sha256','compatible','klipper_commit'))):
+        raise ValueError('Supported profile fields have invalid types')
+    if (not isinstance(value, dict) or set(value) not in (FIELDS, FIELDS | {'feed'}) or
             type(value['format_version']) is not int or value['format_version'] != 1 or
             value['purpose'] != 'supported-configured-printer-candidate' or
             value['hardware_profile'] != 'test-sv08-01' or
             type(value['board_mmc_device_index']) is not int or value['board_mmc_device_index'] != 1 or
-            value['klipper_commit'] != KLIPPER_REVISION or
+            value['klipper_commit'] != klipper_revision or
             not re.fullmatch('[0-9a-f]{40}', value['project_source_revision']) or
             not re.fullmatch('[0-9a-f]{64}', value['expected_cid_sha256']) or
             not re.fullmatch(r'sv08-test-sv08-01-[A-Za-z0-9._-]{1,48}', value['compatible'])):
         raise ValueError('Explicit supported target, measured CID and pinned source required')
-    board = json.loads((REPO/'configs/host-os/recovery-test-sv08-01.json').read_text())
+    if 'feed' in value:
+        from sv08_feed import origin
+        from sv08_state import identifier
+        from urllib.parse import urlsplit
+        feed = value['feed']
+        if (not isinstance(feed,dict) or set(feed) != {'url','channel'} or
+                not isinstance(feed['url'],str) or len(feed['url']) > 2048 or
+                any(ord(c) < 33 or ord(c) > 126 for c in feed['url'])):
+            raise ValueError('Fixed feed requires a bounded HTTPS directory and channel')
+        origin(feed['url']); identifier(feed['channel'])
+        if not urlsplit(feed['url']).path.endswith('/') or urlsplit(feed['url']).query:
+            raise ValueError('Fixed feed requires an HTTPS directory URL without query')
+    board = json.loads((repo/'configs/host-os/recovery-test-sv08-01.json').read_text())
     manifest = dict(release=value['release'], release_revision=value['release_revision'],
                     state_schema=1, deployable=True, owner_setup='recovery-v1',
                     commissioning='explicit-v1', hardware_profile=value['hardware_profile'],
@@ -42,25 +61,33 @@ def profile_check(value):
     return manifest
 
 
-def backend_documents(profile):
-    manifest = profile_check(profile)
-    config = json.loads((REPO/'configs/images/host-ab.json').read_text())
+def backend_documents(profile, *, repo=REPO):
+    """Render deterministic public documents using only the declared checkout inputs."""
+    repo = Path(repo)
+    manifest = profile_check(profile, repo=repo)
+    config = json.loads((repo/'configs/images/host-ab.json').read_text())
     layout(config)
-    environment = json.loads((REPO/'configs/host-os/environment-layout.json').read_text())
+    environment = json.loads((repo/'configs/host-os/environment-layout.json').read_text())
     environment['board_mmc_device_index'] = profile['board_mmc_device_index']
     policy = dict(compatible=profile['compatible'], layout='ab-8gb-v1', state_schema=1,
                   klipper_commit=profile['klipper_commit'], max_bundle_bytes=1073741824,
                   image_bytes={'boot': 192*1024**2, 'rootfs': 2048*1024**2})
     identity = dict(format_version=1, identity_path='/dev/disk/by-path/platform-4022000.mmc',
                     expected_cid_sha256=profile['expected_cid_sha256'])
-    return {'release.json': manifest, 'layout.json': config, 'environment.json': environment,
+    documents = {'release.json': manifest, 'layout.json': config, 'environment.json': environment,
             'environment-device.json': identity, 'update-policy.json': policy,
             'supported-profile.json': profile}
+    if 'feed' in profile:
+        documents['feed.json'] = dict(format_version=1, **profile['feed'],
+                                     ca_file='/etc/rauc/release-keyring.pem',
+                                     signer_ca_file='/etc/rauc/release-keyring.pem')
+    return documents
 
 
-def rauc_configuration(profile):
-    manifest = profile_check(profile)
-    text = (REPO/'configs/host-os/rauc-system.conf.in').read_text().replace('@COMPATIBLE@', profile['compatible'])
+def rauc_configuration(profile, *, repo=REPO):
+    repo = Path(repo)
+    manifest = profile_check(profile, repo=repo)
+    text = (repo/'configs/host-os/rauc-system.conf.in').read_text().replace('@COMPATIBLE@', profile['compatible'])
     for role in ('root-a', 'root-b', 'boot-a', 'boot-b'):
         text = text.replace('@'+role.upper().replace('-', '_')+'@', manifest['devices'][role])
     if '@' in text: raise ValueError('Unrendered supported RAUC configuration')

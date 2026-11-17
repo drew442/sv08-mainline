@@ -34,6 +34,12 @@ def sd_payloads(recovery, work):
                REPO/'scripts/build_sd_network_image.py', REPO/'configs/host-os/supported/recovery-sd.json']
     recipe_hashes = {str(path.relative_to(REPO)):sha(path) for path in recipes}
     record = json.loads((recovery/'build.json').read_text())
+    from project_license import source_state
+    from recovery_image import integration_inputs
+    revision, dirty = source_state(REPO)
+    if (dirty or (record.get('release_manifest') or {}).get('project_source_revision') != revision or
+            record.get('integration_inputs') != integration_inputs()):
+        raise ValueError('Independent SD requires clean current project source/notices and runtime inputs')
     profile = record.get('board_profile', {})
     if (profile.get('format_version') != 2 or profile.get('medium') != 'independent-sd' or
             profile['recovery'] != dict(partuuid=PARTUUID,filesystem_uuid=ROOT_UUID,bytes=536870912,index=2)):

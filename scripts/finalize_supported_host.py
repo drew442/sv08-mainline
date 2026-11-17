@@ -12,6 +12,13 @@ from recovery_image import inventory
 from supported_candidate import backend_documents, profile_check, public_account_checks, public_certificate, rauc_configuration, regular
 
 
+def source_check(profile):
+    from project_license import source_state
+    revision, dirty = source_state(REPO)
+    if dirty or revision != profile['project_source_revision']:
+        raise ValueError('Freeze clean matching project source before supported composition')
+
+
 def checks(root, data, profile):
     expected = firmware_manifest(profile_check(profile))
     if json.loads(regular(root, 'usr/lib/sv08/release.json')) != expected:
@@ -24,6 +31,9 @@ def checks(root, data, profile):
     certificate = root/'etc/rauc/release-keyring.pem'
     public_certificate(certificate)
     public = public_account_checks(root)
+    password_policy = (REPO/'configs/host-os/supported/owner-password-policy.conf').read_bytes()
+    if not regular(root, 'etc/pam.d/common-password').startswith(password_policy):
+        raise ValueError('Supported recovery-only owner password policy is missing or reordered')
     if data.is_symlink() or not data.is_dir() or any(data.iterdir()):
         raise ValueError('Supported image data seed must be empty; enroll state/identity in recovery')
     units = root/'etc/systemd/system'
@@ -65,6 +75,8 @@ def checks(root, data, profile):
 
 
 def finalize(work, data, profile, execute=False):
+    profile_check(profile)
+    source_check(profile)
     root = work/'rootfs'; receipt = work/'supported-finalized.json'
     if root.is_symlink() or not root.is_dir() or receipt.exists() or receipt.is_symlink():
         raise ValueError('Use a fresh completed supported root and receipt')

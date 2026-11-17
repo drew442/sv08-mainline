@@ -27,9 +27,9 @@ The password takes effect at the **next normal boot**. This operation does not
 change currently running authentication, start services, activate state or select
 an OS slot. Fresh or restored state still requires the corresponding explicit
 activation operation. Sign in to normal Cockpit as `sv08`. Normal Cockpit Accounts
-password changes and `passwd` cannot write the read-only shadow bind; use local
-recovery reset instead. Optional SSH public keys can be enrolled through the
-existing Cockpit identity workflow after login.
+password changes and `passwd` for `sv08` are refused by a supported-image PAM
+rule in both modes; use local recovery reset instead. Optional SSH public keys can
+be enrolled through the existing Cockpit identity workflow after login.
 
 ## Persistence and boundaries
 
@@ -46,13 +46,23 @@ initial setup never replaces an existing record. Reset requires the reviewed
 current record. Unknown formats, unsafe permissions, links, changed state/media,
 interrupted activation and inadequate storage/inode reserves are refused.
 
-At each supported normal boot, a private ephemeral shadow is derived from that
-slot's own account files. Only the `sv08` password hash is replaced. Other accounts
-and all aging fields remain slot-local. Supported builders must provide a usable
+At each supported normal boot, only the `sv08` password hash is merged into that
+slot's own account files. Other accounts and all aging fields remain slot-local. Supported builders must provide a usable
 non-expired `sv08` aging policy (an empty last-change field disables forced password
 aging); last-change `0` would require an unsupported first-login password change.
-The ephemeral file is bound read-only over `/etc/shadow` in both immutable and
-writable modes. An absent enrollment keeps `sv08` locked; a malformed existing
+In immutable mode, a private ephemeral file is bound read-only over `/etc/shadow`.
+In writable mode, after the root remount, boot atomically updates the regular
+slot-local shadow, preserving its UID, GID, mode and all aging fields. There is no
+shadow bind in writable mode: package tools can append system users or atomically
+replace shadow, and their account entries survive the next boot of that slot.
+
+Supported image staging prepends the static
+`configs/host-os/supported/owner-password-policy.conf` rule before the existing
+`common-password` stack. It refuses password changes only for `sv08`; all vendor
+rules and other users retain their normal password path. The finalizer rejects a
+missing or reordered policy. Root expert direct shadow edits are unsupported
+customizations, and boot restores the persistent owner hash on the next boot.
+An absent enrollment keeps `sv08` locked; a malformed existing
 record fails closed. Boot does not create or repair enrollment or missing state.
 
 The persistent record is shared across A/B slots and operating modes. Complete

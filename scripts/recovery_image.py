@@ -139,6 +139,8 @@ def integration_inputs():
     paths.extend([REPO/'configs/host-os/recovery-board-root',REPO/'configs/host-os/recovery-password.json',
                   REPO/'scripts/project_license.py',REPO/'scripts/integrate_host_os.py',
                   REPO/'scripts/stage_printer_ui.py',REPO/'LICENSE',REPO/'LICENSING.md'])
+    supplement=REPO/'configs/host-os/supported/recovery-owner-packages.json'
+    if supplement.is_file():paths.append(supplement)
     return {str(p.relative_to(REPO)):sha(p) for p in paths}
 
 
@@ -351,13 +353,66 @@ def inventory(root, *, empty_xattr_reference=None):
     return dict(schema=2,sha256=h.hexdigest(),files=files,bytes=size)
 
 
+def package_inputs(a, work):
+    """Add explicit pinned archives without resolving or replacing the base closure."""
+    lock=clean_path(a.lock);separate(work,lock)
+    raw=lock.read_bytes();base=json.loads(raw)
+    packages=list(base['packages'])
+    supplement=getattr(a,'package_supplement',None)
+    binding={}
+    if supplement is not None:
+        supplement=clean_path(supplement);separate(work,supplement)
+        if not supplement.is_file() or supplement.stat().st_size>65536:
+            raise ValueError('Invalid package supplement bound')
+        data=supplement.read_bytes()
+        def unique(items):
+            result={}
+            for key,value in items:
+                if key in result:raise ValueError('Duplicate package supplement field')
+                result[key]=value
+            return result
+        value=json.loads(data,object_pairs_hook=unique)
+        if (not isinstance(value,dict) or not {'format_version','snapshot','architecture','packages','roots'}<=set(value) or
+                set(value)-{'format_version','snapshot','architecture','packages','roots','resolution'} or
+                type(value['format_version']) is not int or value['format_version']!=1 or
+                value['snapshot']!=base.get('snapshot') or value['architecture']!=base.get('architecture')):
+            raise ValueError('Package supplement format/snapshot/architecture mismatch')
+        additions=value['packages']
+        if not isinstance(additions,list) or not 1<=len(additions)<=16:
+            raise ValueError('Package supplement requires 1..16 packages')
+        fields={'package','version','architecture','bytes','sha256','filename','url','source','source_version','installed_kib','depends','pre_depends'}
+        names=set()
+        for item in additions:
+            if (not isinstance(item,dict) or set(item)!=fields or
+                    not isinstance(item['package'],str) or not re.fullmatch('[a-z0-9][a-z0-9+.-]*',item['package']) or
+                    item['architecture'] not in (base['architecture'],'all') or
+                    type(item['bytes']) is not int or item['bytes']<=0 or
+                    not isinstance(item['sha256'],str) or not re.fullmatch('[0-9a-f]{64}',item['sha256']) or
+                    not isinstance(item['url'],str) or not item['url'].startswith('https://snapshot.debian.org/archive/')):
+                raise ValueError('Invalid package supplement archive identity')
+            if item['package'] in names or any(p.get('package')==item['package'] for p in packages):
+                raise ValueError('Package supplement must not override base or duplicate packages')
+            names.add(item['package'])
+        if not isinstance(value['roots'],list) or not value['roots'] or any(not isinstance(n,str) or n not in names for n in value['roots']):
+            raise ValueError('Invalid package supplement roots')
+        packages.extend(additions)
+        binding=dict(package_supplement_sha256=hashlib.sha256(data).hexdigest())
+    return lock,hashlib.sha256(raw).hexdigest(),packages,supplement,binding
+
+
+def check_package_supplement(path,binding):
+    if path is None:return
+    try:current=sha(path)
+    except OSError as error:raise ValueError('Package supplement unreadable at completion') from error
+    if current!=binding['package_supplement_sha256']:
+        raise ValueError('Package supplement content changed during operation')
+
+
 def intake(a):
-    work=clean_path(a.work,output=True);lock=clean_path(a.lock);separate(work,lock)
-    lock_bytes=lock.read_bytes()
-    lock_hash=hashlib.sha256(lock_bytes).hexdigest()
-    packages=json.loads(lock_bytes)['packages']
+    work=clean_path(a.work,output=True)
+    lock,lock_hash,packages,supplement,binding=package_inputs(a,work)
     if work.exists():raise ValueError('Intake requires a fresh output')
-    if not a.execute:return dict(execute=False,stage='intake',packages=len(packages),bytes=sum(p['bytes'] for p in packages))
+    if not a.execute:return dict(execute=False,stage='intake',packages=len(packages),bytes=sum(p['bytes'] for p in packages),**binding)
     if os.geteuid()==0:raise ValueError('Network intake runs unprivileged')
     work.mkdir(parents=True,mode=0o700)
     for p in packages:
@@ -381,7 +436,8 @@ def intake(a):
     try:current_lock_hash=sha(lock)
     except OSError as error:raise ValueError('Lock unreadable at intake completion') from error
     if current_lock_hash!=lock_hash:raise ValueError('Lock content changed during intake')
-    return dict(stage='intake',packages=len(packages),lock_sha256=lock_hash)
+    check_package_supplement(supplement,binding)
+    return dict(stage='intake',packages=len(packages),lock_sha256=lock_hash,**binding)
 
 
 def assemble(a):
@@ -391,8 +447,7 @@ def assemble(a):
     release=release_manifest(getattr(a,'release_manifest',None))
     if release:separate(work,release['path'])
     if work.exists(): raise ValueError('Assembly requires a fresh output')
-    lock_hash=sha(lock)
-    packages=json.loads(lock.read_text())['packages']
+    lock,lock_hash,packages,supplement,supplement_binding=package_inputs(a,work)
     if not packages or any(not re.fullmatch('[0-9a-f]{64}',p['sha256']) or type(p['bytes']) is not int or p['bytes']<=0 for p in packages):
         raise ValueError('Invalid archive identity')
     for p in packages:
@@ -402,7 +457,7 @@ def assemble(a):
         control=run(['dpkg-deb','-f',f,'Package','Version','Architecture'],capture_output=True,text=True).stdout
         fields=dict(line.split(': ',1) for line in control.splitlines())
         if fields!={'Package':p['package'],'Version':p['version'],'Architecture':p['architecture']}:raise ValueError('Archive control differs from lock')
-    if not a.execute:return dict(execute=False,stage='assemble',packages=len(packages),work=str(work))
+    if not a.execute:return dict(execute=False,stage='assemble',packages=len(packages),work=str(work),**supplement_binding)
     private(); work.mkdir(parents=True,mode=0o700);root=work/'rootfs';root.mkdir()
     # Populate the entire dependency closure before executing maintainer scripts.
     # dpkg subsequently unpacks and configures the same archives to own all metadata.
@@ -508,10 +563,11 @@ def assemble(a):
     write(work/'copyrights.json',json.dumps(copyrights,indent=2)+'\n')
     binding=finalize_project_source(root,release)
     if integration_inputs()!=inputs or sha(lock)!=lock_hash:raise ValueError('Integration inputs changed during assembly')
-    record=dict(lock_sha256=lock_hash,root=inventory(root),integration_inputs=inputs)
+    check_package_supplement(supplement,supplement_binding)
+    record=dict(lock_sha256=lock_hash,root=inventory(root),integration_inputs=inputs,**supplement_binding)
     if binding:record['release_manifest']=binding
     write(work/'assembly.json',json.dumps(record,indent=2)+'\n')
-    return dict(stage='assemble',packages=len(packages),root=str(root))
+    return dict(stage='assemble',packages=len(packages),root=str(root),**supplement_binding)
 
 
 def initramfs(root, output, profile=None):
@@ -686,6 +742,8 @@ def build(a):
     if not root.is_dir() or not (source/'assembly.json').is_file():raise ValueError('Complete assembly required')
     for name in ['usr','boot','boot/vmlinuz-'+kernel,'usr/bin/busybox']:
         clean_path(root/name)
+    if (root/'usr/lib/sv08/sv08_owner.py').exists() and not (root/'usr/bin/openssl').is_file():
+        raise ValueError('Owner setup requires /usr/bin/openssl; use fresh assemble with the default --package-supplement')
     if work.exists():raise ValueError('Build requires a fresh output')
     recorded=json.loads((source/'assembly.json').read_text())
     require_recorded_integration_inputs(recorded, inputs, 'build assembly')
@@ -778,10 +836,11 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('stage',choices=['intake','assemble','derive','build'])
     p.add_argument('--work',type=Path,required=True);p.add_argument('--execute',action='store_true')
     p.add_argument('--intake',type=Path);p.add_argument('--lock',type=Path,default=REPO/'configs/host-os/recovery-packages.json');p.add_argument('--assembly',type=Path);p.add_argument('--reuse-usr',type=Path)
+    p.add_argument('--package-supplement',type=Path,default=REPO/'configs/host-os/supported/recovery-owner-packages.json',help='Additive pinned packages for intake/assemble only')
     p.add_argument('--board-profile',type=Path);p.add_argument('--packages',type=Path)
     p.add_argument('--media-profile',type=Path)
     p.add_argument('--restore-profile',type=Path)
-    p.add_argument('--release-manifest',type=Path,help='Exact diagnostic release identity for assemble/derive; requires matching clean source revision')
+    p.add_argument('--release-manifest',type=Path,help='Exact non-host recovery component identity for assemble/derive; requires matching clean source revision')
     a=p.parse_args()
     if a.release_manifest and a.stage not in ('assemble','derive'):p.error('--release-manifest requires assemble or derive')
     if a.execute and a.stage in ('assemble','derive','build'):

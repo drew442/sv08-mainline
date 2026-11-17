@@ -1,0 +1,135 @@
+{
+  "format_version": 1,
+  "goal": "first-supported-configured-printer-release",
+  "source_task": "supported-release-candidate:implement",
+  "source_allowance": {
+    "process_seconds": 7200,
+    "generated_bytes": 1073741824,
+    "conservative_charge_before_integration_seconds": 900,
+    "conservative_charge_before_integration_bytes": 134217728,
+    "prior_source": "822242e",
+    "candidate_source": "eb673ac",
+    "attempts_preserved": [
+      "owner GTK overflow",
+      "owner touch focus selection",
+      "namespace unsafe ancestry",
+      "ambiguous ready capture",
+      "commissioning test helper argument",
+      "two dependency fixture omissions"
+    ],
+    "conservative_current_charge_seconds": 1800,
+    "conservative_current_charge_bytes": 268435456,
+    "worker_followups": {
+      "provenance": {
+        "conservative_seconds": 30,
+        "generated_bytes_upper": 16777216
+      },
+      "writable_owner_repair": {
+        "conservative_seconds": 10,
+        "generated_bytes_upper": 1048576
+      },
+      "recovery_owner_dependency": {
+        "conservative_seconds": 15,
+        "generated_bytes_upper": 4194304,
+        "role": "project_implementer",
+        "requested_effort": "default low",
+        "effective": "not independently observable"
+      }
+    }
+  },
+  "integration_worker": {
+    "name": "/root/supported_provenance",
+    "role": "project_implementer",
+    "requested_effort": "default low",
+    "effective": "not independently observable",
+    "process_seconds_ceiling": 1000,
+    "generated_bytes_ceiling": 134217728
+  },
+  "native_allocation": {
+    "process_seconds": 10800,
+    "generated_bytes": 68719476736,
+    "work": "/run/a733-guests/sv08-release-20261117",
+    "workspace_logical_bytes_ceiling": 34359738368,
+    "method": "Existing ARM64 development runner; private namespaces and inode-rich ext4 workspace, private tool extraction/exec mounts; no permanent host changes. Charge logical workspace plus generated files, no deletion credit; retain failed attempts. Full images only after source/validator applicability prerequisite closure.",
+    "authorisation": "Active first supported release goal plus coordinator bounded primary-task allocation under AGENTS.md; no physical printer authority.",
+    "prerequisites": {
+      "native_arch": "aarch64",
+      "free_gib": 196,
+      "free_inodes": 15136,
+      "kvm_device_present": true,
+      "live_kvm_probe": "reuse PR17 for prerequisite; actual new guest must record native accelerator",
+      "active_qemu_observed": 0,
+      "board_packages_hash_match": true
+    },
+    "images_built": false,
+    "conservative_current_charge_seconds": 600,
+    "conservative_current_charge_bytes": 34574486732,
+    "tools": {
+      "git": "2.39.5",
+      "debootstrap": "1.0.128+nmu2+deb12u2",
+      "sgdisk": "1.0.9",
+      "mksquashfs": "4.5.1"
+    },
+    "preparation_attempts": [
+      "Private signed Debian tool intake/extraction succeeded; initial version sequence exposed missing pkg-exec/sbin PATH entry. Corrected private wrapper and strict version sequence passed. No host installation."
+    ]
+  },
+  "combined_ceiling": {
+    "process_seconds": 18000,
+    "generated_bytes": 69793218560
+  },
+  "physical_access": true,
+  "target_preflight": {
+    "authority": "Active full release goal: coordinator-only passive target preparation; separate exact-operation authority/review still required for changes/output operations.",
+    "process_seconds_ceiling": 90,
+    "generated_bytes_ceiling": 4194304,
+    "ssh_host_key_check": "existing strict SSH trust; no bypass",
+    "release": "0.1.0-physical-update.2",
+    "slot": "B",
+    "mode": "immutable",
+    "trial": false,
+    "retained_slot_release_revision": 3,
+    "next_candidate_release_revision": 4,
+    "media_bytes": 31272730624,
+    "artifact_layout_bytes": 7818182656,
+    "cid_measured": true,
+    "linux_node": "/dev/mmcblk2",
+    "raw_cid_published": false,
+    "saved_hardware_revision": 13,
+    "selected_third_party_bed": "funssor-cn3d-hotbed 1.0.0",
+    "fitted_match": "owner confirmation pending",
+    "configuration_capture_bytes": 100201,
+    "configuration_capture_sha256": "1e4ddf2ef152bc1f6c4b6012f679d4bb613d3ba61b7cdc4a71ee7c6626831cc6",
+    "configuration_capture": "private assigned target/saved-hardware.json; no credentials/backups/whole-filesystem dump",
+    "service_observation": {
+      "sv08-klipper": "inactive",
+      "sv08-printer-api": "activating",
+      "sv08-mainsail": "inactive"
+    },
+    "mutations": false
+  },
+  "physical_access_kind": "read-only SSH preflight only",
+  "physical_operations": false,
+  "final_source_tests": {
+    "count": 149,
+    "skipped": 0,
+    "exit_code": 0,
+    "seconds": 3.799,
+    "private_log": "/home/drew/.sv08-release-20261117/checks/source-freeze.log",
+    "sha256": "083092f0141fbe6fd48d0c166f9f36ba0a806a35ccc0cb40be80d07bd675f614"
+  },
+  "dependency_closure": {
+    "base_lock_preserved": true,
+    "supplement": "configs/host-os/supported/recovery-owner-packages.json",
+    "supplement_sha256": "c840988de5746efd2f5e79dc5fe15d509147205418a5ab4ad532588f9c9c64b5",
+    "openssl_deb_sha256": "ff38f9e4fdbfef72d9cb31088e5e42f58c83c2fb1d1bbb4e4b4c9adc53c17100",
+    "openssl_bytes": 1472236,
+    "authenticated_control_sha256": "4a11c66c9cf3f16e16410237e5c44f2e0879259fc691c4e280b5a4195d366375",
+    "intake": "ordinary-user existing intake path; hash verified after ARM transfer",
+    "affected_checks": 45,
+    "affected_check_seconds": 1.7,
+    "affected_check_skips": 0,
+    "affected_log_sha256": "d7ac787a9b0fc67e1a622fe7d87e10e2852f14489391a73bbff45019316124d5",
+    "limitation": "Pinned metadata and intake plus source tests; actual installed recovery/PAM still pending"
+  }
+}
