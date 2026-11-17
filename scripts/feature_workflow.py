@@ -247,6 +247,11 @@ class Workflow:
                     require(task['human_task'] is not None, 'Physical task needs a canonical human task reference')
                 if task['human_task']:
                     public_path(self.root, task['human_task'])
+                if task['status'] == 'superseded':
+                    require(task.get('supersession'), 'Superseded task needs an explicit disposition')
+                    public_path(self.root, task['supersession']['reference'])
+                else:
+                    require(not task.get('supersession'), 'Disposition belongs only to a superseded task')
                 if task['status'] == 'blocked':
                     require(task['blocker'], 'Blocked task needs a reason')
                 else:
@@ -453,8 +458,9 @@ class Workflow:
                         'Use canonical source paths without wildcard patterns')
             for name in task['owned_paths']:
                 tracked = git(self.root, 'ls-files', '--stage', '--', ':(literal)' + name)
-                require(not name.endswith('/') and (not (self.root / name).is_dir() or tracked.startswith('160000 ')),
-                        'Owned paths must name files or gitlinks')
+                require((name.endswith('/') and len(Path(name).parts) >= 2) or
+                        (not name.endswith('/') and (not (self.root / name).is_dir() or tracked.startswith('160000 '))),
+                        'Owned paths need exact files/gitlinks or explicit narrow subtrees')
                 require(not re.fullmatch(r'docs/features/[^/]+/record\.json', name), 'Workers cannot own queue records')
                 require(name != record['proposal'], 'Workers cannot change their authorized proposal')
             require(not task['hazards'] or task['review_policy'] == 'consequential',
@@ -545,13 +551,30 @@ class Workflow:
         self.save(record)
         return {'feature': feature, 'requirement_recheck': record['requirement_rechecks'][-1]}
 
+    def supersede(self, records, key, actor, reference, reason):
+        """Retire withdrawn/replaced work without fabricating acceptance or completion."""
+        record, task = self.lookup(records, key)
+        require(task['status'] in {'pending', 'blocked'}, 'Only nonactive pending/blocked work may be superseded')
+        require(actor.strip() and reason.strip(), 'Actor and concrete disposition required')
+        path = public_path(self.root, reference)
+        committed = subprocess.check_output(['git','-C',str(self.root),'show','HEAD:'+reference])
+        require(digest_bytes(committed) == file_hash(self.root, reference), 'Commit the disposition reference first')
+        task.update(status='superseded', blocker=None, supersession=dict(actor=actor,
+            reason=reason, reference=reference, reference_sha256=file_hash(self.root, reference),
+            source_commit=git(self.root, 'rev-parse', 'HEAD')))
+        self.validate_schema_and_records(records)
+        self.save(record)
+        return {'task': key, 'status': 'superseded', 'acceptance_claimed': False}
+
     def check_candidate_scope(self, record, task, tree):
         base = self.lease(task)['base_commit']
         require(subprocess.run(['git', '-C', str(tree), 'merge-base', '--is-ancestor', base, 'HEAD'],
                                check=False).returncode == 0, 'Candidate must preserve its assigned base')
         changed = subprocess.check_output(['git', '-C', str(tree), 'diff', '--name-only',
                                            '--no-renames', '-z', base, 'HEAD']).decode().split('\0')
-        require(all(not name or name in task['owned_paths'] for name in changed),
+        require(all(not name or (self.covered(name, task['owned_paths']) and
+                    name not in {record['proposal'], *(p.split('#',1)[0] for p in record['requirements'])} and
+                    not re.fullmatch(r'docs/features/[^/]+/record\.json', name)) for name in changed),
                 'Candidate changed files outside assigned ownership')
 
     def worktree(self, path):
@@ -790,6 +813,11 @@ def main(argv=None):
     submit.add_argument('--evidence', type=Path, required=True)
     submit.add_argument('--checks-passed', action='store_true', help='Attest observed check success; not independent review')
     submit.add_argument('--reason', default='')
+    supersede = sub.add_parser('supersede', help='Record withdrawn/replaced work; never a passing check')
+    supersede.add_argument('task')
+    supersede.add_argument('--actor', required=True)
+    supersede.add_argument('--reference', required=True)
+    supersede.add_argument('--reason', required=True)
     authorize = sub.add_parser('authorize'); authorize.add_argument('feature')
     authorize.add_argument('--actor', required=True); authorize.add_argument('--session', required=True)
     authorize.add_argument('--basis', choices=('standing', 'owner-request'), required=True)
@@ -845,7 +873,9 @@ def main(argv=None):
         else:
             with workflow.locked():
                 records = workflow.load()
-                if args.command == 'authorize':
+                if args.command == 'supersede':
+                    output = workflow.supersede(records, args.task, args.actor, args.reference, args.reason)
+                elif args.command == 'authorize':
                     output = workflow.authorize(records, args.feature, args.actor, args.session,
                                                 args.basis, args.reference, args.reason)
                 elif args.command == 'recheck-requirements':

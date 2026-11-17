@@ -16,7 +16,7 @@ import subprocess
 import unittest
 
 SUITES = (
-    'test_package_klipper.py', 'test_package_policy.py', 'test_package_rauc.py',
+    'test_build_preflight.py', 'test_package_klipper.py', 'test_package_policy.py', 'test_package_rauc.py',
     'test_package_update_admission_license.py', 'test_python_app_package.py',
     'test_klipper_build_inputs.py', 'test_prepare_release.py',
     'test_image_license_inventory.py', 'test_license_inventory.py',

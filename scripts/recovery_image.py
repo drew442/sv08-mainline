@@ -774,5 +774,9 @@ def main():
     p.add_argument('--release-manifest',type=Path,help='Exact diagnostic release identity for assemble/derive; requires matching clean source revision')
     a=p.parse_args()
     if a.release_manifest and a.stage not in ('assemble','derive'):p.error('--release-manifest requires assemble or derive')
+    if a.execute and a.stage in ('assemble','derive','build'):
+        from build_preflight import check as build_preflight
+        tools = ['dpkg-deb','chroot','mount','umount'] if a.stage != 'build' else ['mksquashfs','mkfs.ext4','debugfs','chroot']
+        build_preflight(a.work, tools=tools, min_bytes=3*SIZE, min_inodes=40000, device_nodes=True)
     print(json.dumps(globals()[a.stage](a),indent=2))
 if __name__=='__main__':main()

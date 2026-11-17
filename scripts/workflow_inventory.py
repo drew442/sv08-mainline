@@ -16,7 +16,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 LIMIT = 2 * 1024 * 1024
-STATUSES = {'pending', 'running', 'review', 'blocked', 'done'}
+STATUSES = {'pending', 'running', 'review', 'blocked', 'done', 'superseded'}
 ENVIRONMENTS = {'offline', 'hardware', 'human'}
 ROUTES = {'self', 'targeted', 'consequential'}
 
@@ -100,7 +100,11 @@ def summarize(records, hashes=None):
     rows = []
     for key, (feature, version, task) in sorted(tasks.items()):
         state = task['status']
-        if state == 'done':
+        if state == 'superseded':
+            if not isinstance(task.get('supersession'),dict) or not task['supersession'].get('reason'):
+                raise ValueError(f'Missing supersession disposition: {key}')
+            action = 'preserve_superseded_history'
+        elif state == 'done':
             action = 'preserve_history'
         elif state in {'running', 'review', 'validated'}:
             action = 'reconcile_active_assignment'
@@ -117,6 +121,7 @@ def summarize(records, hashes=None):
             'environment': task['environment'],
             'review_policy': task.get('review_policy') if version == 2 else 'legacy',
             'blocker': task.get('blocker'), 'inspection_action': action,
+            'supersession': task.get('supersession'),
             'dependencies': [{'task': d,
                               'recorded_status': tasks[d][2]['status'] if d in tasks else 'missing'}
                              for d in task['depends_on']],

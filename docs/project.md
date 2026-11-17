@@ -12,7 +12,7 @@ and AI agents working in this repository.
 
 ## Scope
 
-The first milestone uses the original SV08 with stock electronics. The design
+The first release targets the actual test printer with original SV08 electronics and its real selected component modifications, as confirmed for the commissioning session. Support claims identify the tested configuration; an unmodified bed/hotend and exhaustive parameter combinations are not prerequisites. The design
 must also accommodate modified electronics through explicit profiles: host,
 mainboard, toolhead, transport, probe, and display are independently described.
 New combinations need their own compatibility evidence. SV08 Max and Zero are
@@ -71,7 +71,7 @@ versions, build configs, patches, artifact hashes, hardware profiles, known
 limitations, and recovery procedure. Candidate -> built -> bench-tested ->
 print-tested -> supported are distinct states; promotion requires recorded evidence.
 
-## Completion criteria for the first supported stock profile
+## Completion criteria for the first supported configured-printer release
 
 1. Identify board revisions and recoverable host/MCU backups.
 2. Reproduce the host image and both MCU binaries from recorded inputs.
@@ -85,3 +85,7 @@ print-tested -> supported are distinct states; promotion requires recorded evide
 Backups, MCU USB updates and host bring-up have supporting evidence in the
 named test profile. No hardware profile has completed all of these criteria;
 printing and supported-release validation remain outstanding.
+
+## Delivery contract
+
+The current mandatory/deferred scope and release sequence are in [remaining work](remaining-work-plan.md). Initial signed delivery is LAN-based. Firmware recommendations are selected through immutable definitions bound to the running release; an older system never automatically reflashes MCUs and reports observed disagreement. Existing safety, compatibility and user-data protections remain. A software PR is distinct from the supported public release.

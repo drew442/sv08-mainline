@@ -221,3 +221,7 @@ checkout. The owner public-key seed is a fixed-path non-code build input, record
 by type and SHA256 without publishing key bytes or inventing a source mapping.
 Its addition, removal or modification invalidates existing provenance. Arbitrary
 unknown seed files or altered generated settings remain development-only.
+
+## Promotion to supported release
+
+Follow [the canonical route](../remaining-work-plan.md), using the actual configured test printer and initial LAN delivery. Existing prepare_release reports deliberately qualify source/software rather than hardware or printing. Keep that boundary: combine their exact artifact/source/notice receipts with separately passed candidate install, commissioning, required peripheral, update and recovery acceptance. Resolve concrete shipped-component corresponding-source/distribution obligations; generic unqualified labels are not endless projects. Publish artifacts and evidence together only under release authority. Diagnostic composer masks and deployable:false are not to be removed to fabricate readiness. Release/commissioning path implementation is the next milestone in existing tools.

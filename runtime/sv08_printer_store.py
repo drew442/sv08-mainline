@@ -228,7 +228,9 @@ class PrinterStore:
                 # Browsable defaults are current source choices, never saved runtime assets.
                 choices={b['id']:b.get('presets',[]) for b in self.catalog.data['boards']
                          if b['id'] in effective.boards and compatible_mapping(effective.boards[b['id']],b)}
-                return dict(state=state,catalog=effective.data,available_components=choices,native_calibration_status=self.calibration_status(state,context),context=context,
+                from sv08_printer_firmware import status as firmware_status
+                firmware=firmware_status(context['generation'],context['release'],Publisher(self.directory.parent,source=self.native_source),context)
+                return dict(mcu_firmware=firmware,state=state,catalog=effective.data,available_components=choices,native_calibration_status=self.calibration_status(state,context),context=context,
                             catalog_revision=self.catalog.revision,catalog_supported=self.catalog.supported,
                             loaded_identity=self.identity(state,context,None),definitions=self.definitions(state),sources=state.get('sources',{}),migration_available='definition_plan' not in state['draft'])
             if 'expected_revision' in request:
@@ -297,7 +299,8 @@ class PrinterStore:
                 if not generated['complete'] or generated['text']!=state['current']['text']:raise ValueError('Candidate or definition lock changed; regenerate before publication')
                 files={'hardware.cfg':generated['text']}
                 from sv08_printer_calibration import hardware_binding,calibration_sources
-                publisher=Publisher(self.directory.parent,self.publication_admit,getattr(self.store,'budget',None),self.publication_validate,source=self.native_source,binding=dict(manual_calibration=generated.get('manual_calibration',{}),calibration_sources=calibration_sources(state['draft'],self.catalog),hardware=hardware_binding(state['draft']),sources=digest(state['draft'].get('definition_plan',{}).get('runtime_assets',{}))))
+                from sv08_printer_firmware import applied_boards
+                publisher=Publisher(self.directory.parent,self.publication_admit,getattr(self.store,'budget',None),self.publication_validate,source=self.native_source,binding=dict(firmware_boards=applied_boards(state['draft'],effective),manual_calibration=generated.get('manual_calibration',{}),calibration_sources=calibration_sources(state['draft'],self.catalog),hardware=hardware_binding(state['draft']),sources=digest(state['draft'].get('definition_plan',{}).get('runtime_assets',{}))))
                 plan=self.identity(state,context,'full')
                 if action=='publication_review':return publisher.preview(files,context,plan)
                 result=publisher.apply(request['review'],files,context,plan)
