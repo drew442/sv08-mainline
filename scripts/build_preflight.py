@@ -9,7 +9,6 @@ import json
 import os
 from pathlib import Path
 import shutil
-import stat
 
 
 def check(work, *, tools=(), min_bytes=0, min_inodes=0, executable=True, device_nodes=False):

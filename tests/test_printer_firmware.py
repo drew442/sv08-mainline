@@ -93,6 +93,30 @@ class Firmware(unittest.TestCase):
         self.assertEqual(sent[-1]['params'],{'objects':{'mcu':['mcu_version'],'mcu tool':['mcu_version']}})
         self.assertEqual(result['mcu']['mcu_version'],'v1-1-g'+KLIPPER_REVISION[:12])
 
+    def test_shared_deadline_prevents_second_send_after_first_response_consumes_budget(self):
+        clock=[0.0];sent=[];timeouts=[]
+        import sv08_printer_firmware as firmware
+        original_parser=firmware.strict_json
+        class Client:
+            def __enter__(client):return client
+            def __exit__(client,*args):pass
+            def settimeout(client,seconds):timeouts.append(seconds)
+            def connect(client,path):clock[0]+=.4
+            def sendall(client,raw):sent.append(json.loads(raw[:-1]));clock[0]+=.3
+            def recv(client,size):
+                clock[0]+=.9
+                return json.dumps(dict(id=1,result={'objects':['mcu']})).encode()+b'\x03'
+        def parse(raw,limit):
+            result=original_parser(raw,limit);clock[0]+=.5
+            return result
+        with patch.object(firmware.time,'monotonic',side_effect=lambda:clock[0]),patch.object(firmware.socket,'socket',return_value=Client()),patch.object(firmware,'strict_json',side_effect=parse):
+            with self.assertRaisesRegex(TimeoutError,'timed out'):observe()
+        self.assertEqual([request['method'] for request in sent],['objects/list'])
+        self.assertEqual(timeouts[0],2)
+        self.assertAlmostEqual(timeouts[1],1.6)
+        self.assertTrue(all(0<seconds<=2 for seconds in timeouts))
+        self.assertGreater(clock[0],2)
+
     def test_publication_status_uses_applied_mapping_and_never_saved_draft(self):
         from sv08_printer_store import PrinterStore
         from sv08_printer_publish import Publisher
@@ -166,9 +190,12 @@ class GenerationAssignment(unittest.TestCase):
             store.expect_trial('B','r2','A')
             with patch('sv08_printer_firmware.installed_assignment',return_value=new):b=store.prepare_boot('B','r2')
             self.assertEqual(json.loads((Path(b['generation'])/'mcu-firmware.json').read_text()),new)
+            self.assertNotEqual(old['host_klipper_commit'],new['host_klipper_commit'])
+            self.assertEqual(json.loads(oldpath.read_text())['host_klipper_commit'],KLIPPER_REVISION)
             before=fingerprint(Path(b['generation']))
             with patch('sv08_printer_firmware.installed_assignment',return_value=old):rolled=store.prepare_boot('A','r1')
             self.assertEqual(rolled['generation'],a['generation']);self.assertEqual(oldpath.read_bytes(),original)
+            self.assertEqual(json.loads(oldpath.read_text())['host_klipper_commit'],KLIPPER_REVISION)
             self.assertEqual(fingerprint(Path(b['generation'])),before)
             altered=copy.deepcopy(old);altered['definitions']=[]
             with patch('sv08_printer_firmware.installed_assignment',return_value=altered):

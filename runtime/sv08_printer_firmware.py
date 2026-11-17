@@ -96,16 +96,21 @@ def observe():
     """Only fixed read operations over the fixed local UDS; bounded total time."""
     deadline = time.monotonic() + 2
     with socket.socket(socket.AF_UNIX) as client:
-        client.settimeout(2)
+        def remaining():
+            seconds = deadline - time.monotonic()
+            if seconds <= 0: raise TimeoutError('MCU observation timed out')
+            client.settimeout(seconds)
+        remaining()
         client.connect(SOCKET)
         buffer = b''
         def call(ident, method, params):
             nonlocal buffer
+            remaining()
             client.sendall(json.dumps(dict(id=ident, method=method, params=params)).encode()+b'\x03')
             while True:
-                client.settimeout(max(.001, deadline-time.monotonic()))
-                if time.monotonic() >= deadline: raise TimeoutError('MCU observation timed out')
+                remaining()
                 if b'\x03' not in buffer:
+                    remaining()
                     chunk = client.recv(16384)
                     if not chunk: raise ValueError('Klipper unavailable')
                     buffer += chunk

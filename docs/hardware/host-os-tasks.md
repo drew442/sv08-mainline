@@ -19,3 +19,11 @@ Current acceptance checklist for [the release route](../remaining-work-plan.md).
 Reuse [native complete-stack restore/reboot/rollback](../features/recovery-printer-stack/native-evidence.md), [physical healthy update/fallback](../features/physical-automatic-update-validation/completion.md), [attended SD reimage](../features/h12-attended-sd-reimage/physical-completion.md), [configuration and native calibration](../features/stock-printer-readiness/evidence.md), [selected package rebuilds](../features/package-reproducibility-qualification/evidence.md) and [notice closure](../features/release-qualification-closure/evidence.md). Preserve scope: native KVM is not SD/printing proof; repaired physical diagnostic slots are not an untouched final-release image. New candidate differences receive applicable checks, not blanket repetition.
 
 Immutable/writable modes and administration/identity/network capabilities remain required and implemented; validate changed integration. Arbitrary custom-image reconstruction may remain blocked under ADR0004. Fully automatic MCU orchestration, new hardware families, Internet delivery and broad optimisation are not prerequisites for this release. RAM maintenance is abandoned and automatic recovery return remains deferred; do not recreate old gates.
+
+## Human and powered-printer tasks
+
+This anchor is retained for existing feature requirements. Use the
+[single coordinated queue](coordinated-human-tasks.md) and
+[configured-printer session](test-sv08-01-commissioning-session.md).
+The gates above are the current remaining scope; archived checkboxes do not
+request new physical operations.

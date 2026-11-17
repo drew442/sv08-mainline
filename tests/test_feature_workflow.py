@@ -402,5 +402,11 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(self.workflow.select(self.workflow.load())['task'], 'export:implement')
 
 
+# Keep the new contract in the established named CI suite as well as its
+# independently runnable focused module; no extra runner or CI dependency.
+def load_tests(loader, standard_tests, pattern):
+    standard_tests.addTests(loader.loadTestsFromName('test_build_preflight'))
+    return standard_tests
+
 if __name__ == '__main__':
     unittest.main()

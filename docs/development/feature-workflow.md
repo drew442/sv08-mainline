@@ -217,3 +217,27 @@ The disposition retains evidence/review/ownership history and records reference 
 ## Delivery efficiency
 
 Current state belongs in `.codex/current-goals.md`; release scope/order belongs in `docs/remaining-work-plan.md`. A native Codex goal is separate from feature status. Use concise scoped packets, direct tools for predetermined execution, and existing named roles only when their work saves coordination or isolates a concrete question. Reuse relevant passes by dependency/environment/assumption identity; classify failures before expanding work. Existing inexpensive regression automation stays. Exact-operation consequential review remains at the hazardous transition, not every reversible preparation.
+
+## Before expensive image execution
+
+Existing `prepare_host_os.py --execute` and recovery `assemble/derive/build
+--execute` CLI paths now run the shared read-only build preflight before stage
+mutation. It checks tools, available bytes/inodes, real workspace ancestry and
+execution/device-node mount flags. Floors (normal root budget or three recovery
+partitions; 40,000 inodes) are baseline build workspace estimates, not final factory
+capacity evidence or a new hardware requirement. Use an authorised private
+workspace/execution mount for noexec/nodev hosts; the check never installs tools
+or changes mounts. Standalone invocation lets the coordinator apply the actual
+assigned resource floor before allocating images:
+
+```sh
+python3 scripts/build_preflight.py --work /assigned/private/work \
+  --min-bytes 3221225472 --min-inodes 100000 --tool mksquashfs --device-nodes
+```
+
+Set floors from the assigned build/output allowance and observed closure; do not
+copy example limits into a printing, recovery or release acceptance contract.
+Direct Python calls to stage functions remain lower-level APIs; their caller
+must perform the same preflight. CLI integration does not establish QEMU/KVM or
+browser readiness: use the existing backend/browser initialization checks before
+claiming those execution modes.
