@@ -1,0 +1,388 @@
+{
+  "format_version": 1,
+  "goal": "first-supported-configured-printer-release",
+  "source_task": "supported-release-candidate:implement",
+  "source_allowance": {
+    "process_seconds": 7200,
+    "generated_bytes": 1073741824,
+    "conservative_charge_before_integration_seconds": 900,
+    "conservative_charge_before_integration_bytes": 134217728,
+    "prior_source": "822242e",
+    "candidate_source": "eb673ac",
+    "attempts_preserved": [
+      "owner GTK overflow",
+      "owner touch focus selection",
+      "namespace unsafe ancestry",
+      "ambiguous ready capture",
+      "commissioning test helper argument",
+      "two dependency fixture omissions"
+    ],
+    "conservative_current_charge_seconds": 3740,
+    "conservative_current_charge_bytes": 759169024,
+    "worker_followups": {
+      "provenance": {
+        "conservative_seconds": 30,
+        "generated_bytes_upper": 16777216
+      },
+      "writable_owner_repair": {
+        "conservative_seconds": 10,
+        "generated_bytes_upper": 1048576
+      },
+      "recovery_owner_dependency": {
+        "conservative_seconds": 15,
+        "generated_bytes_upper": 4194304,
+        "role": "project_implementer",
+        "requested_effort": "default low",
+        "effective": "not independently observable"
+      },
+      "commissioned_boot_activation": {
+        "requested_role": "project_implementer",
+        "requested_effort": "medium",
+        "effective": "not independently observable",
+        "cumulative_process_seconds_upper": 45,
+        "cumulative_generated_bytes_upper": 121634816,
+        "source_tests": {
+          "commissioning": 8,
+          "host_health": 41,
+          "supported_candidate": 10,
+          "host_integration": 7
+        },
+        "failed_attempts": [
+          "Compatible-update test fixture initially ran after writable customization; corrected fixture order without removing requirement."
+        ]
+      }
+    },
+    "workflow_submission": {
+      "initial": "Refused before save: merged candidate included a queue-record change relative to lease base8fb8bd0. Product checks unchanged.",
+      "repair": "Coordinator restored only candidate queue snapshot to lease base; authoritative running record remains on main. Candidate source/evidence and prior commit preserved; no gate or scope change.",
+      "queue_authority": "primary main checkout"
+    }
+  },
+  "integration_worker": {
+    "name": "/root/supported_provenance",
+    "role": "project_implementer",
+    "requested_effort": "default low",
+    "effective": "not independently observable",
+    "process_seconds_ceiling": 1000,
+    "generated_bytes_ceiling": 134217728
+  },
+  "native_allocation": {
+    "process_seconds": 18000,
+    "generated_bytes": 133143986176,
+    "work": "/run/a733-guests/sv08-release-20261117",
+    "workspace_logical_bytes_ceiling": 34359738368,
+    "method": "Existing ARM64 development runner; private namespaces and inode-rich ext4 workspace, private tool extraction/exec mounts; no permanent host changes. Charge logical workspace plus generated files, no deletion credit; retain failed attempts. Full images only after source/validator applicability prerequisite closure.",
+    "authorisation": "Active first supported release goal plus coordinator bounded primary-task allocation under AGENTS.md; no physical printer authority.",
+    "prerequisites": {
+      "native_arch": "aarch64",
+      "free_gib": 196,
+      "free_inodes": 15136,
+      "kvm_device_present": true,
+      "live_kvm_probe": "reuse PR17 for prerequisite; actual new guest must record native accelerator",
+      "active_qemu_observed": 0,
+      "board_packages_hash_match": true
+    },
+    "images_built": true,
+    "conservative_current_charge_seconds": 11800,
+    "conservative_current_charge_bytes": 103079215104,
+    "tools": {
+      "git": "2.39.5",
+      "debootstrap": "1.0.128+nmu2+deb12u2",
+      "sgdisk": "1.0.9",
+      "mksquashfs": "4.5.1"
+    },
+    "preparation_attempts": [
+      "Private signed Debian tool intake/extraction succeeded; initial version sequence exposed missing pkg-exec/sbin PATH entry. Corrected private wrapper and strict version sequence passed. No host installation.",
+      "Bootstrap attempt1 refused missing wget before downloads; privately extracted signed Debian wget, retained failed work/log; fresh bootstrap/package/refresh/inspect PASS.",
+      "Pinned application/Cockpit/RAUC package install and exact board package install, generic kernel purge and artifact/regdb checks PASS.",
+      "Native KVM validator PASS for factory and captured selected hardware; repaired owner fixture PASS29 checks. All failed/collector receipts retained; no unchanged validator repeat.",
+      "Actual supported normal root staged current core/UI/public-source provenance, then hygiene check refused the canonical persistent Cockpit certificate link. Source repair accepts exact link without following it; wrong/private/embedded-data refusals retained. Final root/provenance must be refreshed at published repaired source.",
+      "Normal finalization second attempt passed canonical link but exposed missing host lsinitramfs. Privately extracted signed initramfs-tools-core/cpio; reran only finalizer PASS at66dce8d.",
+      "Recovery base285-package assembly, both board derivations and internal recovery build PASS, source base preserved.",
+      "Six-partition factory-capacity composition PASS; actual partition/SPL/environment readback matches. Capacity model uses measured filesystem and explicitly assumed usage;512MiB existing usage with max bundle+256MiB copy correctly refuses.",
+      "Selected-software release gate first invocation used wrong disposable Debian inventory root (normal lacks selected recovery closure); corrected to current recovery base and full default gate PASS. Historical input/failed log preserved. Current admission archive5310237 selects its existing measured reproduction proof.",
+      "Native lifecycle staging first stopped before any guest: host Python lacks tarfile extraction filter. Existing GNU tar repaired only disposable invocation; original empty staging and failed log retained. Two distinct ARM64/KVM boots then passed six explicit stub-health/permission cases each.",
+      "Repaired sourceDD65: refreshed normal root,285-package recovery base/board/image, factory-capacity six-partition disk and signed revision5 payload built; all byte readbacks and default selected-software gate PASS. Trusted inspection initially generated one5024-byte Python cache after payload build: preserved cache/failure, restored exact source-root inventory, repeated only inspection with bytecode disabled PASS; no image/bundle rebuild."
+    ],
+    "native_boundaries": "native-evidence.json",
+    "initial_generated_bytes_ceiling": 68719476736,
+    "continuations": [
+      {
+        "reason": "Required distinct revision5 OTA payload from unchanged source for supported revision4 signed LAN update/fallback qualification; reuse current package/kernel/recovery inputs. Also retains room for pending-media independent SD artifacts. No additional whole normal disk image planned.",
+        "additional_generated_bytes": 8589934592,
+        "additional_process_seconds": 0,
+        "cumulative_native_process_seconds_ceiling": 10800,
+        "cumulative_native_generated_bytes_ceiling": 77309411328,
+        "previous_charges_seconds": 6600,
+        "previous_conservative_generated_bytes": 66571993088,
+        "continuation_authority": "Coordinator bounded primary-task continuation under AGENTS.md standing consent and active full release goal; no printer/deployment authority.",
+        "workspace_logical_bytes_still": 34359738368
+      },
+      {
+        "reason": "Demonstrated missing Klipper activation after commissioned reboot/update requires source repair, native unit-contract proof and refreshed affected normal/recovery/update outputs. Reuse package/kernel caches; preserve66dce8d prototype receipts/hashes and remove superseded generated copies only after evidence intake. No additional historical image set kept.",
+        "additional_process_seconds": 3600,
+        "additional_generated_bytes": 25769803776,
+        "cumulative_native_process_seconds_ceiling": 14400,
+        "cumulative_native_generated_bytes_ceiling": 103079215104,
+        "previous_process_seconds_ceiling": 10800,
+        "previous_generated_bytes_ceiling": 77309411328,
+        "previous_consumption_not_reset": true,
+        "workspace_logical_bytes_still": 34359738368,
+        "authority": "Coordinator bounded continuation under AGENTS.md standing consent and active full release goal; no printer operation/public binary release authority."
+      },
+      {
+        "reason": "Owner supplied new blank16GB SD; SD root/source preparation exposed actual physical eMMC boot0/boot1 inventory refusal. Fix protected auxiliary topology and refresh only affected outputs, reusing package/kernel caches. Preserve original source/native proofs and compressed prototype receipts; no physical write.",
+        "additional_process_seconds": 3600,
+        "additional_generated_bytes": 30064771072,
+        "sd_preparation_output_continuation_bytes": 4294967296,
+        "subsequent_topology_repair_output_continuation_bytes": 25769803776,
+        "previous_ceiling_seconds": 14400,
+        "previous_ceiling_bytes": 103079215104,
+        "cumulative_native_ceiling_seconds": 18000,
+        "cumulative_native_ceiling_bytes": 133143986176,
+        "previous_consumption_not_reset": true,
+        "workspace_logical_bytes_still": 34359738368,
+        "authority": "Coordinator bounded continuation under AGENTS.md standing consent and active full-release goal; no physical operation or binary-release authority."
+      }
+    ],
+    "built_scope": [
+      "isolated native boundary fixture",
+      "supported revision4 normal six-partition candidate",
+      "internal recovery image",
+      "repaired supported revision4 normal six-partition candidate atdd65c33",
+      "repaired internal recovery atdd65c33",
+      "repaired signed revision5 OTA atdd65c33"
+    ],
+    "physical_boot": false,
+    "printing_qualified": false,
+    "release_qualified": false
+  },
+  "combined_ceiling": {
+    "process_seconds": 25200,
+    "generated_bytes": 134217728000
+  },
+  "physical_access": true,
+  "target_preflight": {
+    "authority": "Active full release goal: coordinator-only passive target preparation; separate exact-operation authority/review still required for changes/output operations.",
+    "process_seconds_ceiling": 90,
+    "generated_bytes_ceiling": 4194304,
+    "ssh_host_key_check": "existing strict SSH trust; no bypass",
+    "release": "0.1.0-physical-update.2",
+    "slot": "B",
+    "mode": "immutable",
+    "trial": false,
+    "retained_slot_release_revision": 3,
+    "next_candidate_release_revision": 4,
+    "media_bytes": 31272730624,
+    "artifact_layout_bytes": 7818182656,
+    "cid_measured": true,
+    "linux_node": "/dev/mmcblk2",
+    "raw_cid_published": false,
+    "saved_hardware_revision": 13,
+    "selected_third_party_bed": "funssor-cn3d-hotbed 1.0.0",
+    "fitted_match": "Owner explicitly confirmed Yes, those are fitted on2026-11-17",
+    "configuration_capture_bytes": 100201,
+    "configuration_capture_sha256": "1e4ddf2ef152bc1f6c4b6012f679d4bb613d3ba61b7cdc4a71ee7c6626831cc6",
+    "configuration_capture": "private assigned target/saved-hardware.json; no credentials/backups/whole-filesystem dump",
+    "service_observation": {
+      "sv08-klipper": "inactive",
+      "sv08-printer-api": "activating",
+      "sv08-mainsail": "inactive"
+    },
+    "mutations": false,
+    "physical_operation_authority": false
+  },
+  "physical_access_kind": "read-only SSH preflight only",
+  "physical_operations": false,
+  "final_source_tests": {
+    "count": 149,
+    "skipped": 0,
+    "exit_code": 0,
+    "seconds": 3.799,
+    "private_log": "/home/drew/.sv08-release-20261117/checks/source-freeze.log",
+    "sha256": "083092f0141fbe6fd48d0c166f9f36ba0a806a35ccc0cb40be80d07bd675f614"
+  },
+  "dependency_closure": {
+    "base_lock_preserved": true,
+    "supplement": "configs/host-os/supported/recovery-owner-packages.json",
+    "supplement_sha256": "c840988de5746efd2f5e79dc5fe15d509147205418a5ab4ad532588f9c9c64b5",
+    "openssl_deb_sha256": "ff38f9e4fdbfef72d9cb31088e5e42f58c83c2fb1d1bbb4e4b4c9adc53c17100",
+    "openssl_bytes": 1472236,
+    "authenticated_control_sha256": "4a11c66c9cf3f16e16410237e5c44f2e0879259fc691c4e280b5a4195d366375",
+    "intake": "ordinary-user existing intake path; hash verified after ARM transfer",
+    "affected_checks": 45,
+    "affected_check_seconds": 1.7,
+    "affected_check_skips": 0,
+    "affected_log_sha256": "d7ac787a9b0fc67e1a622fe7d87e10e2852f14489391a73bbff45019316124d5",
+    "limitation": "Pinned metadata and intake plus source tests; actual installed recovery/PAM still pending"
+  },
+  "native_boundaries": {
+    "evidence": "native-evidence.json",
+    "factory_validator": "PASS",
+    "selected_validator": "PASS",
+    "owner_pam_checks": 29,
+    "normal_boot": false,
+    "browser_login": false
+  },
+  "native_candidate": {
+    "source_revision": "66dce8d44b0e2af2bda69c6a050e2548d34aeefb",
+    "release_revision": 4,
+    "image_bytes": 7818182656,
+    "image_sha256": "b1c1728d73ed75430040556458c29ecbf193070d4e0d455aa6a862ba5bd0e302",
+    "normal_finalization": "PASS",
+    "all_six_partition_readback": "PASS",
+    "spl_and_both_environment_readback": "PASS",
+    "selected_software_release_preparation": "PASS",
+    "physical_boot": false,
+    "independent_sd_media_policy": "awaiting actual medium identities",
+    "update_payload": "revision5 preparation authorised; no additional whole disk image"
+  },
+  "demonstrated_lifecycle_defect": {
+    "source": "66dce8d",
+    "finding": "Valid persisted commissioning permission has no boot activation consumer; a one-time manual start does not survive reboot or update.",
+    "evidence": [
+      "integrate_host_os.py removes wants links",
+      "finalize_supported_host.py forbids physical wants links",
+      "Commissioning.authorize persists permission only",
+      "BootHealth and enabled API never schedule Klipper"
+    ],
+    "repair": "Supported post-health permission-checked nonblocking activation; original startup guards retained.",
+    "prototype_status": "unqualified; retain measured evidence, rebuild affected outputs after source checks",
+    "source_worker": {
+      "role": "project_implementer",
+      "requested_effort": "medium",
+      "effective": "not independently observable"
+    },
+    "repair_status": "Source and native STUB unit-contract checks PASS; all affected normal/internal-recovery/signed-update outputs refreshed atdd65c33. Physical qualification pending."
+  },
+  "post_confirmation_defect": {
+    "finding": "Real confirmation left boot.json trial=true, blocking same-boot commissioning/configuration/health restart.",
+    "repair": "Under state/admission/writer locks verify completed matching tx/no pending, validate normal context, atomically publish trial=false before trial marker removal/readiness. Fail closed on changed state, shutdown or publication failure.",
+    "ownership_authorization": "8fb8bd0",
+    "current_claim": "fc4c8ee09ba64cfb9f446a564406c79a",
+    "worktree": "local/feature-workflow/worktrees/supported-release-boot-fix",
+    "previous_worktree_preserved": true,
+    "tests": "8 commissioning +41 host-health source tests; no production-health claim"
+  },
+  "related_regressions": {
+    "transaction": {
+      "tests": 37,
+      "passed": 37,
+      "seconds": 1.282
+    },
+    "restart": {
+      "tests": 14,
+      "passed": 14,
+      "seconds": 0.5
+    },
+    "host_boot": {
+      "tests": 12,
+      "passed": 11,
+      "skipped": 1,
+      "seconds": 0.233,
+      "limitation": "Namespace opt-in not run in this invocation; prior six-boot mount evidence stays at its original unchanged-input scope."
+    }
+  },
+  "native_lifecycle": {
+    "evidence": "boot-lifecycle-evidence.json",
+    "source_revision": "dd65c33f51d535c1f9f3ff7a15482fc5bb4c008d",
+    "boots": 2,
+    "cases_per_boot": 6,
+    "passed": true,
+    "production_os_health": false,
+    "physical_hardware": false
+  },
+  "prototype_archive": {
+    "source_revision": "66dce8d44b0e2af2bda69c6a050e2548d34aeefb",
+    "prototype_only": true,
+    "not_for_deployment": true,
+    "compressed_bytes": 1140491424,
+    "compressed_sha256": "5d14933ac946059f643108f2929931f928ecf824e88a807c514c8b978c6a394a",
+    "uncompressed_bytes": 7818182656,
+    "uncompressed_sha256": "b1c1728d73ed75430040556458c29ecbf193070d4e0d455aa6a862ba5bd0e302",
+    "roundtrip_verified": true,
+    "source_raw_retired_after_verified_archive": true,
+    "elapsed_seconds": 620.5685979119735,
+    "generated_bytes_not_refunded": true,
+    "retired_components": {
+      "boot-a.img": {
+        "bytes": 201326592,
+        "sha256": "c75cb452bddb2b6abdb002617e8e0ae6c12ee6ffdff45f120a1f4a96fe16d188"
+      },
+      "root-a.img": {
+        "bytes": 2147483648,
+        "sha256": "131ebfec3fd7416b965f295b96756e7d2306e3c0e72f8a5f268444c2db30cc9b"
+      },
+      "boot-b.img": {
+        "bytes": 201326592,
+        "sha256": "cf6be002144f72440aa40c10d4b7f37cf7cb319314bbbd62048a158b934efe20"
+      },
+      "root-b.img": {
+        "bytes": 2147483648,
+        "sha256": "a99a474b34e8d029f4b3cf208ecaad7ce46492cc8115f9c787bdb2e21f0961d8"
+      },
+      "recovery.img": {
+        "bytes": 536870912,
+        "sha256": "4d6b8857db8a18adc7bb5b50275ce72e1c990d935a3f2b608c6710147d657653"
+      },
+      "data.img": {
+        "bytes": 2565865472,
+        "sha256": "2b29a60f04344d9d34655f7ef27bcf17432d7be5459e98bb64ca32c75205d9db"
+      }
+    }
+  },
+  "native_candidate_current": {
+    "evidence": "candidate-build-evidence.json",
+    "source_revision": "dd65c33f51d535c1f9f3ff7a15482fc5bb4c008d",
+    "normal_built": true,
+    "internal_recovery_built": true,
+    "signed_update_payload_built": true,
+    "source_and_selected_notices": "PASS",
+    "physical_boot": false,
+    "independent_sd": "awaiting media identities",
+    "public_binary_release": false
+  },
+  "physical_topology_defect": {
+    "observed": "Unchanged installed Kernel.inventory failed: Stable medium identity is unavailable: mmcblk2boot0",
+    "runtime_sha256": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
+    "passive_observation": true,
+    "mutations": false,
+    "boot_areas": [
+      {
+        "index": 0,
+        "sectors": 8192,
+        "readonly": true,
+        "force_readonly": true,
+        "parent_mmc_verified": true,
+        "holders": [],
+        "slaves": []
+      },
+      {
+        "index": 1,
+        "sectors": 8192,
+        "readonly": true,
+        "force_readonly": true,
+        "parent_mmc_verified": true,
+        "holders": [],
+        "slaves": []
+      }
+    ],
+    "repair_status": "Source task reopened; explicit protected nonselectable boot-area model required. CurrentDD65 images not for deployment.",
+    "private_observation": "/home/drew/.sv08-release-20261117/sd-preparation/printer-inventory-private.json",
+    "previous_source_validation_commit": "adb8be0d061bd4eac3fc8623ea86a600e4248f13",
+    "historical_source_validation_preserved_in_main": "27ffe17c6f992d17a2a34f0200beaf069f58b2fa"
+  },
+  "new_recovery_sd": {
+    "host": "beelink.drewnet.online",
+    "observed_device": "/dev/mmcblk0",
+    "bytes": 15931539456,
+    "name": "SC16G",
+    "cid_sha256": "599fd94c2cf7c3604aad8f72f28cbc9b48edf0e88016be0658a8b61f603a1ce3",
+    "owner_declared_new_blank": true,
+    "unmounted": true,
+    "no_write": true,
+    "backup_drive": "requested; not yet identified",
+    "sd_root_derived_at": "dd65c33; source-only predecessor before topology repair",
+    "loader_sources_and_tf_a": "prepared; no final loader without final policy-bound script"
+  }
+}

@@ -17,7 +17,12 @@ H12 attended SD reimage, H13 physical automatic update/fallback and PR17 native
 software recovery have completed evidence. Reuse applicable results; final-artifact
 or physical boundaries still need their own acceptance. Do not repeat destructive
 recovery/fallback merely to start printing. No physical task is marked passed here.
-The supported candidate and clean-owner path are source-validated in [PR39](https://github.com/drew442/sv08-mainline/pull/39).
+The supported candidate/clean-owner source checkpoint is in [PR39](https://github.com/drew442/sv08-mainline/pull/39).
+Its task is reopened after an actual passive inventory call rejected the printer's
+eMMC boot0/boot1 hardware areas. The new blank16GB SC16G SD is identified on
+Beelink and remains unwritten; backup-media identity is still requested.
+The coordinator must correct protected boot-area admission and refresh affected
+artifacts before finalising the SD policy or requesting a physical write.
 The [current session bindings](test-sv08-01-commissioning-session.md#current-candidate-bindings--2026-11-17)
 record rebuilt artifacts, an actual native-validated input-only candidate and a
 passive installed-storage snapshot. These do not pass any physical H phase.

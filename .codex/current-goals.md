@@ -1,5 +1,31 @@
 # Current delivery state
 
+## Current continuation — new SD and eMMC topology repair
+
+Owner supplied a new blank SC16G SD (15,931,539,456 bytes), identified read-only
+on Beelink as `/dev/mmcblk0`; it is unmounted with no holders and has not been
+written. The separate backup drive is still requested. Current recovery requires
+backup, SD root and eMMC target to be distinct physical disks.
+
+Actual read-only invocation of the unchanged installed media inventory reader
+failed on `mmcblk2boot0`. The eMMC exposes boot0/boot1 as readonly 4MiB hardware
+areas, not independently identified user disks. Reopen the existing source task
+for protected, nonselectable auxiliary topology; retain alias, holder, mount,
+read-only and complete-inventory protections. Source/native passes below remain
+historical at their stated inputs; DD65 images are not deployment candidates.
+No card, eMMC, MCU, service or printer-output changes have occurred.
+
+The SD root and loader source/TF-A preparation exist, but final SD composition
+waits for repaired source and actual backup-media policy. Reuse cached packages
+and the recorded normal/recovery roots; no unchanged OS bootstrap. Source ceiling
+stays7,200seconds/1GiB. Native ceiling is now18,000process-seconds/124GiB after a
+bounded continuation for this demonstrated repair and affected artifact refresh;
+conservative prior charges11,800seconds/96GiB include all prior attempts, inputs
+and the logical32GiB workspace, with no deletion credit. The existing execution
+ledger records the full continuation. No physical write or release is authorised.
+
+## Preserved source checkpoint (before this topology finding)
+
 PR38 merged as `47e265e21b3382ddc921317097e53991fffd6035`. The native
 first-supported-release goal remains active. The existing
 [supported candidate task](../docs/features/supported-release-candidate/proposal.md)
