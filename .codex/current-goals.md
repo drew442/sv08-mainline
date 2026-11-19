@@ -1,53 +1,43 @@
 # Current delivery state
 
-## Current continuation — supplied USB and safe initial installation
+## Current continuation — recovery media preparation, 2026-11-19
 
-2026-11-19: the native first-supported-release goal is active. Owner supplied a
-new USB drive on Beelink: 31,014,191,104 bytes, one existing FAT32 partition,
-removable, unmounted. The previously identified blank SC16G SD is unchanged.
-Do not format the USB: backup uses FAT; the existing Beelink read-only NFS image
-source avoids its 4 GiB file limit. Preserve the tested rescue SD.
+The native first-supported-release goal remains active. The actual 31,014,191,104-byte
+FAT32 USB and blank SC16G SD on Beelink are identified and remain unmounted/unwritten.
+Preserve the USB filesystem and tested rescue SD; the existing read-only NFS source
+carries the normal image. No printer outputs, services, firmware or boot were changed.
 
-The USB lacks SCSI WWID/serial; optional `device/wwid` returns ENXIO, while the
-actual nearest USB-device descriptor has its own serial/VID/PID. The shared reader
-correction preserves legacy shapes and all aliases, rejects hub borrowing and
-multi-LUN ambiguity, and passes 63 focused tests. Its exact Kernel identity code
-also identified the real USB read-only, in memory; no complete-host/recovery
-admission is claimed. A small wrapper extension admits exactly one reviewed
-export or restore SD profile binding; 11 supported-candidate and seven SD-builder
-checks pass. These source changes are preserved at `51299a1`.
+Frozen production source: `c69618ea9ac060b8714d68c1751fd36bb653988c`.
+The USB reader now admits the actual own-device descriptor identity while preserving
+legacy shapes and whole-topology guards. The supported SD loader binds both required
+immutable manifests. The installation-archive helper preserves original data and
+identity in a new target-bound generation and quarantines inherited startup permission.
+63 media checks,19 supported/legacy SD checks and9 root preservation/ownership checks
+pass. Its actual production CLI also passed against real731 GPT normal-A bytes on
+native ARM with synthetic legacy data. This is not actual-backup or physical acceptance.
+[Current source/receipts](https://github.com/drew442/sv08-mainline/blob/e3a869f/docs/features/supported-release-candidate/recovery-media-evidence.json)
+retain limitations and the independent assessment's actual-data conditions.
 
 Current owned worktree: `local/feature-workflow/worktrees/supported-release-boot-fix`,
-branch `feature/supported-installation-data`, run
-`a89684eaf21b4652a58fe257d829f5bd`, lease base `3d2b0e4`.
-The existing source task is running; no second backlog is introduced.
-An offline original-preserving installation-archive helper is being implemented:
-fresh passive metadata confirms old immutable B/schema1/revision2 with no trial
-or pending update. Raw state cannot satisfy target A/revision4 activation, and
-`prepare_boot` correctly refuses an unannounced release. Prepare a new generation
-from the explicitly bound source and exact target image, preserving the original
-archive/identity/configuration and quarantining inherited Klipper-start permission.
-Do not relabel old records, fake health/trial or weaken activation.
+branch `feature/supported-sd-provider-binding`, run
+`c58c1f75e9ff4db9b256ae38823629a7`, lease base `f356beb`.
+One cache-reusing native normal/internal-recovery/OTA/export-SD refresh is running
+at the frozen source; do not fast-forward that checkout for subsequent record commits.
+Use retained process handle and `/run/a733-guests/sv08-release-20261117/logs/refresh-c69618e-pipeline.json`.
+No unchanged OS bootstrap or new historical raw-image collection.
 
-Before image refresh, finish this helper and source/round-trip checks. Then freeze
-one clean source and refresh affected normal/recovery/OTA/export-SD outputs using
-pinned caches and the current 7317a89 parent roots. The earlier 7317a89 artifacts
-and source proofs remain historical, not support for this USB identity path.
-Export and restore retain separate immutable topologies; never mount H12's NFS
-source or run its writer while export/restore target mounts remain. Exact exported
-archive filename/hash is known only after actual export. Legacy seed preparation
-must be proven before any destructive installation; the original backup stays
-untouched. Human power-isolated media moves, owner entry, consequential-operation
-assessment and exact-operation authority remain required.
+Carried source ceiling7,200process-seconds/1.25GiB; conservative charge4,700seconds/
+1,160MiB. Native ceiling18,000seconds/168GiB; before this refresh14,580seconds/127GiB,
+including the actual-image probe, all previous attempts and logical32GiB workspace.
+Deletion does not return allowance. Candidate execution ledger retains continuations.
 
-Carried source ceiling: 7,200 process-seconds/1.25 GiB after a bounded 256 MiB
-continuation; prior conservative charge 4,400 seconds/920 MiB. Native ceiling:
-18,000 seconds/168 GiB after a bounded 40 GiB continuation for the demonstrated
-runtime repair, final SD outputs and one new raw image at the existing NFS source.
-Prior native charge 14,500 seconds/126 GiB and logical 32 GiB workspace remain
-charged; no deletion credits. Existing execution/H records retain all prior
-attempts, proofs, receipts and continuations. No SD/USB/eMMC write, target service
-change, heater/motion/MCU action, deployment or public binary release occurred.
+Next: finish current-source readbacks and source/notice gate, bind/build the actual
+export SD and inspect exact artifacts. Obtain exact-operation assessment/authority
+before writing the blank card or changing printer state. Export and restore retain
+separate immutable policies. Actual export name/SHA, original independently preserved
+backup and successfully verified target-bound preparation are mandatory before
+installation. Human power-isolated media moves and subsequent attended commissioning
+remain required. Earlier artifacts prove only their named historical sources.
 
 ## Historical 2026-11-17 preparation (superseded only where stated above)
 
