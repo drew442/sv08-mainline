@@ -73,7 +73,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "a89684eaf21b4652a58fe257d829f5bd",
+        "session": "supported-release-20261119"
+      },
       "input_paths": [
         "runtime/sv08_state.py",
         "runtime/sv08_identity.py",
@@ -178,7 +182,7 @@
       "resumption": "Continue same C1-C5 first supported installation after demonstrated legacyB2-to-newA4 activation mismatch. Add bounded offline original-preserving schema1 immutable installation-archive helper/tests; unchanged activation and commissioning guards, no physical authority.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate supported candidate source path",
       "validation": null,
       "verification": null
