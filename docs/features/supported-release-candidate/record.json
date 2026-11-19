@@ -59,7 +59,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "USB identity and export-SD extension pass focused checks and actual read-only USB proof. Fresh live legacy B/schema1/revision2 cannot satisfy target A/revision4 unchanged activation guard. Extend same C1-C5 source ownership with a bounded offline original-preserving installation-archive helper and its tests before expensive image refresh or destructive installation.",
       "checks": [
         "c1",
         "c2",
@@ -180,7 +180,7 @@
       "resumption": "Owner supplied real backup USB; actual USB serial exists but reader aborts optional SCSI WWID ENXIO and lacks descriptor discovery. Same authorized C1-C5 scope, strengthen owned runtime/tests rather than fabricate identity or weaken protections. Carry all prior source/native attempts and bounded continuation.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
-      "status": "running",
+      "status": "blocked",
       "title": "Implement and validate supported candidate source path",
       "validation": null,
       "verification": null
