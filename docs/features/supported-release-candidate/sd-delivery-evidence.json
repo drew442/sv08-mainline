@@ -1,0 +1,304 @@
+{
+  "format_version": 1,
+  "date": "2026-11-19",
+  "production_source_revision": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+  "delivery_source_revision": "766b0257c55be3675493e7cc38bb05bd2b73af66",
+  "source_sha256": {
+    "scripts/assemble_supported_candidate.py": "13dcaf5327ffbf7e712d730263fb26044e459f940b0005c69888d443e3cb5702",
+    "tests/test_supported_candidate.py": "f3f459ac517b0375417adb7529ac66a1e49e7699c7bd2b4050ab8cc75a35ed4f",
+    "scripts/build_sd_recovery_host.py": "2007ecbd2b2d4fab5f420a45bb393eea9236ffb0f5f41227a17925055506b2b5",
+    "tests/test_sd_recovery_host.py": "fb5e004516328e90d4f8de9c38d34e2934d94d47be529994f412377925cf25a3"
+  },
+  "source_checks": {
+    "supported_tests": 12,
+    "sd_loader_tests": 8,
+    "sd_loader_input_unchanged": true,
+    "logs": {
+      "supported-upstream-gitlinks.log": "eddaa3f9aa2fd402e34671e68bb78ce12d763f4d78b8d72f1f00ba7680452e8c",
+      "sdhost.log": "3102f5da3850724bba37398fb882ad2b4da9b5644b324c795c9a786dab53256e"
+    },
+    "previous_media_and_helper_evidence": "recovery-media-evidence.json"
+  },
+  "actual_native": {
+    "runtime_artifacts": "native-refresh-c69618e.json",
+    "runtime_artifacts_sha256": "485e2be5df6bee8ff21eefb7a0ad776f92a62efa1d616effe15118a6309a7c83",
+    "pipeline": {
+      "source_revision": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+      "phases": [
+        {
+          "phase": "archive-7317a89.py",
+          "command": [
+            "python3",
+            "-B",
+            "/run/a733-guests/sv08-release-20261117/inputs/archive-7317a89.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 215.71810232597636,
+          "log_sha256": "756dcd7f54070d8ab2824815c0fc7a866dab6b6db96002935ea7dd2798b99cf7"
+        },
+        {
+          "phase": "refresh-normal-c69618e.py",
+          "command": [
+            "python3",
+            "-B",
+            "/run/a733-guests/sv08-release-20261117/inputs/refresh-normal-c69618e.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 45.20347311900696,
+          "log_sha256": "0ee3c04b74050b87ecabee8bd64dbad8ed6d20d4f975a29dae0313631e71be8b"
+        },
+        {
+          "phase": "rebuild-recovery-c69618e.py",
+          "command": [
+            "python3",
+            "-B",
+            "/run/a733-guests/sv08-release-20261117/inputs/rebuild-recovery-c69618e.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 503.7741188679938,
+          "log_sha256": "c04c428c75bc079b2829f6bdf3f29fa6014b9a9d086e5817aec2be69cf774b9e"
+        },
+        {
+          "phase": "retire-731-roots.py",
+          "command": [
+            "python3",
+            "-B",
+            "/run/a733-guests/sv08-release-20261117/inputs/retire-731-roots.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 6.9516226460109465,
+          "log_sha256": "ddb851cb14c0343a5582081ae86113353d6eafabe8045a912cddeb9edd6c39cc"
+        },
+        {
+          "phase": "compose-normal-c69618e.py",
+          "command": [
+            "python3",
+            "-B",
+            "/run/a733-guests/sv08-release-20261117/inputs/compose-normal-c69618e.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 352.5127487810096,
+          "log_sha256": "ad77862e12aa0efccb1b1775e400c66fa4ca03ca50ce999dfcd4620baad57f38"
+        },
+        {
+          "phase": "update-c69618e-pipeline.py",
+          "command": [
+            "python3",
+            "-B",
+            "/run/a733-guests/sv08-release-20261117/inputs/update-c69618e-pipeline.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 256.43465879996074,
+          "log_sha256": "ea3b315997603d215e7cadb305346afddea700f1b4ac1fedf902dc093527ff04"
+        },
+        {
+          "phase": "collect-refresh-c69618e.py",
+          "command": [
+            "python3",
+            "-B",
+            "/run/a733-guests/sv08-release-20261117/inputs/collect-refresh-c69618e.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 22.168331954977475,
+          "log_sha256": "1e1499fc2ab157c56c6d6064ca2c27c84709bfc35e394966275932125ceceea7"
+        }
+      ],
+      "elapsed_seconds": 1402.7751798509853,
+      "physical_operation": false
+    },
+    "board_policy_proof": {
+      "source_revision": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+      "dtb_sha256": "571288762747007542bb00c7ce04c2e0994678422e441975d928022588da9d3f",
+      "controller": "/soc/mmc@4020000",
+      "enabled": true,
+      "non_removable": false,
+      "expected_card_removable": true,
+      "evidence_class": "Pinned compiled DTB plus Linux MMC removable semantics; actual recovery inventory must match. Not physical SD observation.",
+      "profile_sha256": "c9dc17d501c0f11052a93653d43ee2a992b36ab56cac64b484b4d88fa6dff3b9",
+      "reuse_current_identical_compressed_usr": true,
+      "exit_code": 0,
+      "elapsed_seconds": 24.370157232973725,
+      "log_sha256": "e1fbc30bf492b353fa2d651e6dbed436b55f97c5248a103fa61a82abafd13c68",
+      "payload_exit_code": 1,
+      "total_elapsed_seconds": 26.46225132397376,
+      "payload_log_sha256": "7ba733c2ffeb4d3470a549d3186b7fb8e80edf768415bbf11be9edf02a3b8c3f"
+    },
+    "payload_retry": {
+      "producer_source_revision": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+      "builder_source_revision": "766b0257c55be3675493e7cc38bb05bd2b73af66",
+      "exit_code": 0,
+      "elapsed_seconds": 8.838070271012839,
+      "command": [
+        "python3",
+        "-B",
+        "/run/a733-guests/sv08-release-20261117/workspace/candidate/scripts/assemble_supported_candidate.py",
+        "--medium",
+        "sd-payloads",
+        "--recovery",
+        "/run/a733-guests/sv08-release-20261117/workspace/candidate/build/recovery-sd-export-c69618e",
+        "--work",
+        "/run/a733-guests/sv08-release-20261117/workspace/candidate/build/sd-export-payloads-c69618e",
+        "--recovery-source-revision",
+        "c69618ea9ac060b8714d68c1751fd36bb653988c",
+        "--execute"
+      ],
+      "log_sha256": "88fc02d4ba8f48681369dd450b8bdd513265da5fe2a476d214019f5f12aaa86a",
+      "source_record_preserved": true,
+      "source_image_preserved": true,
+      "physical_operation": false
+    },
+    "sd": {
+      "deployable": false,
+      "image_sha256": "b1d992da6b77d1c20abff03017e4ba28803e2fa53c595da08029688a2afe83e3",
+      "image_bytes": 738197504,
+      "source_composition_sha256": "88fc02d4ba8f48681369dd450b8bdd513265da5fe2a476d214019f5f12aaa86a",
+      "loader_receipt_sha256": "985ed67a9d9486b941ff1a6c344aebc7dfeb33da82d9e812c753ae70bd94cf55",
+      "root_index": 2,
+      "root_partuuid": "deaf981d-7441-428c-bf43-ce40bca6ca65",
+      "physical_boot": false,
+      "producer_source_revision": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+      "delivery_builder_source_revision": "766b0257c55be3675493e7cc38bb05bd2b73af66",
+      "payloads": {
+        "Image": {
+          "bytes": 33405440,
+          "sha256": "5bc7c62df2b521610d0dea0a82b38aceb54af7d340a44b02a27428d6ea28dc34",
+          "actual_fat_readback": true
+        },
+        "boot.scr": {
+          "bytes": 1154,
+          "sha256": "d4145e2b772dc08df004b435aea0e995b9c9372bcd321bdd6481253487bd1095",
+          "actual_fat_readback": true
+        },
+        "initrd.img": {
+          "bytes": 2712471,
+          "sha256": "49bc70acf19e161a5706177e7dc26000a2d2ab7fc0c3cc0c5b689048c2bbcf0f",
+          "actual_fat_readback": true
+        },
+        "sv08.dtb": {
+          "bytes": 48208,
+          "sha256": "571288762747007542bb00c7ce04c2e0994678422e441975d928022588da9d3f",
+          "actual_fat_readback": true
+        }
+      },
+      "root_partition_readback": true,
+      "spl_readback": true,
+      "primary_and_backup_gpt_valid": true,
+      "emmc_environment_regions_zero": true,
+      "both_kernel_manifest_bindings": true,
+      "elapsed_seconds": 7.5491543429670855,
+      "physical_write": false,
+      "release_qualified": false
+    },
+    "sd_recovery_root_sha256": "0340048f251836ff030b2fc4d7195d84f4b9604a19bc84f49b3001f12304eada",
+    "kernel_manifest_arguments": [
+      "sv08.envelope=3c1af48f7aacf54f75b5a0e797e363dab96ba6bf5eb4c8ff6875b821f4403cfa",
+      "sv08.recovery=b247d3a260b8f443ad18eac1c04f6b5d575670be0c7b5780356a9bd439b7df81"
+    ]
+  },
+  "failure": {
+    "classification": "Source delivery defect",
+    "evidence": "Native producer passed, then old wrapper attempted an unpacked usr DTB which compressed recovery deliberately omits. Failure occurred before output creation.",
+    "failed_log_sha256": "7ba733c2ffeb4d3470a549d3186b7fb8e80edf768415bbf11be9edf02a3b8c3f",
+    "repair": "Read exact DTB via unsquashfs-cat from validated compressed usr. Preserve current-source default; explicit ancestor reuse compares all other source blobs, additions/removals, upstream gitlinks and exact runtime integration inputs. Record both revisions without relabelling production images.",
+    "retry": "One native payload retry passes with original image and build record unchanged; no OS/image rebuild."
+  },
+  "loader": {
+    "bytes": 743753,
+    "sha256": "fcd50045dc9952f00a41f473f0ad6cae9bcfccd10ad6750aaf995c4da43b3fa9",
+    "config_sha256": "0fbfbffe985dde15eb3953512f7a07974640ecf4406739f50f158f3f56f77d63",
+    "bl31_sha256": "d32d949018cecb21a4b39ba83e166e0d6399344550227880daf1387cd06651ef",
+    "boot_script_sha256": "d4145e2b772dc08df004b435aea0e995b9c9372bcd321bdd6481253487bd1095",
+    "environment_sha256": "4a359cffa38703570fa5b93253c92fbb2cf562b361141b1b3688efb729572c9f",
+    "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "elapsed_seconds": 32.84796194219962,
+    "effective_sd_only_configuration": {
+      "CONFIG_ENV_IS_NOWHERE": "y",
+      "CONFIG_ENV_IS_IN_MMC": "n",
+      "CONFIG_ENV_IS_IN_FAT": "n",
+      "CONFIG_ENV_IS_IN_EXT4": "n",
+      "CONFIG_ENV_REDUNDANT": "n",
+      "CONFIG_BOOTMETH_RAUC": "n",
+      "CONFIG_BOOTSTD": "n",
+      "CONFIG_CMD_SAVEENV": "n",
+      "CONFIG_CMD_HASH": "y",
+      "CONFIG_HASH_VERIFY": "y",
+      "CONFIG_SHA256": "y",
+      "CONFIG_MMC_SUNXI_SLOT_EXTRA": "-1",
+      "CONFIG_DEFAULT_DEVICE_TREE": "\"allwinner/sun50i-h616-sovol-sv08-sd-network\"",
+      "CONFIG_ENV_DEFAULT_ENV_TEXT_FILE": "\"sv08-sd-network.env\""
+    },
+    "executed_receipt_sha256": "071bbbb33cfb228c967becf48f07e237f4a570a77214cf7bcba832d52a22c000"
+  },
+  "beelink_staging": [
+    {
+      "kind": "normal",
+      "path": "/srv/sv08-sd-nfs/sv08-supported-candidate-c69618e.img",
+      "bytes": 7818182656,
+      "sha256": "7cbf00915e670e999d86bdfa985889c564a5d982562211bade4831e4ef7968b9",
+      "readback_matches": true,
+      "source_revision": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+      "elapsed_seconds": 201.89733912819065,
+      "qualification": "Private development staging only; not a qualified release or device write."
+    },
+    {
+      "kind": "sd",
+      "path": "/var/tmp/sv08-release-20261119/sv08-export-sd-c69618e.img",
+      "bytes": 738197504,
+      "sha256": "b1d992da6b77d1c20abff03017e4ba28803e2fa53c595da08029688a2afe83e3",
+      "readback_matches": true,
+      "source_revision": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+      "elapsed_seconds": 24.180944686057046,
+      "qualification": "Private development staging only; not a qualified release or device write."
+    }
+  ],
+  "public_delivery_source": {
+    "source_revision": "766b0257c55be3675493e7cc38bb05bd2b73af66",
+    "url": "https://codeload.github.com/drew442/sv08-mainline/tar.gz/766b0257c55be3675493e7cc38bb05bd2b73af66",
+    "sha256": "f36473bc839d1bcd07a9de1a2c00f9d1b5a18ad3e56568e0b0bd0462d0f7114a",
+    "bytes": 11159143,
+    "all_source_files_match": true,
+    "matching_files": 637
+  },
+  "independent_assessment": {
+    "role": "high_consequence_reviewer",
+    "configured_effort": "medium",
+    "effective_effort": "not observable",
+    "result": "PASS WITH CONDITIONS",
+    "writer_sha256": "ab4ab55f2e3ad0d0e8f9e2b12786371c82e81c4ddd4e6d11e0b6fe0115685063",
+    "scope": "Exact blank-SD prefix write and conditional initial orderly shutdown/recovery boot/export only.",
+    "conditions": [
+      "Explicit owner operation authority still required.",
+      "Recheck exact target/card capacity/CID/children/mounts/holders/fuser/swaps/image; assertions enabled, one attempt, stop on failure.",
+      "Require exact-prefix fsync/direct readback; no tail write/GPT repair/resize.",
+      "Confirm current printer idle/outputs/source state and preserved tested rescue SD; orderly shutdown before removing PSU/USB back-power.",
+      "Actual complete recovery inventory including SD removable status must match immutable policy; mismatch stops admission.",
+      "Completed export/checksum/readback plus independently verified preserved original required before later conversion/installation."
+    ],
+    "exclusions": [
+      "Installation/eMMC image write",
+      "MCU actions",
+      "Heaters/motion",
+      "Unrelated console operations",
+      "Repeated boots"
+    ]
+  },
+  "allowances": {
+    "source_ceiling_seconds": 7200,
+    "source_ceiling_bytes": 1342177280,
+    "source_conservative_charge_seconds": 5200,
+    "source_conservative_charge_bytes": 1279262720,
+    "native_ceiling_seconds": 18000,
+    "native_ceiling_bytes": 180388626432,
+    "native_conservative_charge_seconds": 17000,
+    "native_conservative_charge_bytes": 178241142784,
+    "all_prior_attempts_and_logical_workspace_carried": true,
+    "no_deletion_credit": true
+  },
+  "limitations": [
+    "Construction/offline/native source evidence; no physical card write or boot, actual backup, printer services, printing or public release qualification.",
+    "Recorded emmc_environment_regions_zero checks offsets in SD image file only; no eMMC was accessed or zeroed.",
+    "Actual-image archive helper check used synthetic data and historical731 image; actual final-image/backup conversion remains mandatory.",
+    "Source/runtime imagec696 and delivery tool766 are deliberately distinct and both public.",
+    "For later restore SD use frozen c696 runtime builder/root, then766 delivery tool with explicit producer pin; never relabel source or weaken guards."
+  ]
+}

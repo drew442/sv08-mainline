@@ -1,53 +1,60 @@
 # Current delivery state
 
-## Current continuation — supplied USB and safe initial installation
+## Current continuation — recovery media ready, 2026-11-19
 
-2026-11-19: the native first-supported-release goal is active. Owner supplied a
-new USB drive on Beelink: 31,014,191,104 bytes, one existing FAT32 partition,
-removable, unmounted. The previously identified blank SC16G SD is unchanged.
-Do not format the USB: backup uses FAT; the existing Beelink read-only NFS image
-source avoids its 4 GiB file limit. Preserve the tested rescue SD.
+The native first-supported-release goal remains active. The actual 31,014,191,104-byte
+FAT32 USB and blank SC16G SD on Beelink are identified and remain unmounted/unwritten.
+Preserve the USB filesystem and tested rescue SD. No printer outputs, services,
+firmware, boot or physical storage were changed during preparation.
 
-The USB lacks SCSI WWID/serial; optional `device/wwid` returns ENXIO, while the
-actual nearest USB-device descriptor has its own serial/VID/PID. The shared reader
-correction preserves legacy shapes and all aliases, rejects hub borrowing and
-multi-LUN ambiguity, and passes 63 focused tests. Its exact Kernel identity code
-also identified the real USB read-only, in memory; no complete-host/recovery
-admission is claimed. A small wrapper extension admits exactly one reviewed
-export or restore SD profile binding; 11 supported-candidate and seven SD-builder
-checks pass. These source changes are preserved at `51299a1`.
+Production source is frozen at `c69618ea9ac060b8714d68c1751fd36bb653988c`.
+Normal six-partition image, internal recovery and signed revision5 OTA pass actual
+construction/readbacks and the selected-software public source/notice gate. The
+normal image is hash-verified at Beelink's existing read-only NFS source. Export SD
+image is hash-verified in Beelink's private staging; it is not written to the card.
+All artifacts remain unqualified for public release or printing.
 
-Current owned worktree: `local/feature-workflow/worktrees/supported-release-boot-fix`,
-branch `feature/supported-installation-data`, run
-`a89684eaf21b4652a58fe257d829f5bd`, lease base `3d2b0e4`.
-The existing source task is running; no second backlog is introduced.
-An offline original-preserving installation-archive helper is being implemented:
-fresh passive metadata confirms old immutable B/schema1/revision2 with no trial
-or pending update. Raw state cannot satisfy target A/revision4 activation, and
-`prepare_boot` correctly refuses an unannounced release. Prepare a new generation
-from the explicitly bound source and exact target image, preserving the original
-archive/identity/configuration and quarantining inherited Klipper-start permission.
-Do not relabel old records, fake health/trial or weaken activation.
+Delivery-only wrapper correction: `766b0257c55be3675493e7cc38bb05bd2b73af66`.
+Native execution exposed a DTB lookup into already-compressed usr. The correction
+extracts only the sealed DTB. Explicit ancestor pinning proves all other shipped
+source and upstream gitlinks unchanged; integration inputs must match. Original
+production images/receipts are untouched, with producer and delivery revisions
+recorded separately. For later restore-SD composition use the frozen c696 runtime
+builder/root, then766's delivery wrapper with the explicit producer pin; never
+relabel an old image or bypass source/notices admission.
 
-Before image refresh, finish this helper and source/round-trip checks. Then freeze
-one clean source and refresh affected normal/recovery/OTA/export-SD outputs using
-pinned caches and the current 7317a89 parent roots. The earlier 7317a89 artifacts
-and source proofs remain historical, not support for this USB identity path.
-Export and restore retain separate immutable topologies; never mount H12's NFS
-source or run its writer while export/restore target mounts remain. Exact exported
-archive filename/hash is known only after actual export. Legacy seed preparation
-must be proven before any destructive installation; the original backup stays
-untouched. Human power-isolated media moves, owner entry, consequential-operation
-assessment and exact-operation authority remain required.
+63 media checks,12 supported checks, eight unchanged SD-loader checks and9 root
+preservation/ownership checks pass at their recorded inputs. Native helper CLI
+passed against actual731 GPT normal-A with synthetic data; real-backup preparation
+against the final image remains mandatory before installation. The archive helper
+preserves original data/identity and quarantines inherited startup permission.
+[Current delivery evidence](https://github.com/drew442/sv08-mainline/blob/feature/supported-sd-provider-binding/docs/features/supported-release-candidate/sd-delivery-evidence.json)
+records source/receipt hashes and limitations; earlier proofs retain their revisions.
 
-Carried source ceiling: 7,200 process-seconds/1.25 GiB after a bounded 256 MiB
-continuation; prior conservative charge 4,400 seconds/920 MiB. Native ceiling:
-18,000 seconds/168 GiB after a bounded 40 GiB continuation for the demonstrated
-runtime repair, final SD outputs and one new raw image at the existing NFS source.
-Prior native charge 14,500 seconds/126 GiB and logical 32 GiB workspace remain
-charged; no deletion credits. Existing execution/H records retain all prior
-attempts, proofs, receipts and continuations. No SD/USB/eMMC write, target service
-change, heater/motion/MCU action, deployment or public binary release occurred.
+Source worktree: `local/feature-workflow/worktrees/supported-release-boot-fix`,
+branch `feature/supported-sd-provider-binding`, run
+`c58c1f75e9ff4db9b256ae38823629a7`, lease base `f356beb`.
+The authoritative feature record governs source-task status. The complete release
+goal has separate physical acceptance. Native checkout is now the delivery766
+revision deliberately; do not advance it for record-only commits.
+
+Carried source ceiling7,200process-seconds/1.25GiB, conservative charge5,200seconds/
+1,220MiB. Native ceiling18,000seconds/168GiB, conservative charge17,000seconds/166GiB,
+including all attempts, SD loader, transfers and logical32GiB workspace. No deletion
+credits. One verified compressed731 prototype and all receipts are retained;
+superseded generated roots are retired after validated replacements. Caches remain.
+
+Next: obtain explicit authority to write only the reviewed738,197,504-byte export
+image to the exact blank SD; require fresh whole-card/child usage/CID/capacity checks
+and exact-prefix direct readback. Writer assertions must remain enabled. Independent
+assessment passes with conditions, including preserved rescue SD, current idle/source
+state and orderly original-system shutdown before removing PSU/USB back-power for
+attended media moves. Neither authority nor current printer state is inferred.
+Actual inventory must match the immutable export policy, including SD removable
+status; mismatches stop admission. Independently preserve the completed original
+backup, then verify target-bound derived archive before any later installation.
+No eMMC image write, MCU/heater/motion action or public binary release is authorised.
+PR39 reports hosted CI separately; query its actual current head/status.
 
 ## Historical 2026-11-17 preparation (superseded only where stated above)
 

@@ -226,3 +226,39 @@ for one cache-reusing image refresh. Historical artifacts and failed attempts
 remain recorded; source/record updates after this freeze do not relabel them.
 Physical authority, current target/precondition checks, preserved original backup
 and attended power-isolated media moves remain required before installation.
+
+
+## Current prepared artifacts and SD delivery correction, 2026-11-19
+
+[New immutable native receipts](native-refresh-c69618e.json) bind the actual normal,
+internal recovery and signed revision5 OTA to production source `c69618e`. All
+six partitions/SPL/environments, actual selected-software public source/notice
+gate, trusted signer and streamed update payload/embedded-release checks pass.
+No OTA installation or verity-installation result is claimed.
+
+[SD delivery evidence](sd-delivery-evidence.json) records the native packaging
+failure, its single diagnosed repair and actual retry. Recovery compresses usr;
+the wrapper now reads only the exact sealed DTB rather than looking in an
+unpacked directory. The explicit ancestor pin admits only wrapper/fixture source
+differences, with unchanged protected source blobs, additions/removals, upstream
+gitlinks and integration inputs. Default current-source admission remains strict.
+Production artifacts stay at c696; the separately public delivery tool is766b025.
+The original recovery image/build receipt are unchanged, avoiding an unnecessary
+OS/image rebuild. For later restore-SD composition use the frozen c696 runtime
+builder/root and then766's delivery wrapper with its explicit producer pin.
+
+The complete704MiB export-SD image has actual GPT, SPL, FAT payload and root
+readbacks, both immutable kernel bindings and a script/environment-bound SD-only
+loader. Its final bytes and normal image are hash-verified on Beelink. Neither
+the new SD nor USB has been mounted/written. Existing rescue media is preserved.
+Independent assessment is PASS WITH CONDITIONS for the exact prefix write and
+conditional initial boot/export; the JSON records all conditions and excludes
+installation, MCU, heaters and motion. Explicit operation authority and current
+preconditions remain required. The native full-release goal remains active.
+
+Final source scope remains C1–C5, separately from physical acceptance. Prior
+source/native/rendered proofs are reused only for matching inputs; the validator
+module pins remain unchanged. Final changed supported checks12pass; unchanged
+SD-loader8pass, prior media63pass and root preservation/ownership9pass retain
+their named logs/hashes. Agent routes are requested named profiles; effective
+settings are not independently observable and no savings are claimed.
