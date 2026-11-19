@@ -88,3 +88,49 @@ Focused checks are `tests/test_owner.py`, `tests/test_recovery_owner.py`,
 The latter requires root-owned safe scratch ancestry. These establish offline
 behavior; assembled native Cockpit/PAM login and named-printer release acceptance
 remain separate integration checks.
+
+
+## Preserving legacy data during the first supported installation
+
+A backup from an older installed release is not automatically compatible with a
+new normal image. Recovery activation still requires the reviewed release, state
+schema and release revision; normal boot still rejects unannounced releases.
+Do not relabel an old registry, invent trial/health records, or select fresh state
+while claiming that the old identity and application data were migrated.
+
+For the initial schema-1 immutable installation, the coordinator can prepare a
+**derived installation archive** with
+`scripts/prepare_recovery_installation_archive.py`. This is offline preparation on
+a development host in a private mount namespace, not a device writer or a recovery
+permission override. It requires the original archive SHA256, the measured source
+slot/release/schema/revision/generation, and the exact normal image, composition
+receipt and their pinned hashes. Its `--source-revision` is the **target image's
+project Git revision**, not the older installed release number. The normal A
+manifest is read from the actual verified image partition; a supplied manifest
+alone is insufficient. Run `--help` for the exact required flags.
+
+The helper preserves the original archive, original generations and registry
+backup, system/shared identity and application configuration/calibration. A new A
+generation receives the target release and MCU recommendation. SQLite committed
+WAL data is recovered into that new generation; old generation bytes remain
+unchanged. Any active `system/klipper-start.json` is preserved in the preparation
+backup but quarantined from its active location. A new explicit commissioning
+permission is required; no MCU is flashed and no service is started. Writable or
+customized OS state, unsupported schemas/links, unfinished operations, changed
+inputs and insufficient space refuse without a successful output.
+
+The derived archive is exported and restored into another disposable directory
+and must pass unchanged activation compatibility and preservation checks before
+its private `installation.tar` and receipt are published. Keep **both** original
+and derived archives private. Successful preparation is not hardware, installation,
+OS-health or printing acceptance. Independently assess the exact preparation and
+backup evidence before relying on it for destructive installation; that later
+operation also needs its existing exact-target review and owner authority.
+
+Export and restore SD images retain distinct immutable media topologies. Use the
+backup interface to create the real archive first; its random filename is known
+only after execution. Bind the actual checked derived archive into the restore
+profile. The [commissioning session](../hardware/test-sv08-01-commissioning-session.md)
+records power-isolated media exchanges and the existing read-only NFS full-image
+source. Neither an extra NFS mount nor mounted export/restore targets may be
+carried into an operation whose strict admission excludes them.

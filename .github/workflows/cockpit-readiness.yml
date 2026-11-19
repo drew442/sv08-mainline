@@ -163,7 +163,7 @@ jobs:
           sudo env TMPDIR=/root/sv08-supported-contracts PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=runtime:scripts /usr/bin/python3 - <<'PYTHON'
           import unittest
           loader = unittest.TestLoader()
-          names = ('test_owner.py', 'test_recovery_owner.py', 'test_host_mounts.py', 'test_supported_candidate.py', 'test_commissioning.py', 'test_host_integration.py', 'test_finalize_diagnostic_host.py', 'test_recovery_image.py', 'test_recovery_restore_media.py', 'test_environment_device.py', 'test_project_license.py')
+          names = ('test_owner.py', 'test_recovery_owner.py', 'test_host_mounts.py', 'test_supported_candidate.py', 'test_commissioning.py', 'test_host_integration.py', 'test_finalize_diagnostic_host.py', 'test_recovery_image.py', 'test_recovery_restore_media.py', 'test_recovery_media.py', 'test_recovery_prepare.py', 'test_recovery_restore_prepare.py', 'test_recovery_installation_archive.py', 'test_environment_device.py', 'test_project_license.py')
           suites = [loader.discover('tests', pattern=name) for name in names]
           if loader.errors or any(not suite.countTestCases() for suite in suites):
               raise SystemExit('Incomplete supported-candidate test discovery')
