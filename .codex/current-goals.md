@@ -1,43 +1,60 @@
 # Current delivery state
 
-## Current continuation — recovery media preparation, 2026-11-19
+## Current continuation — recovery media ready, 2026-11-19
 
 The native first-supported-release goal remains active. The actual 31,014,191,104-byte
 FAT32 USB and blank SC16G SD on Beelink are identified and remain unmounted/unwritten.
-Preserve the USB filesystem and tested rescue SD; the existing read-only NFS source
-carries the normal image. No printer outputs, services, firmware or boot were changed.
+Preserve the USB filesystem and tested rescue SD. No printer outputs, services,
+firmware, boot or physical storage were changed during preparation.
 
-Frozen production source: `c69618ea9ac060b8714d68c1751fd36bb653988c`.
-The USB reader now admits the actual own-device descriptor identity while preserving
-legacy shapes and whole-topology guards. The supported SD loader binds both required
-immutable manifests. The installation-archive helper preserves original data and
-identity in a new target-bound generation and quarantines inherited startup permission.
-63 media checks,19 supported/legacy SD checks and9 root preservation/ownership checks
-pass. Its actual production CLI also passed against real731 GPT normal-A bytes on
-native ARM with synthetic legacy data. This is not actual-backup or physical acceptance.
-[Current source/receipts](https://github.com/drew442/sv08-mainline/blob/e3a869f/docs/features/supported-release-candidate/recovery-media-evidence.json)
-retain limitations and the independent assessment's actual-data conditions.
+Production source is frozen at `c69618ea9ac060b8714d68c1751fd36bb653988c`.
+Normal six-partition image, internal recovery and signed revision5 OTA pass actual
+construction/readbacks and the selected-software public source/notice gate. The
+normal image is hash-verified at Beelink's existing read-only NFS source. Export SD
+image is hash-verified in Beelink's private staging; it is not written to the card.
+All artifacts remain unqualified for public release or printing.
 
-Current owned worktree: `local/feature-workflow/worktrees/supported-release-boot-fix`,
+Delivery-only wrapper correction: `766b0257c55be3675493e7cc38bb05bd2b73af66`.
+Native execution exposed a DTB lookup into already-compressed usr. The correction
+extracts only the sealed DTB. Explicit ancestor pinning proves all other shipped
+source and upstream gitlinks unchanged; integration inputs must match. Original
+production images/receipts are untouched, with producer and delivery revisions
+recorded separately. For later restore-SD composition use the frozen c696 runtime
+builder/root, then766's delivery wrapper with the explicit producer pin; never
+relabel an old image or bypass source/notices admission.
+
+63 media checks,12 supported checks, eight unchanged SD-loader checks and9 root
+preservation/ownership checks pass at their recorded inputs. Native helper CLI
+passed against actual731 GPT normal-A with synthetic data; real-backup preparation
+against the final image remains mandatory before installation. The archive helper
+preserves original data/identity and quarantines inherited startup permission.
+[Current delivery evidence](https://github.com/drew442/sv08-mainline/blob/feature/supported-sd-provider-binding/docs/features/supported-release-candidate/sd-delivery-evidence.json)
+records source/receipt hashes and limitations; earlier proofs retain their revisions.
+
+Source worktree: `local/feature-workflow/worktrees/supported-release-boot-fix`,
 branch `feature/supported-sd-provider-binding`, run
 `c58c1f75e9ff4db9b256ae38823629a7`, lease base `f356beb`.
-One cache-reusing native normal/internal-recovery/OTA/export-SD refresh is running
-at the frozen source; do not fast-forward that checkout for subsequent record commits.
-Use retained process handle and `/run/a733-guests/sv08-release-20261117/logs/refresh-c69618e-pipeline.json`.
-No unchanged OS bootstrap or new historical raw-image collection.
+The authoritative feature record governs source-task status. The complete release
+goal has separate physical acceptance. Native checkout is now the delivery766
+revision deliberately; do not advance it for record-only commits.
 
-Carried source ceiling7,200process-seconds/1.25GiB; conservative charge4,700seconds/
-1,160MiB. Native ceiling18,000seconds/168GiB; before this refresh14,580seconds/127GiB,
-including the actual-image probe, all previous attempts and logical32GiB workspace.
-Deletion does not return allowance. Candidate execution ledger retains continuations.
+Carried source ceiling7,200process-seconds/1.25GiB, conservative charge5,200seconds/
+1,220MiB. Native ceiling18,000seconds/168GiB, conservative charge17,000seconds/166GiB,
+including all attempts, SD loader, transfers and logical32GiB workspace. No deletion
+credits. One verified compressed731 prototype and all receipts are retained;
+superseded generated roots are retired after validated replacements. Caches remain.
 
-Next: finish current-source readbacks and source/notice gate, bind/build the actual
-export SD and inspect exact artifacts. Obtain exact-operation assessment/authority
-before writing the blank card or changing printer state. Export and restore retain
-separate immutable policies. Actual export name/SHA, original independently preserved
-backup and successfully verified target-bound preparation are mandatory before
-installation. Human power-isolated media moves and subsequent attended commissioning
-remain required. Earlier artifacts prove only their named historical sources.
+Next: obtain explicit authority to write only the reviewed738,197,504-byte export
+image to the exact blank SD; require fresh whole-card/child usage/CID/capacity checks
+and exact-prefix direct readback. Writer assertions must remain enabled. Independent
+assessment passes with conditions, including preserved rescue SD, current idle/source
+state and orderly original-system shutdown before removing PSU/USB back-power for
+attended media moves. Neither authority nor current printer state is inferred.
+Actual inventory must match the immutable export policy, including SD removable
+status; mismatches stop admission. Independently preserve the completed original
+backup, then verify target-bound derived archive before any later installation.
+No eMMC image write, MCU/heater/motion action or public binary release is authorised.
+PR39 reports hosted CI separately; query its actual current head/status.
 
 ## Historical 2026-11-17 preparation (superseded only where stated above)
 

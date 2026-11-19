@@ -320,3 +320,54 @@ The coordinator links this single result into H01/H02/H04/H05/H06, recording exa
 passed phases and exclusions. Unresolved fitted parts, activation, calibration or
 print behavior remain named dependencies with the next useful action. No H row is
 closed from an empty form, a parser pass, an export or a publication receipt.
+
+
+## Recovery media ready, 2026-11-19
+
+Production source `c69618ea9ac060b8714d68c1751fd36bb653988c`; delivery wrapper
+`766b0257c55be3675493e7cc38bb05bd2b73af66` differs only in the wrapper/fixture
+among shipped source. Native explicit pin verifies source blobs, upstream gitlinks
+and integration inputs. DTB is read from sealed compressed usr. Original production
+images and receipts remain unchanged; failed first lookup/log remains preserved.
+
+| Artifact | Bytes | SHA256 | Measured preparation |
+| --- | ---: | --- | --- |
+| Normal disk | 7,818,182,656 | `7cbf00915e670e999d86bdfa985889c564a5d982562211bade4831e4ef7968b9` | Six partition/SPL/environment readbacks and selected-software source/notice gate; Beelink NFS staging/readback |
+| Internal recovery | 536,870,912 | `c95163aaf5f74feb2b4a3ce8e4af5ba68c96f77b20535f2482f2d0a63ec590fc` | Actual current-source construction/fsck/readback |
+| Revision5 OTA | 545,130,926 | `42b5caa8b421e2a812d1300238656b75fb8af4f317cfdd9b03b04c67c75ecab5` | Trusted signature, streamed payload and embedded release checks; no installation/verity-install claim |
+| Export SD | 738,197,504 | `b1d992da6b77d1c20abff03017e4ba28803e2fa53c595da08029688a2afe83e3` | GPT, SPL, all FAT payloads, root partition and both kernel manifest bindings; Beelink private staging/readback |
+
+The exact blank SD is15,931,539,456bytes, CID-file SHA256
+`599fd94c2cf7c3604aad8f72f28cbc9b48edf0e88016be0658a8b61f603a1ce3`.
+USB is31,014,191,104bytes with its original FAT32 partition. Both remain
+unmounted/unwritten; stable raw identifiers/policy stay in private preparation
+records. SD removable=true is inferred from the actual pinned DTB, not a physical
+observation; recovery must match the complete live policy before export.
+
+Reviewed writer SHA256
+`ab4ab55f2e3ad0d0e8f9e2b12786371c82e81c4ddd4e6d11e0b6fe0115685063`.
+Independent assessment passes with conditions for only this card-prefix write and
+conditional initial recovery boot/export. Owner authority is pending. Recheck all
+target/usage/image facts immediately, run with assertions enabled and require full
+direct readback; no tail write, GPT repair or resize. Keep the tested rescue SD.
+Confirm actual idle/outputs/source/recovery state, perform orderly old-system
+shutdown and observe completion before removing PSU and USB back-power for moves.
+No heater, motion, MCU or eMMC installation action is covered. Stop on mismatch,
+unexpected output, boot loop or admission failure; no repeated attempt by default.
+
+Native actual-image helper prerequisite passed with synthetic legacy data; actual
+backup conversion against the final image is still mandatory. Export and restore
+retain separate immutable policies. Preserve/verify the original actual archive
+outside the installation boundary before proceeding; an interrupted helper or tar
+without its matching completed receipt is unusable. Calibration/identity persist;
+inherited start permission is quarantined and fresh commissioning remains required.
+
+Resources retain all prior consumption: source7,200seconds/1.25GiB ceiling with
+5,200seconds/1,220MiB conservative charge; native18,000seconds/168GiB ceiling with
+17,000seconds/166GiB conservative charge. Includes logical32GiB workspace, retained
+failed attempts, compressed731 prototype, local loader and Beelink transfers; no
+deletion credits. Original package/app/kernel/license inputs are retained.
+
+These are construction/offline/native-source receipts, not installed hardware,
+printing or release qualification. No new SD/USB/eMMC writes, printer service/boot
+changes, outputs, deployment or public binary release occurred.
