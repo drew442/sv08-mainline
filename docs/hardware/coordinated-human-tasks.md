@@ -17,6 +17,16 @@ H12 attended SD reimage, H13 physical automatic update/fallback and PR17 native
 software recovery have completed evidence. Reuse applicable results; final-artifact
 or physical boundaries still need their own acceptance. Do not repeat destructive
 recovery/fallback merely to start printing. No physical task is marked passed here.
+Current 2026-11-19 continuation: the owner supplied the new 32 GB FAT32 USB on
+Beelink. It and the blank SD remain unmounted/unwritten. Actual USB descriptor
+identity support is source-tested and passively observed; legacy-state
+installation preparation is being implemented before rebuilding or requesting
+any destructive action. Reuse the existing read-only NFS image source and retain
+the USB FAT filesystem and tested rescue SD. Backup/restore use distinct immutable
+profiles; the actual archive name and safe revision-2→4 seed must be established
+before installation. See the active source task/current-goals record. Earlier
+artifact bindings below retain their stated source, not current USB qualification.
+
 The supported candidate/clean-owner source checkpoint is in [PR39](https://github.com/drew442/sv08-mainline/pull/39).
 Its source task was reopened after an actual passive inventory call rejected the
 printer's eMMC boot0/boot1 hardware areas; that correction is now self-validated.

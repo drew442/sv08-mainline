@@ -1,5 +1,56 @@
 # Current delivery state
 
+## Current continuation — supplied USB and safe initial installation
+
+2026-11-19: the native first-supported-release goal is active. Owner supplied a
+new USB drive on Beelink: 31,014,191,104 bytes, one existing FAT32 partition,
+removable, unmounted. The previously identified blank SC16G SD is unchanged.
+Do not format the USB: backup uses FAT; the existing Beelink read-only NFS image
+source avoids its 4 GiB file limit. Preserve the tested rescue SD.
+
+The USB lacks SCSI WWID/serial; optional `device/wwid` returns ENXIO, while the
+actual nearest USB-device descriptor has its own serial/VID/PID. The shared reader
+correction preserves legacy shapes and all aliases, rejects hub borrowing and
+multi-LUN ambiguity, and passes 63 focused tests. Its exact Kernel identity code
+also identified the real USB read-only, in memory; no complete-host/recovery
+admission is claimed. A small wrapper extension admits exactly one reviewed
+export or restore SD profile binding; 11 supported-candidate and seven SD-builder
+checks pass. These source changes are preserved at `51299a1`.
+
+Current owned worktree: `local/feature-workflow/worktrees/supported-release-boot-fix`,
+branch `feature/supported-installation-data`, run
+`a89684eaf21b4652a58fe257d829f5bd`, lease base `3d2b0e4`.
+The existing source task is running; no second backlog is introduced.
+An offline original-preserving installation-archive helper is being implemented:
+fresh passive metadata confirms old immutable B/schema1/revision2 with no trial
+or pending update. Raw state cannot satisfy target A/revision4 activation, and
+`prepare_boot` correctly refuses an unannounced release. Prepare a new generation
+from the explicitly bound source and exact target image, preserving the original
+archive/identity/configuration and quarantining inherited Klipper-start permission.
+Do not relabel old records, fake health/trial or weaken activation.
+
+Before image refresh, finish this helper and source/round-trip checks. Then freeze
+one clean source and refresh affected normal/recovery/OTA/export-SD outputs using
+pinned caches and the current 7317a89 parent roots. The earlier 7317a89 artifacts
+and source proofs remain historical, not support for this USB identity path.
+Export and restore retain separate immutable topologies; never mount H12's NFS
+source or run its writer while export/restore target mounts remain. Exact exported
+archive filename/hash is known only after actual export. Legacy seed preparation
+must be proven before any destructive installation; the original backup stays
+untouched. Human power-isolated media moves, owner entry, consequential-operation
+assessment and exact-operation authority remain required.
+
+Carried source ceiling: 7,200 process-seconds/1.25 GiB after a bounded 256 MiB
+continuation; prior conservative charge 4,400 seconds/920 MiB. Native ceiling:
+18,000 seconds/168 GiB after a bounded 40 GiB continuation for the demonstrated
+runtime repair, final SD outputs and one new raw image at the existing NFS source.
+Prior native charge 14,500 seconds/126 GiB and logical 32 GiB workspace remain
+charged; no deletion credits. Existing execution/H records retain all prior
+attempts, proofs, receipts and continuations. No SD/USB/eMMC write, target service
+change, heater/motion/MCU action, deployment or public binary release occurred.
+
+## Historical 2026-11-17 preparation (superseded only where stated above)
+
 ## Current continuation — new SD and eMMC topology repair
 
 Current owned source worktree: `local/feature-workflow/worktrees/supported-recovery-boot-areas`,
