@@ -34,6 +34,100 @@ class ProjectLicenseTests(unittest.TestCase):
         self.overrides = {'usr/lib/sv08/controller.py':inputs['runtime/controller.py'],
                           'usr/share/cockpit/sv08-host/index.html':inputs['ui/host/index.html']}
 
+    def supported_fixture(self):
+        from supported_candidate import backend_documents, rauc_configuration
+        from test_supported_candidate import profile
+        import shutil
+        for name in ('upstream-lock.json', 'configs/host-os/recovery-test-sv08-01.json',
+                     'configs/images/host-ab.json', 'configs/host-os/environment-layout.json',
+                     'configs/host-os/rauc-system.conf.in', 'scripts/supported_candidate.py',
+                     'scripts/integrate_host_os.py', 'scripts/prepare_host_os.py',
+                     'scripts/project_license.py',
+                     'configs/host-os/systemd/sv08-klipper.service.d/supported-commissioning.conf'):
+            target = self.repo/name; target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(license.REPO/name, target)
+        value = profile()
+        for name, document in backend_documents(value, repo=self.repo).items():
+            (self.root/'usr/lib/sv08'/name).write_text(json.dumps(document, indent=2)+'\n')
+        target = self.root/'etc/rauc/system.conf'; target.parent.mkdir(parents=True)
+        target.write_text(rauc_configuration(value, repo=self.repo))
+        guard = 'etc/systemd/system/sv08-klipper.service.d/supported-commissioning.conf'
+        target = self.root/guard; target.parent.mkdir(parents=True)
+        shutil.copyfile(self.repo/'configs/host-os/systemd/sv08-klipper.service.d/supported-commissioning.conf', target)
+        return value
+
+    def test_supported_generated_documents_exact_bytes_and_declared_checkout(self):
+        self.supported_fixture()
+        record = self.stage()
+        self.assertFalse(record['development'])
+        names = ['usr/lib/sv08/'+n for n in
+                 ('layout.json', 'environment.json', 'environment-device.json', 'update-policy.json')]
+        names += ['etc/rauc/system.conf']
+        for name in names:
+            self.assertEqual(record['staged_files'][name]['origin'], 'generated')
+            path = self.root/name; original = path.read_bytes()
+            path.write_bytes(original+b' ')
+            self.assertIn(name, self.prepare()[1]['unmatched_original_files'])
+            with self.assertRaises(ValueError): license.validate(self.root)
+            path.write_bytes(original)
+        unknown = self.root/'usr/lib/sv08/unknown-backend.json'; unknown.write_text('{"unknown_backend_fixture": true}')
+        self.assertIn(str(unknown.relative_to(self.root)), self.prepare()[1]['unmatched_original_files'])
+        unknown.unlink()
+        # Same process, different declared source: cached producer inputs cannot qualify it.
+        source = self.repo/'configs/host-os/environment-layout.json'
+        value = json.loads(source.read_bytes()); value['declared_checkout_test'] = True
+        source.write_text(json.dumps(value))
+        self.assertIn('usr/lib/sv08/environment.json', self.prepare()[1]['unmatched_original_files'])
+
+    def test_supported_public_input_hashes_and_conditional_inventory(self):
+        self.supported_fixture(); record = self.stage()
+        name = 'usr/lib/sv08/supported-profile.json'; path = self.root/name
+        self.assertEqual(record['non_code_build_inputs'][name]['type'], 'supported-public-profile')
+        self.assertNotIn(name, record['staged_files'])
+        import subprocess
+        cert = self.root/'etc/rauc/release-keyring.pem'
+        key = self.base/'disposable-test.key'
+        subprocess.run(['openssl', 'req', '-new', '-x509', '-newkey', 'ed25519', '-nodes',
+                        '-keyout', str(key), '-out', str(cert), '-subj', '/CN=Provenance fixture/',
+                        '-days', '1'], check=True, capture_output=True, timeout=10)
+        record = self.stage()
+        self.assertEqual(record['non_code_build_inputs'][str(cert.relative_to(self.root))]['type'],
+                         'release-public-certificate')
+        certificate = cert.read_bytes(); cert.write_bytes(certificate+b'annotation')
+        with self.assertRaisesRegex(ValueError, 'Non-code build input'): license.validate(self.root)
+        with self.assertRaises(ValueError): self.prepare()
+        cert.write_bytes(certificate+key.read_bytes())
+        with self.assertRaises(ValueError): self.prepare()
+        cert.write_bytes(certificate)
+        original = path.read_bytes(); path.write_bytes(original+b' ')
+        with self.assertRaisesRegex(ValueError, 'Non-code build input'): license.validate(self.root)
+        path.write_bytes(original)
+        self.assertEqual(license.validate(self.root), record)
+        path.unlink()
+        files = license.installed_files(self.root)
+        self.assertNotIn('etc/rauc/system.conf', files)
+        self.assertNotIn('etc/systemd/system/sv08-klipper.service.d/supported-commissioning.conf', files)
+
+    def test_supported_recipe_cannot_qualify_a_different_declared_producer(self):
+        self.supported_fixture(); self.assertFalse(self.stage()['development'])
+        path=self.repo/'scripts/supported_candidate.py';path.write_bytes(path.read_bytes()+b'\n# Different producer source\n')
+        self.assertIn('usr/lib/sv08/environment-device.json',self.prepare()[1]['unmatched_original_files'])
+
+    def test_supported_feed_is_bound_to_declared_profile_and_bytes(self):
+        from supported_candidate import backend_documents
+        import shutil
+        value=self.supported_fixture();value['feed']=dict(url='https://192.0.2.10:8443/releases/',channel='stable')
+        for name in ('runtime/sv08_feed.py','runtime/sv08_state.py'):
+            path=self.repo/name;path.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(license.REPO/name,path)
+        documents=backend_documents(value,repo=self.repo)
+        for name in ('feed.json','supported-profile.json'):
+            (self.root/'usr/lib/sv08'/name).write_text(json.dumps(documents[name],indent=2)+'\n')
+        record=self.stage();self.assertFalse(record['development'])
+        feed=self.root/'usr/lib/sv08/feed.json';old=feed.read_bytes()
+        feed.write_bytes(old.replace(b'192.0.2.10',b'192.0.2.20'))
+        self.assertIn('usr/lib/sv08/feed.json',self.prepare()[1]['unmatched_original_files'])
+        with self.assertRaises(ValueError):license.validate(self.root)
+
     def test_identity_socket_recipe_accepts_only_exact_staging_constant(self):
         from stage_admin_ui import IDENTITY_SOCKET
         name='etc/systemd/system/cockpit.socket.d/sv08-identity.conf'

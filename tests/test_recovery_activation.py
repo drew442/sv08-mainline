@@ -119,7 +119,7 @@ class ActivationTests(unittest.TestCase):
         targets = dict(target=dict(self.targets['target'], label='Disposable target'))
         def factory():
             adapter = Composite(Unavailable('No export fixture'),
-                                RestoreAdapter(SimpleNamespace(targets=targets, archives={}, admission=admitted), BOOT))
+                                RestoreAdapter(SimpleNamespace(targets=targets, archives={}, admission=admitted, reserve_bytes=0), BOOT))
             calls.append(adapter)
             return adapter, None
         controller = RecoveryController(Store(self.parent/'sv08'), adapter_factory=factory)

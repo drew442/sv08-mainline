@@ -20,8 +20,12 @@ EXTRA_FILES = ('etc/cockpit/cockpit.conf','etc/sudoers.d/sv08-view',
     'usr/share/xsessions/sv08-recovery.desktop')
 GENERATED = ('project-source.json', 'project-LICENSE.txt', 'project-NOTICE.txt')
 NOTICE_PATHS = {base+name for base in (DOC,*PACKAGES) for name in GENERATED}
-# The owner public key is an image build input, not project corresponding source.
-NON_CODE_BUILD_INPUTS = {'usr/lib/sv08/seed/authorized_keys':'owner-public-key'}
+# Fixed public configuration and keys are build inputs, not corresponding source.
+SUPPORTED_PROFILE = 'usr/lib/sv08/supported-profile.json'
+SUPPORTED_FILES = ('etc/rauc/system.conf',
+    'etc/systemd/system/sv08-klipper.service.d/supported-commissioning.conf')
+NON_CODE_BUILD_INPUTS = {'usr/lib/sv08/seed/authorized_keys':'owner-public-key',
+                         SUPPORTED_PROFILE:'supported-public-profile'}
 NON_CODE_INPUT_LIMIT = 65536
 # Only these branding assets belong to this project. Other files in Debian's
 # shared branding directory (including its favicon/logo symlinks) belong to the
@@ -49,9 +53,16 @@ def checked(root, name):
     return path
 
 def non_code_build_inputs(root):
-    """Hash only the fixed public-key input; never publish its bytes or source map."""
+    """Hash fixed bounded public inputs; never publish bytes or source maps.
+
+    Supported-only authority inputs join the inventory only when the explicit
+    supported profile exists; legacy/vendor roots keep their historical scope.
+    """
     result = {}
-    for name, kind in NON_CODE_BUILD_INPUTS.items():
+    inputs = dict(NON_CODE_BUILD_INPUTS)
+    if checked(root, SUPPORTED_PROFILE).is_file():
+        inputs['etc/rauc/release-keyring.pem'] = 'release-public-certificate'
+    for name, kind in inputs.items():
         path = checked(root, name)
         if not path.is_file(): continue
         if path.stat().st_size > NON_CODE_INPUT_LIMIT:
@@ -76,7 +87,10 @@ def walk_files(base, recursive=True):
 
 
 def installed_files(root, overrides=None, replaced=()):
-    if any(name in NON_CODE_BUILD_INPUTS for name in (overrides or {})):
+    input_names = set(NON_CODE_BUILD_INPUTS)
+    if checked(root, SUPPORTED_PROFILE).is_file():
+        input_names.add('etc/rauc/release-keyring.pem')
+    if any(name in input_names for name in (overrides or {})):
         raise ValueError('Stage the owner public-key build input before preparing provenance')
     result = {}
     for prefix in PREFIXES:
@@ -89,7 +103,8 @@ def installed_files(root, overrides=None, replaced=()):
             if path.is_symlink(): raise ValueError('Symlink in staged project files')
             if name in NON_CODE_BUILD_INPUTS: continue
             if path.is_file(): result[name] = checked(root, name).read_bytes()
-    for name in EXTRA_FILES:
+    extras = EXTRA_FILES + (SUPPORTED_FILES if checked(root, SUPPORTED_PROFILE).is_file() else ())
+    for name in extras:
         path = checked(root, name)
         if path.is_file(): result[name] = path.read_bytes()
     branding = root/'usr/share/cockpit/branding/debian'

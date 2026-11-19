@@ -1,0 +1,25 @@
+{
+  "format_version": 1,
+  "snapshot": "20260901T000000Z",
+  "architecture": "arm64",
+  "roots": [
+    "openssl"
+  ],
+  "packages": [
+    {
+      "package": "openssl",
+      "version": "3.5.7-1~deb13u2",
+      "architecture": "arm64",
+      "bytes": 1472236,
+      "sha256": "ff38f9e4fdbfef72d9cb31088e5e42f58c83c2fb1d1bbb4e4b4c9adc53c17100",
+      "filename": "pool/updates/main/o/openssl/openssl_3.5.7-1~deb13u2_arm64.deb",
+      "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/o/openssl/openssl_3.5.7-1~deb13u2_arm64.deb",
+      "source": "openssl",
+      "source_version": "3.5.7-1~deb13u2",
+      "installed_kib": 2554,
+      "depends": "libc6 (>= 2.34), libssl3t64 (>= 3.5.0)",
+      "pre_depends": ""
+    }
+  ],
+  "resolution": "Additive openssl CLI required by existing sv08_web.password_hash; authenticated pinned Debian/security APT metadata. Base recovery lock preserved without package upgrades."
+}

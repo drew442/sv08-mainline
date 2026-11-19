@@ -94,13 +94,13 @@ def initialize_identity(data):
 
 
 def initialize_owner_authorized_keys(data, seed=Path('/usr/lib/sv08/seed/authorized_keys'),
-                                     uid=1000, gid=1000):
+                                     uid=1000, gid=1000, allow_empty=False):
     """Seed the persistent SSH key once, without replacing owner changes."""
     seed = Path(seed)
     if seed.is_symlink() or not seed.is_file():
         raise ValueError('Owner authorized-key seed must be a regular file')
     contents = seed.read_bytes()
-    if not contents.strip():
+    if not contents.strip() and not allow_empty:
         raise ValueError('Owner authorized-key seed must not be empty')
     owner = Path(data) / 'users/sv08'
     ssh = owner / '.ssh'
@@ -188,9 +188,11 @@ def main():
     from sv08_recovery_activation import boot_guard
     boot_guard(data.parent)
     store = Store(data)
-    store.initialize()
+    supported_owner = config.get('owner_setup') == 'recovery-v1'
+    if supported_owner: store.load()  # Recovery explicitly creates/activates supported state.
+    else: store.initialize()
     initialize_identity(data)
-    initialize_owner_authorized_keys(data)
+    initialize_owner_authorized_keys(data, allow_empty=supported_owner)
     if Path('/etc/machine-id').read_text().strip() != (data / 'system/machine-id').read_text().strip():
         raise ValueError('Initramfs must prepare persistent identity before systemd starts')
     boot = bind_boot_identity(store.prepare_boot(slot, config['release'], config['state_schema']))
@@ -205,7 +207,7 @@ def main():
     # /boot is paired with the actual root device; never mount the other slot here.
     subprocess.run(['mount', '-t', 'vfat', '-o', 'ro' if boot['mode'] == 'immutable' else 'rw',
                     config['devices']['boot-' + slot.lower()], '/boot'], check=True)
-    apply(Path('/'), data, boot)
+    apply(Path('/'), data, boot, owner_setup=supported_owner)
     if boot['trial']:
         # Fail closed until OS health confirmation is implemented and validated.
         Path('/run/sv08/trial').touch()
