@@ -7,6 +7,7 @@ verify that contract's current root, namespace and simple block topology; flock
 does not constrain arbitrary privileged software. See host-recovery-media.md.
 """
 from contextlib import contextmanager
+import errno
 import fcntl
 import hashlib
 import json
@@ -321,12 +322,7 @@ class Kernel:
                     (disk / 'loop/sizelimit').read_text().strip() == '0', 'Unsupported loop mapping')
             stable = dict(disposable_backing=backing, identity=fixture['images'][backing])
         else:
-            stable = {}
-            for name in ('wwid', 'device/wwid', 'device/cid', 'device/serial', 'serial'):
-                file = disk / name
-                if file.is_file() and file.read_text().strip():
-                    stable[name] = file.read_text().strip()
-            require(bool(stable), 'Stable physical medium identity is unavailable')
+            stable = self._stable_identity(disk)
         sequence = int((disk / 'diskseq').read_text())
         require(sequence > 0, 'Kernel disk sequence is unavailable')
         uevent = dict(line.split('=', 1) for line in (node / 'uevent').read_text().splitlines())
@@ -357,6 +353,86 @@ class Kernel:
                     removable=flag(disk / 'removable'),
                     filesystem_uuid=filesystem['UUID'], filesystem=filesystem['TYPE'],
                     partuuid=filesystem.get('PART_ENTRY_UUID', ''))
+
+    def _usb_owner(self, disk):
+        """Resolve the nearest actual USB interface/device, never a hub serial."""
+        usb = self.sysfs_root / 'bus/usb'
+        for ancestor in disk.parents:
+            subsystem = ancestor / 'subsystem'
+            if not subsystem.is_symlink():
+                continue
+            if subsystem.resolve(strict=True) != usb:
+                continue
+            event = dict(line.split('=', 1) for line in
+                         (ancestor / 'uevent').read_text().splitlines())
+            require(event.get('DEVTYPE') == 'usb_interface',
+                    'Unsupported nearest USB interface topology')
+            device = ancestor.parent
+            require((device / 'subsystem').resolve(strict=True) == usb and
+                    device.is_relative_to(self.sysfs_root / 'devices'),
+                    'Unsupported USB device ancestry')
+            event = dict(line.split('=', 1) for line in
+                         (device / 'uevent').read_text().splitlines())
+            driver = (ancestor / 'driver').resolve(strict=True)
+            require(event.get('DEVTYPE') == 'usb_device' and
+                    re.fullmatch(r'[0-9]+-[0-9]+(?:\.[0-9]+)*', device.name) is not None and
+                    (ancestor / 'bInterfaceClass').read_text().strip() == '08' and
+                    driver.parent == usb / 'drivers' and driver.name in ('usb-storage', 'uas'),
+                    'Unsupported USB mass-storage ownership')
+            return device
+        require('/usb' not in str(disk.relative_to(self.sysfs_root / 'devices')),
+                'Unresolved USB storage ancestry')
+        return None
+
+    def _stable_identity(self, disk):
+        """Observe legacy attributes once; use descriptors only without legacy ID.
+
+        Fallback stable shape: usb/serial is a conservative serial alias, while
+        usb/device is [lowercase VID, lowercase PID, serial], an indivisible
+        binding. VID/PID alone are never aliases. Legacy policy shapes stay exact.
+        """
+        owner = self._usb_owner(disk)
+        if owner is not None:
+            # One USB descriptor identifies a device, not each of its LUNs.
+            # Census all whole disks, including other storage interfaces, even
+            # when each LUN supplies a distinct otherwise usable WWID.
+            disks = []
+            for link in (self.sysfs_root / 'class/block').iterdir():
+                node = link.resolve(strict=True)
+                if node.is_relative_to(owner) and not (node / 'partition').exists():
+                    disks.append(node)
+            require(disks == [disk], 'Multiple or ambiguous whole-disk USB LUNs')
+        stable = {}
+        unsupported = []
+        for name in ('wwid', 'device/wwid', 'device/cid', 'device/serial', 'serial'):
+            item = disk / name
+            try:
+                info = item.stat()
+            except FileNotFoundError:
+                continue
+            require(stat.S_ISREG(info.st_mode), 'Invalid stable medium attribute')
+            try:
+                value = item.read_text().strip()
+            except OSError as error:
+                if name in ('wwid', 'device/wwid') and error.errno in (errno.ENXIO, errno.EINVAL):
+                    unsupported.append(error)
+                    continue
+                raise
+            if value:
+                stable[name] = value
+        if not stable and owner is not None:
+            vendor = (owner / 'idVendor').read_text().strip()
+            product = (owner / 'idProduct').read_text().strip()
+            serial = (owner / 'serial').read_text().strip()
+            require(re.fullmatch(r'[0-9a-fA-F]{4}', vendor) is not None and
+                    re.fullmatch(r'[0-9a-fA-F]{4}', product) is not None and
+                    bool(serial) and not any(ord(char) < 32 or ord(char) == 127 for char in serial),
+                    'Invalid USB descriptor identity')
+            stable = {'usb/serial': serial, 'usb/device': [vendor.lower(), product.lower(), serial]}
+        if not stable and unsupported:
+            raise unsupported[0]
+        require(stable, 'Stable physical medium identity is unavailable')
+        return stable
 
     def _probe(self, node):
         result = subprocess.run(['/usr/sbin/blkid', '-p', '-o', 'export', str(node)],
@@ -477,14 +553,7 @@ class Kernel:
                 transport = 'mmc'
             else:
                 raise ValueError('Unsupported block transport: '+disk.name)
-            stable = {}
-            for name in ('wwid', 'device/wwid', 'device/cid', 'device/serial', 'serial'):
-                item = disk / name
-                if item.is_file():
-                    value = item.read_text().strip()
-                    if value:
-                        stable[name] = value
-            require(stable, 'Stable medium identity is unavailable: '+disk.name)
+            stable = self._stable_identity(disk)
             children = sorted((node for node in nodes.values()
                                if node.parent == disk and (node / 'partition').exists()),
                               key=lambda child: int((child / 'partition').read_text()))
@@ -581,7 +650,9 @@ def durable_identity(block):
 def same_identity(left, right):
     # Keep every value: two differently named attributes may normalize to the
     # same key, and either value can identify a protected system medium.
-    return any(left_key.removeprefix('device/') == right_key.removeprefix('device/') and
+    def alias(key):
+        return 'serial' if key == 'usb/serial' else key.removeprefix('device/')
+    return any(alias(left_key) == alias(right_key) and
                left_value == right_value
                for left_key, left_value in left.items()
                for right_key, right_value in right.items())

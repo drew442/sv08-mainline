@@ -259,6 +259,68 @@ class SupportedCandidate(unittest.TestCase):
 
 
 
+class IndependentSDPayloadTests(unittest.TestCase):
+    def test_export_restore_admission_and_integrity(self):
+        import gzip
+        import hashlib
+        from contextlib import ExitStack
+        import recovery_image as recovery
+        from assemble_supported_candidate import sd_payloads
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as directory:
+            base=Path(directory);(base/'build').mkdir();source=base/'build/recovery';source.mkdir()
+            board=copy.deepcopy(recovery.board_profile(ROOT/'configs/host-os/supported/recovery-sd.json'))
+            envelope=source/'envelope';envelope.mkdir()
+            dtb=envelope/board['artifacts']['dtb']['path'];dtb.parent.mkdir(parents=True,exist_ok=True)
+            dtb.write_bytes(b'fixture dtb');board['artifacts']['dtb']['sha256']=recovery.sha(dtb)
+            raw=b'fixture kernel';(source/'vmlinuz').write_bytes(gzip.compress(raw))
+            (source/'initrd.img').write_bytes(b'fixture initrd')
+            (source/'recovery.ext4').write_bytes(b'fixture root')
+            record=dict(board_profile=board,integration_inputs=recovery.integration_inputs(),
+                        release_manifest=dict(project_source_revision='a'*40),
+                        image_sha256=recovery.sha(source/'recovery.ext4'),envelope=recovery.inventory(envelope),
+                        kernel_sha256=recovery.sha(source/'vmlinuz'),initrd_sha256=recovery.sha(source/'initrd.img'),
+                        manifest_sha256=hashlib.sha256(b'envelope').hexdigest())
+            # Use file digests as emitted by the builder, not truthy mode markers.
+            profile=base/'profile.json';profile.write_text('{"fixture":"reviewed"}\n');digest=recovery.sha(profile)
+            def run(*args):
+                self.assertEqual(args[0],'mkimage');Path(args[-1]).write_bytes(b'compiled fixture script')
+            from prepare_host_os import work_path
+            def fixture_work_path(path):
+                with patch('prepare_host_os.REPO',base):return work_path(path)
+            with ExitStack() as stack:
+                stack.enter_context(patch('assemble_supported_candidate.work_path',side_effect=fixture_work_path))
+                stack.enter_context(patch('project_license.source_state',return_value=('a'*40,False)))
+                stack.enter_context(patch('assemble_board_diagnostic.RAW_IMAGE',hashlib.sha256(raw).hexdigest()))
+                stack.enter_context(patch('assemble_board_diagnostic.run',side_effect=run))
+                stack.enter_context(patch('recovery_image.board_profile',return_value=board))
+                for key in ('media_profile_sha256','restore_profile_sha256'):
+                    (source/'build.json').write_text(json.dumps({**record,key:digest}))
+                    before=recovery.inventory(source);output=base/'build'/key
+                    result=sd_payloads(source,output)
+                    self.assertFalse(result['deployable']);self.assertFalse(result['physical_boot'])
+                    self.assertEqual((output/'boot/Image').read_bytes(),raw)
+                    self.assertEqual(recovery.sha(output/'recovery.ext4'),record['image_sha256'])
+                    self.assertEqual(recovery.inventory(source),before)
+                invalid=[{},dict(media_profile_sha256=digest,restore_profile_sha256=digest)]
+                for key in ('media_profile_sha256','restore_profile_sha256'):
+                    invalid.extend({key:value} for value in (None,'',True,42,'reviewed','A'*64,'g'*64))
+                    invalid.append({key:digest,('restore_profile_sha256' if key=='media_profile_sha256' else 'media_profile_sha256'):None})
+                for number,binding in enumerate(invalid):
+                    with self.subTest(binding=binding):
+                        (source/'build.json').write_text(json.dumps({**record,**binding}))
+                        output=base/'build'/('invalid-'+str(number));before=recovery.inventory(source)
+                        with self.assertRaisesRegex(ValueError,'exactly one reviewed'):sd_payloads(source,output)
+                        self.assertFalse(output.exists());self.assertEqual(recovery.inventory(source),before)
+                for field,value in [('integration_inputs',{}),('image_sha256','0'*64),('envelope',{}),
+                                    ('kernel_sha256','0'*64),('initrd_sha256','0'*64),
+                                    ('release_manifest',dict(project_source_revision='b'*40))]:
+                    with self.subTest(drift=field):
+                        (source/'build.json').write_text(json.dumps({**record,'media_profile_sha256':digest,field:value}))
+                        output=base/'build'/('drift-'+field)
+                        with self.assertRaises(ValueError):sd_payloads(source,output)
+                        self.assertFalse(output.exists())
+
+
 class RecoveryOwnerDependencyTests(unittest.TestCase):
     def test_default_supplement_adds_openssl_without_replacing_base(self):
         import recovery_image as recovery

@@ -20,6 +20,7 @@ def sd_payloads(recovery, work):
     """
     import gzip
     import hashlib
+    import re
     import shutil
     from recovery_image import inventory, sha
     from assemble_board_diagnostic import run, RAW_IMAGE
@@ -49,8 +50,11 @@ def sd_payloads(recovery, work):
             sha(recovery/'vmlinuz') != record['kernel_sha256'] or
             sha(recovery/'initrd.img') != record['initrd_sha256']):
         raise ValueError('Independent recovery changed after build')
-    if not record.get('restore_profile_sha256'):
-        raise ValueError('Independent recovery requires a reviewed target/owner setup policy')
+    # Builder modes have distinct topologies; invalid extra bindings are not absent.
+    bindings = [record[key] for key in ('media_profile_sha256', 'restore_profile_sha256') if key in record]
+    if (len(bindings) != 1 or not isinstance(bindings[0], str) or
+            re.fullmatch('[0-9a-f]{64}', bindings[0]) is None):
+        raise ValueError('Independent recovery requires exactly one reviewed export or restore profile SHA256 binding')
     raw = gzip.decompress((recovery/'vmlinuz').read_bytes())
     if hashlib.sha256(raw).hexdigest() != RAW_IMAGE: raise ValueError('Unreviewed SD kernel Image')
     from recovery_image import board_profile

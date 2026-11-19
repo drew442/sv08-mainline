@@ -171,6 +171,220 @@ class SysfsInventoryTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'boot area has an unexpected mount'):provider.snapshot()
 
 
+class UsbIdentityTests(unittest.TestCase):
+    """Descriptor identity is bound to real USB ownership in disposable sysfs."""
+    node = SysfsInventoryTests.node
+    discovered = SysfsInventoryTests.discovered
+
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        self.sysfs, self.dev = self.root/'sys', self.root/'dev'
+        self.dev.mkdir()
+        for name in ('class/block', 'dev/block', 'bus/usb/drivers/usb-storage',
+                     'bus/usb/drivers/uas'):
+            (self.sysfs/name).mkdir(parents=True)
+        self.hub = self.sysfs/'devices/pci/usb1'
+        self.owner = self.hub/'1-2'
+        self.interface = self.owner/'1-2:1.0'
+        self.scsi = self.interface/'host4/target4:0:0/4:0:0:0'
+        self.disk = self.scsi/'block/sda'
+        self.numbers = {}
+        self.node(self.disk, '8:0', 40000, 32)
+        (self.disk/'device').symlink_to(self.scsi)
+        self.partition = self.disk/'sda1'
+        self.node(self.partition, '8:1', 30000, 0)
+        (self.partition/'partition').write_text('1\n')
+        (self.partition/'start').write_text('2048\n')
+        for node, kind in ((self.hub, 'usb_device'), (self.owner, 'usb_device'),
+                           (self.interface, 'usb_interface')):
+            (node/'subsystem').symlink_to(self.sysfs/'bus/usb')
+            (node/'uevent').write_text('DEVTYPE='+kind+'\n')
+        (self.interface/'driver').symlink_to(self.sysfs/'bus/usb/drivers/usb-storage')
+        (self.interface/'bInterfaceClass').write_text('08\n')
+        (self.owner/'idVendor').write_text('AB12\n')
+        (self.owner/'idProduct').write_text('0034\n')
+        (self.owner/'serial').write_text('media-serial\n')
+        (self.hub/'serial').write_text('controller-serial\n')
+        self.expected = {'usb/serial': 'media-serial',
+                         'usb/device': ['ab12', '0034', 'media-serial']}
+
+    def observations(self, kernel):
+        # block() probes its selected mounted node; inventory probes all nodes.
+        with patch('sv08_recovery_media.subprocess.run', return_value=SimpleNamespace(
+                stdout='TYPE=ext4\nUUID=fixture-partition\n')):
+            return kernel.block(dict(device='8:1', filesystem='ext4')), kernel.inventory()
+
+    def test_both_entry_points_fallback_and_changed_descriptor_inventory(self):
+        with self.discovered() as kernel:
+            block, inventory = self.observations(kernel)
+            self.assertEqual(block['stable'], self.expected)
+            self.assertEqual(inventory[0]['stable'], self.expected)
+            self.assertEqual(inventory[0]['transport'], 'usb-scsi')
+            old = reviewed_inventory(inventory)
+            (self.owner/'serial').write_text('replacement\n')
+            changed, inventory = self.observations(kernel)
+            self.assertNotEqual(changed['stable'], block['stable'])
+            self.assertNotEqual(durable_identity(changed), durable_identity(block))
+            self.assertNotEqual(reviewed_inventory(inventory), old)
+
+    def test_legacy_values_preserved_and_each_attribute_read_once(self):
+        values = {'wwid': 'disk-wwid', 'device/wwid': 'scsi-wwid',
+                  'device/cid': 'cid', 'device/serial': 'scsi-serial', 'serial': 'disk-serial'}
+        for name, value in values.items():
+            (self.disk/name).write_text(value+'\n')
+        original = Path.read_text
+        for entry in ('block', 'inventory'):
+            reads = []
+            def read(path, *args, **kwargs):
+                reads.append(path)
+                return original(path, *args, **kwargs)
+            with self.discovered() as kernel, patch.object(Path, 'read_text', read), \
+                 patch('sv08_recovery_media.subprocess.run', return_value=SimpleNamespace(
+                     stdout='TYPE=ext4\nUUID=fixture-partition\n')):
+                observed = (kernel.block(dict(device='8:1', filesystem='ext4')) if entry == 'block'
+                            else kernel.inventory()[0])
+            self.assertEqual(observed['stable'], values)
+            for name in values:
+                self.assertEqual(reads.count(self.disk/name), 1, (entry, name))
+            self.assertNotIn(self.owner/'serial', reads)
+
+    def test_optional_wwid_errors_require_an_independent_identity(self):
+        (self.scsi/'wwid').write_text('unreadable')
+        original = Path.read_text
+        for code in (errno.ENXIO, errno.EINVAL, errno.EIO, errno.EACCES, errno.ENODEV, errno.ENOENT):
+            def read(path, *args, **kwargs):
+                if path == self.disk/'device/wwid':
+                    raise OSError(code, 'injected optional WWID read failure')
+                return original(path, *args, **kwargs)
+            with self.subTest(errno=code), self.discovered() as kernel, patch.object(Path, 'read_text', read):
+                if code in (errno.ENXIO, errno.EINVAL):
+                    block, inventory = self.observations(kernel)
+                    self.assertEqual(block['stable'], self.expected)
+                    self.assertEqual(inventory[0]['stable'], self.expected)
+                else:
+                    for call in (lambda: self.observations(kernel), kernel.inventory):
+                        with self.assertRaises(OSError): call()
+        # Unsupported WWID errors can also coexist with a usable legacy serial.
+        (self.disk/'serial').write_text('legacy\n')
+        def unsupported(path, *args, **kwargs):
+            if path == self.disk/'device/wwid': raise OSError(errno.ENXIO, 'unsupported')
+            return original(path, *args, **kwargs)
+        with self.discovered() as kernel, patch.object(Path, 'read_text', unsupported):
+            block, inventory = self.observations(kernel)
+            self.assertEqual(block['stable'], {'serial': 'legacy'})
+            self.assertEqual(inventory[0]['stable'], {'serial': 'legacy'})
+        (self.disk/'serial').unlink()
+        (self.owner/'serial').write_text('\n')
+        with self.discovered() as kernel, patch.object(Path, 'read_text', unsupported):
+            with self.assertRaises(ValueError): self.observations(kernel)
+            with self.assertRaises(ValueError): kernel.inventory()
+
+    def test_nearest_descriptor_never_borrows_hub_and_io_fails_closed(self):
+        for name, value in (('serial', ''), ('serial', 'bad\x01serial'),
+                            ('idVendor', '123'), ('idProduct', 'zzzz')):
+            path = self.owner/name
+            old = path.read_bytes()
+            path.write_text(value+'\n')
+            with self.subTest(name=name, value=value), self.discovered() as kernel:
+                with self.assertRaises(ValueError): self.observations(kernel)
+                with self.assertRaises(ValueError): kernel.inventory()
+            path.write_bytes(old)
+        for name in ('serial', 'idVendor', 'idProduct'):
+            path = self.owner/name
+            old = path.read_bytes()
+            path.unlink()
+            with self.subTest(missing=name), self.discovered() as kernel:
+                with self.assertRaises(OSError): self.observations(kernel)
+                with self.assertRaises(OSError): kernel.inventory()
+            path.write_bytes(old)
+        original = Path.read_text
+        for code in (errno.ENXIO, errno.EINVAL, errno.EACCES, errno.EIO, errno.ENODEV):
+            def read(path, *args, **kwargs):
+                if path == self.owner/'serial': raise OSError(code, 'descriptor unavailable')
+                return original(path, *args, **kwargs)
+            with self.subTest(errno=code), self.discovered() as kernel, patch.object(Path, 'read_text', read):
+                with self.assertRaises(OSError): self.observations(kernel)
+                with self.assertRaises(OSError): kernel.inventory()
+
+    def test_wrong_usb_ancestry_interface_and_root_hub_refuse(self):
+        for path, value in ((self.interface/'bInterfaceClass', '09'),
+                            (self.interface/'uevent', 'DEVTYPE=usb_device'),
+                            (self.owner/'uevent', 'DEVTYPE=usb_interface')):
+            old = path.read_bytes()
+            path.write_text(value+'\n')
+            with self.subTest(path=path), self.discovered() as kernel:
+                with self.assertRaises(ValueError): self.observations(kernel)
+                with self.assertRaises(ValueError): kernel.inventory()
+            path.write_bytes(old)
+        for path, target in ((self.interface/'driver', self.sysfs/'bus/usb/drivers'),
+                             (self.owner/'subsystem', self.sysfs/'bus')):
+            old = path.readlink()
+            path.unlink(); path.symlink_to(target)
+            with self.discovered() as kernel:
+                with self.assertRaises(ValueError): self.observations(kernel)
+                with self.assertRaises(ValueError): kernel.inventory()
+            path.unlink(); path.symlink_to(old)
+        # Missing the actual device/interface metadata exposes the hub as the
+        # nearest USB ancestor; its own valid serial must not become identity.
+        for node in (self.interface, self.owner): (node/'subsystem').unlink()
+        with self.discovered() as kernel:
+            with self.assertRaises(ValueError): self.observations(kernel)
+            with self.assertRaises(ValueError): kernel.inventory()
+
+    def test_multi_lun_refuses_even_with_distinct_wwids(self):
+        (self.disk/'wwid').write_text('first-lun\n')
+        second = self.interface/'host4/target4:0:0/4:0:0:1/block/sdb'
+        self.node(second, '8:16', 40000, 33)
+        (second/'wwid').write_text('second-lun\n')
+        with self.discovered() as kernel:
+            with self.assertRaisesRegex(ValueError, 'LUN'): self.observations(kernel)
+            with self.assertRaisesRegex(ValueError, 'LUN'): kernel.inventory()
+
+    def test_uas_and_cross_interface_lun_ownership(self):
+        driver = self.interface/'driver'
+        driver.unlink(); driver.symlink_to(self.sysfs/'bus/usb/drivers/uas')
+        with self.discovered() as kernel:
+            block, inventory = self.observations(kernel)
+            self.assertEqual(block['stable'], inventory[0]['stable'])
+        second = self.owner/'1-2:1.1/host5/target5:0:0/5:0:0:0/block/sdb'
+        self.node(second, '8:16', 40000, 33)
+        (self.disk/'wwid').write_text('first-interface\n')
+        (second/'wwid').write_text('second-interface\n')
+        with self.discovered() as kernel:
+            with self.assertRaisesRegex(ValueError, 'LUN'): self.observations(kernel)
+            with self.assertRaisesRegex(ValueError, 'LUN'): kernel.inventory()
+
+    def test_unsupported_wwid_without_any_identity_refuses(self):
+        # A non-USB disk has no descriptor fallback; unsupported WWID alone
+        # remains a refusal rather than an invented filesystem/device identity.
+        import shutil
+        shutil.rmtree(self.sysfs/'devices')
+        for directory in ('class/block', 'dev/block'):
+            for link in (self.sysfs/directory).iterdir(): link.unlink()
+        self.disk = self.sysfs/'devices/pci/virtio0/block/vda'
+        self.node(self.disk, '254:0', 40000, 34)
+        (self.disk/'wwid').write_text('unreadable')
+        original = Path.read_text
+        def read(path, *args, **kwargs):
+            if path == self.disk/'wwid': raise OSError(errno.EINVAL, 'unsupported')
+            return original(path, *args, **kwargs)
+        with self.discovered() as kernel, patch.object(Path, 'read_text', read):
+            with self.assertRaises(OSError): kernel.inventory()
+            with self.assertRaises(OSError): kernel.block(dict(device='254:0', filesystem='ext4'))
+
+    def test_serial_aliases_keep_all_conflicting_values(self):
+        for legacy in ({'serial': 'other', 'device/serial': 'media-serial'},
+                       {'device/serial': 'other', 'serial': 'media-serial'}):
+            for left, right in ((self.expected, legacy), (legacy, self.expected)):
+                self.assertTrue(same_identity(left, right))
+        self.assertFalse(same_identity(self.expected, {'serial': 'other'}))
+        self.assertFalse(same_identity(self.expected,
+            {'usb/device': ['ab12', '0034', 'other'], 'usb/serial': 'other'}))
+        self.assertFalse(same_identity(self.expected, {'idVendor': 'ab12', 'idProduct': '0034'}))
+
+
 class RecoveryMediaTests(unittest.TestCase):
     def setUp(self):
         self.policy = dict(format_version=1, kind='independent-recovery', protocol=PROTOCOL,
@@ -544,6 +758,17 @@ class RecoveryMediaTests(unittest.TestCase):
                             with self.subTest(known_key=known_key, order=order, side=side):
                                 blocks['/media/usb']['stable'] = dict(order) if side == 'destination' else protected
                                 policy['system_media'][-1] = protected if side == 'destination' else dict(order)
+                                with self.assertRaisesRegex(ValueError, 'shares a system/source medium'):
+                                    provider.snapshot()
+                usb = {'usb/serial': 'shared-serial',
+                       'usb/device': ['1234', '5678', 'shared-serial']}
+                for pairs in ([('serial', 'other'), ('device/serial', 'shared-serial')],
+                              [('device/serial', 'other'), ('serial', 'shared-serial')]):
+                    for order in (pairs, list(reversed(pairs))):
+                        for side in ('destination', 'inventory'):
+                            with self.subTest(usb_alias=order, side=side):
+                                blocks['/media/usb']['stable'] = usb if side == 'destination' else dict(order)
+                                policy['system_media'][-1] = dict(order) if side == 'destination' else usb
                                 with self.assertRaisesRegex(ValueError, 'shares a system/source medium'):
                                     provider.snapshot()
                 policy['system_media'][-1] = protected
