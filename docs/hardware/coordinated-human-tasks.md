@@ -17,24 +17,29 @@ H12 attended SD reimage, H13 physical automatic update/fallback and PR17 native
 software recovery have completed evidence. Reuse applicable results; final-artifact
 or physical boundaries still need their own acceptance. Do not repeat destructive
 recovery/fallback merely to start printing. No physical task is marked passed here.
-Current 2026-11-19 continuation: both supplied media remain unmounted/unwritten.
-Production c696 normal/recovery/signed OTA and export-SD composition pass offline
-readbacks/source gates. Native execution exposed and corrected compressed-DTB
-lookup in the delivery-only766 wrapper; explicit producer/source/gitlink proof
-preserves all existing production bytes. Normal and SD images are hash-verified
-on Beelink. The USB retains FAT32; the existing read-only NFS source serves the
-normal image. Keep the tested rescue SD unchanged.
+Current physical state, 2026-11-19T08:13Z: the owner authorised the exact new-SD
+write and confirmed the tested rescue SD is available. The reviewed704MiB export
+image was written once to the distinct blank SC16G card in Beelink. Full direct
+prefix readback matches; expected FAT/ext4 geometry/UUIDs and no mounts, holders
+or open users are confirmed. USB FAT remains unmounted and unchanged. No printer
+shutdown, boot, service/output, MCU or eMMC operation has occurred.
 
-Independent assessment is PASS WITH CONDITIONS for the exact blank-SD write and
-conditional initial boot/export; owner authority is still required. The next
-request covers the new SD prefix only, not an eMMC install. Fresh target/usage
-checks, assertions-enabled reviewed writer and direct readback are mandatory.
-Current printer idle/source/recovery state and orderly shutdown must be established
-before later power-isolated media moves. Export admission must match actual complete
-inventory; no topology repair/bypass. Preserve and independently verify the original
-archive before conversion or installation. No physical H phase is marked passed.
-See [current continuation](../../.codex/current-goals.md) and
-[exact artifact/session bindings](test-sv08-01-commissioning-session.md#recovery-media-ready-2026-11-19).
+[Write/readback receipts and next boundary](test-sv08-01-commissioning-session.md#sd-card-written-2026-11-19)
+supersede earlier unwritten-media statements. Validated source evidence/hashes and
+PR39 remain at their stated source checkpoint; no historical hashes are refreshed.
+Native charges now17,150seconds/167GiB within18,000seconds/168GiB, carrying all
+prior attempts and the one physical write. Package/app/kernel/license caches and
+the independently tested rescue SD are preserved.
+
+Next dependency is the attended first recovery boot/export. Reconfirm current
+printer idle/outputs/source state and obtain authority for orderly shutdown before
+PSU/USB back-power removal and physical card/USB moves. Use the exact written image
+and reviewed immutable policy; actual complete inventory must match or admission
+stops. No topology repair/bypass, repeated boot, eMMC installation, heater/motion
+or MCU action is authorised by the SD-write answer. Preserve and independently
+verify the completed original archive before later conversion or installation.
+Owner instructions must be a concrete staged sequence; do not ask them to
+improvise Linux commands. No full physical H phase is marked passed.
 
 **Historical731 checkpoint below:** its then-current missing-USB statements and
 artifact bindings retain their original scope; the continuation above supersedes

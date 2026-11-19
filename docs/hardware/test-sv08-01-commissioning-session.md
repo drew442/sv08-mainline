@@ -371,3 +371,53 @@ deletion credits. Original package/app/kernel/license inputs are retained.
 These are construction/offline/native-source receipts, not installed hardware,
 printing or release qualification. No new SD/USB/eMMC writes, printer service/boot
 changes, outputs, deployment or public binary release occurred.
+
+
+## SD card written, 2026-11-19
+
+This post-source physical record supersedes earlier unwritten-card statements.
+Validated source snapshots and historical evidence remain unchanged. The owner
+explicitly authorised writing the new blank SD in Beelink and confirmed that the
+tested rescue SD is available; authority covers this card write. The current
+card CID digest differs from the historically tested rescue-card digest.
+
+Fresh08:09:47Z preflight confirmed the exact SD capacity15,931,539,456bytes, CID-file
+SHA256 `599fd94c2cf7c3604aad8f72f28cbc9b48edf0e88016be0658a8b61f603a1ce3`,
+SD type, unmounted whole disk/child and unchanged reviewed writer/image. The
+assertions-enabled reviewed writer independently rechecked source hash, target
+CID/capacity, all child mounts/holders/users/swaps and held exclusive block FD.
+One write completed08:11:24Z: exactly738,197,504bytes, offsetzero; fsync and
+full direct-I/O prefix readback both match
+`b1d992da6b77d1c20abff03017e4ba28803e2fa53c595da08029688a2afe83e3`.
+No tail write, resize or GPT repair occurred. USB and printer eMMC were not targets.
+
+08:13:10Z post-check confirms both expected partitions: FAT128MiB at32768sectors,
+UUID `5356-3038`; ext4512MiB at294912sectors, UUID
+`27ea34a6-fb05-4814-aaee-251071577ae1`. Both PARTUUIDs match the image recipe.
+Whole/children are unmounted, with no holders or open users. USB is still its
+original unmounted FAT32 partition. The first read-only collector assumed the
+whole-disk `slaves` sysfs directory existed on partitions; corrected invocation
+permits absence only for verified partitions while requiring the whole-disk
+directory and retaining every usage/layout/identity check. No write was repeated.
+
+Private exact write-receipt SHA256 `5150ebc7f55aba73be712a150aaa1037027af2d119a997579080e8df05a7aa21`;
+post-check receipt SHA256 `38a642a9ab0d70d2f4ff0f9a8d78b373638b84aecfe887b11ff5de59ca921e34`.
+Raw card identifiers, full receipts, failed collector diagnosis and unchanged
+writer remain in the assigned private preparation directory and Beelink's
+`/var/tmp/sv08-release-20261119/`. No credentials or owner backup were inspected.
+
+Primary exact-write suballowance300process-seconds/1GiB was drawn from the existing
+continuation, with conservative charge150seconds/740MiB. Cumulative native charge
+is now17,150seconds/167GiB under18,000seconds/168GiB; previous source charge and
+all attempts remain carried, without deletion credits. No printer boot or printing
+acceptance is inferred from writing the SD.
+
+Next: an attended first recovery boot/export under its reviewed conditions.
+Establish current idle/output/source state, authorise orderly old-system shutdown,
+observe completion and fully remove PSU/USB back-power before moving this SD and
+USB into the printer. Keep the tested rescue SD unchanged. Current owner authority
+does not cover shutdown/boot/export or an eMMC image write. Actual complete media
+inventory must match the immutable export policy; any mismatch stops admission.
+After successful export, independently preserve/verify the original archive before
+conversion or installation. No physical printer/service, firmware, heater or
+motion changes have been made.
