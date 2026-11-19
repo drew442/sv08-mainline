@@ -17,8 +17,8 @@
       "commissioning test helper argument",
       "two dependency fixture omissions"
     ],
-    "conservative_current_charge_seconds": 4120,
-    "conservative_current_charge_bytes": 947912704,
+    "conservative_current_charge_seconds": 4400,
+    "conservative_current_charge_bytes": 964689920,
     "worker_followups": {
       "provenance": {
         "conservative_seconds": 30,
@@ -432,5 +432,32 @@
     "authority": "Coordinator bounded continuation under AGENTS.md standing consent and active first-supported-release goal; no physical SD/USB/eMMC write, target service/output, deployment or binary publication authority.",
     "prior_consumption_attempts_preserved": true,
     "no_deletion_credit": true
+  },
+  "installation_archive_scope": {
+    "demonstrated_source": {
+      "slot": "B",
+      "release": "0.1.0-physical-update.2",
+      "schema": 1,
+      "release_revision": 2,
+      "mode": "immutable",
+      "trial": false,
+      "pending": false,
+      "passive_observation_date": "2026-11-19"
+    },
+    "target": {
+      "slot": "A",
+      "release": "0.1.0-supported-candidate.1",
+      "schema": 1,
+      "release_revision": 4
+    },
+    "requirement": "Original legacy archive cannot activate under unchanged new-release guard. Create original-preserving derived installation archive in fresh private scratch with exact source binding and target-image manifest binding, new generation/MCU recommendation, intact identity/customisations and quarantined startup permission. No relabelled original, fake health/trial, live service or physical write.",
+    "owned_additions": [
+      "scripts/prepare_recovery_installation_archive.py",
+      "tests/test_recovery_installation_archive.py"
+    ],
+    "original_compatibility_and_unannounced_release_guards_retained": true,
+    "implementation_suballowance_seconds": 1500,
+    "implementation_suballowance_bytes": 201326592,
+    "review": "Self-validate offline; targeted independent assessment before relying on derived data for destructive installation; exact physical action separately assessed/authorised."
   }
 }

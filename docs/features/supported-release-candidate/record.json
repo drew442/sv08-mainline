@@ -59,7 +59,7 @@
   ],
   "tasks": [
     {
-      "blocker": "USB identity and export-SD extension pass focused checks and actual read-only USB proof. Fresh live legacy B/schema1/revision2 cannot satisfy target A/revision4 unchanged activation guard. Extend same C1-C5 source ownership with a bounded offline original-preserving installation-archive helper and its tests before expensive image refresh or destructive installation.",
+      "blocker": null,
       "checks": [
         "c1",
         "c2",
@@ -73,11 +73,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "c2dcb1c204ed49e5ba534fdf071368b9",
-        "session": "supported-release-20261119"
-      },
+      "implementation": null,
       "input_paths": [
         "runtime/sv08_state.py",
         "runtime/sv08_identity.py",
@@ -174,13 +170,15 @@
         "tests/test_recovery_media.py",
         "tests/test_recovery_prepare.py",
         "tests/test_recovery_restore_prepare.py",
-        "tests/test_recovery_activation.py"
+        "tests/test_recovery_activation.py",
+        "scripts/prepare_recovery_installation_archive.py",
+        "tests/test_recovery_installation_archive.py"
       ],
       "repeats": 0,
-      "resumption": "Owner supplied real backup USB; actual USB serial exists but reader aborts optional SCSI WWID ENXIO and lacks descriptor discovery. Same authorized C1-C5 scope, strengthen owned runtime/tests rather than fabricate identity or weaken protections. Carry all prior source/native attempts and bounded continuation.",
+      "resumption": "Continue same C1-C5 first supported installation after demonstrated legacyB2-to-newA4 activation mismatch. Add bounded offline original-preserving schema1 immutable installation-archive helper/tests; unchanged activation and commissioning guards, no physical authority.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
-      "status": "blocked",
+      "status": "pending",
       "title": "Implement and validate supported candidate source path",
       "validation": null,
       "verification": null
