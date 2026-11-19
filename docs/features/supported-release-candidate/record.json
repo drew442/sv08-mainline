@@ -4,7 +4,7 @@
     "actor": "root/coordinator",
     "basis": "owner-request",
     "proposal_sha256": "1872d64f651372420751845bb6a51b52a5f14330b3dc7dbe50d727475af8b741",
-    "rationale": "Same C1-C5 actual first-release installation must preserve legacy schema1 immutable data, but observedB2 fails unchanged A4 activation. Add only offline derived-archive helper and tests: exact image/source binding, new generation, preserved original/data/identity, revoked inherited startup permission. Retain all historical evidence, budgets and guards. No physical action authority.",
+    "rationale": "Same C1-C5 installed recovery path requires both envelope and provider manifest kernel bindings. Extend existing SD script with optional provider digest, preserving exact legacy two-argument behavior; validate actual provider and envelope files before output. No authentication weakening or physical operation authority.",
     "reference": "docs/features/supported-release-candidate/owner-request.md",
     "reference_sha256": "9271da70c3f75e3f472a27ad2d383a83425e910d5755fc2e457af069b0dba8b3",
     "requirements_sha256": {
@@ -12,9 +12,9 @@
       "docs/features/supported-release-candidate/owner-request.md": "9271da70c3f75e3f472a27ad2d383a83425e910d5755fc2e457af069b0dba8b3",
       "docs/remaining-work-plan.md": "c86c29e67af62eb3853aa0f8a79ec39c1fbba8b71860d2175ffe1cc5540a0f31"
     },
-    "scope_sha256": "bd3bdaec15b6cb58487d14099184c0eea5100cd22a5c51cf47644709a7ea9463",
+    "scope_sha256": "b305a7050d682942887d0234a0857c934d430a88cfea676d7fd45c90b38cc350",
     "session": "supported-release-20261119",
-    "source_commit": "04d31031d650eb4c3f2741224c2461842f9f7fa5"
+    "source_commit": "2c66526a8cca8448f081bc31c2a2ccadc2b9cc9a"
   },
   "checks": [
     {
