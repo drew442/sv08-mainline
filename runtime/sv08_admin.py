@@ -32,6 +32,7 @@ ACTIONS = {
     'recovery.activate': ('Use restored state', 'Activate restored configuration for normal boot. Preserve previous state for rollback.'),
     'recovery.activate-fresh': ('Use fresh state', 'Activate fresh immutable state for normal boot. Preserve previous configuration for rollback.'),
     'recovery.rollback': ('Return to previous state', 'Restore the retained configuration for normal boot. Preserve restored bytes.'),
+    'recovery.owner': ('Set owner password', 'Enroll or explicitly reset the sv08 account on the selected state. No state activation or boot selection.'),
     'recovery.check': ('Check storage', 'Inspect storage without repairing, formatting or changing files.'),
     'system.reboot': ('Restart when idle', 'Restart only after the printer accepts idle admission. Never interrupt a print.'),
 }
@@ -92,6 +93,11 @@ def snapshot(store, boot, context):
 def validate_arguments(action, arguments):
     if action not in ACTIONS or not isinstance(arguments, dict):
         raise ValueError('Unknown administration operation')
+    if action == 'recovery.owner':
+        if set(arguments) != {'target', 'state', 'reset'} or arguments['state'] not in ('current','fresh','restored') or type(arguments['reset']) is not bool:
+            raise ValueError('Choose storage, state and explicit enrollment or reset.')
+        validate_arguments('recovery.initialize', {'target': arguments['target']})
+        return
     if action == 'recovery.data-restore':
         if set(arguments) != {'archive', 'target'}: raise ValueError('Choose an archive and target')
         for key in arguments:

@@ -73,6 +73,9 @@ class RecoveryController(Controller):
     def plan(self, action, arguments):
         with self._adapter_lock:
             plan = super().plan(action, arguments)
+            if action == 'recovery.owner':
+                plan['owner'] = self.adapter.review_owner(arguments)
+                plan['effect'] = ('Reset the existing' if arguments['reset'] else 'Set the initial')+" password for the sv08 account on the selected state. Local recovery can reset this password. No activation, boot selection or other account changes."
             if action == 'recovery.export':
                 if self.adapter is None or not hasattr(self.adapter, 'review_export'):
                     raise ValueError('Export preflight is unavailable')
@@ -101,10 +104,20 @@ class RecoveryController(Controller):
                     ' at the next normal boot. Previous canonical state is retained for explicit rollback. No OS slot or heater changes.')
             return plan
 
+    def enroll_owner(self, plan, password, confirmation):
+        # Secrets are accepted only by this local method, never the public JSON
+        # review/apply contract. All public fields are revalidated before writes.
+        with self._adapter_lock:
+            if not isinstance(plan, dict) or plan.get('action') != 'recovery.owner' or plan != self.plan(plan.get('action'), plan.get('arguments')):
+                raise ValueError('Owner setup changed. Review the operation again.')
+            return self.adapter.enroll_owner(plan, password, confirmation)
+
     def apply(self, plan):
         with self._adapter_lock:
             if not isinstance(plan, dict) or plan != self.plan(plan.get('action'), plan.get('arguments')):
                 raise ValueError('Recovery state changed. Review the operation again.')
+            if plan['action'] == 'recovery.owner':
+                raise ValueError('Use local recovery password entry to apply owner setup.')
             if plan['action'] == 'recovery.check':
                 return dict(message=self.status()['diagnostic'])
             if self.adapter is None: raise ValueError('Verified recovery backend unavailable')

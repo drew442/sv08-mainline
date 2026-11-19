@@ -170,6 +170,7 @@ class IntegrationManifestTests(unittest.TestCase):
         wants = root / 'etc/systemd/system/multi-user.target.wants'
         self.assertEqual({p.name for p in wants.iterdir()},
                          {'sv08-boot-health.service', 'sv08-printer-api.service', 'sv08-mainsail.service'})
+        self.assertFalse((wants/'sv08-commissioned-start.service').exists())
         observer=(units/'sv08-calibration-reconcile.service').read_text()
         self.assertIn('sv08_calibration_reconcile.py',observer)
         self.assertIn('ConditionPathExists=!/run/sv08/trial',observer)

@@ -1,0 +1,53 @@
+{
+  "source": "22e3bd7f6a9220c8f47bf42b888cc614ddf79ac8",
+  "candidate_base": "f854623",
+  "native_goal": "active first supported configured-printer release; not source-task completion",
+  "scope": "proposal.md c1-c5",
+  "allowance": {
+    "process_seconds": 7200,
+    "generated_bytes": 1073741824,
+    "initial_conservative_charge_seconds": 300,
+    "initial_conservative_charge_bytes": 67108864,
+    "owner_worker_ceiling_seconds": 3000,
+    "owner_worker_ceiling_bytes": 402653184
+  },
+  "storage": {
+    "local_free_gib": 9.6,
+    "arm_free_gib": 196,
+    "arm_free_inodes": 15136
+  },
+  "agents": [
+    {
+      "name": "/root/release_candidate_trace",
+      "role": "project_researcher",
+      "requested_effort": "default low",
+      "effective": "not independently observable",
+      "result": "read-only trace; no experiments or edits"
+    },
+    {
+      "name": "/root/release_owner_setup",
+      "role": "project_implementer",
+      "requested_effort": "medium",
+      "effective": "not independently observable",
+      "context": "fork_turns=none; task-scoped explicit UX skill read"
+    }
+  ],
+  "evidence_reuse": {
+    "klipper_validator": "PR17 native-evidence.md pinned actual f0892d82; unchanged parser/resource/readiness inputs; new auth/UI/composition boundaries still need own evidence",
+    "diagnostic_contract": "prior final CI on merged PR38; changed integration paths need focused regression"
+  },
+  "inputs": {
+    "docs/remaining-work-plan.md": "c86c29e67af62eb3853aa0f8a79ec39c1fbba8b71860d2175ffe1cc5540a0f31",
+    "scripts/integrate_host_os.py": "117d21547984dd7862ca8226627dc88cbd74dcc46b68921f889d5ee0279c1865",
+    "scripts/assemble_board_diagnostic.py": "7c1a67f7aefe671dc1b6da1737f433da330ee5bea896d9d658bd7ad44f769533",
+    "runtime/sv08_boot_health.py": "9914f7d42e98cab64247dd5f8e073988abff86962cf7680ee1c49b1b009d9d1a",
+    "runtime/sv08_environment_device.py": "176d0704fd8dce38482abcc45cda9383bd2abca94852ad6bdf0c74879969cf3c",
+    "runtime/sv08_printer_firmware.py": "291755d55b0191a2ca55889272126adf1d5e92a3e0516a319d29d051ee84a396",
+    "runtime/sv08_printer_publish.py": "77fe141910f601962a67efc5d225a5115d49887e6923e73d3b35aca3193b4c3e",
+    "configs/host-os/recovery-test-sv08-01.json": "1047d7cd5c2d823aae4b6f5bd590d289d9fc0465a0b056533fdc49bfd3926751",
+    "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+    "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+  },
+  "physical_access": false,
+  "images_built": false
+}

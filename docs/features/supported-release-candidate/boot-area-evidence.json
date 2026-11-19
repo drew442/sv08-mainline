@@ -1,0 +1,105 @@
+{
+  "source_revision": "7317a890b4cf812f2010c3fdf480edb0657e8d8b",
+  "scope": "Protected hardware boot-area discovery and affected source regressions, not recovery execution or release acceptance",
+  "files_sha256": {
+    "runtime/sv08_recovery_media.py": "82950e6c21135e54d1c99e9b69c659848bb0accdf9668d29d5a8c53386bb9c79",
+    "runtime/sv08_recovery_prepare.py": "effe895b5772383894285ee869cb4365e92cdbc8fb890dcf177438abd4f0fa92",
+    "runtime/sv08_recovery_restore_prepare.py": "794c68a3418fae705bce9d8c72ef02745eccc7be1c133b2bad90c27ac890b6dc",
+    "tests/test_recovery_media.py": "05edcce03c46fdf5b4d600f0689bb75feefb131081b56e29ccaf308f7562a6b5",
+    "tests/test_recovery_prepare.py": "4493a4bb4f5177b7874c318c8bc8c3fb97ae9d7e2d3f48de08433c5428502736",
+    "tests/test_recovery_restore_prepare.py": "ddf5dca620c327af1557a167d2b0c5436beeb4554ceebaabfec08bd793ab6ef4",
+    "tests/test_recovery_activation.py": "cd70760a662626bed639cae02737c829dfff63c8f40ca9c553e9bc60a8bad224"
+  },
+  "original_defect": "Installed Kernel.inventory refused mmcblk2boot0 because it has no independent stable identity",
+  "repair": "Protected nonselectable boot_areas nested under verified owning MMC card; separate live identity/protection snapshots and durable extents; complete mount census; malformed/writable/selected auxiliaries refuse",
+  "focused": {
+    "command": "PYTHONPATH=runtime:tests python3 -m unittest test_recovery_media test_recovery_prepare test_recovery_restore_prepare test_recovery_restore_media",
+    "passed": 54,
+    "exit_code": 0,
+    "evidence": "Named implementer execution report and exact six-file source hashes; no separate focused raw log retained",
+    "reported_process_seconds_upper": 30
+  },
+  "related": {
+    "initial_tests": 99,
+    "initial_passed": 96,
+    "initial_errors": 3,
+    "initial_log_sha256": "211d63075a9a1694e87d476ff9d66d145184d5dbe1d5690e17c4b9aabf83784f",
+    "invocation": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "test_recovery_image",
+      "test_supported_candidate",
+      "test_recovery_owner",
+      "test_recovery_activation",
+      "test_recovery_board",
+      "test_sd_recovery_host",
+      "test_recovery_restore_stack"
+    ],
+    "corrections": [
+      "Two board checks required direct local build directory; symlink attempt refused, guard unchanged",
+      "Activation factory fixture now explicitly supplies reserve_bytes=0; production storage reserve unchanged"
+    ],
+    "affected_board_tests_passed": 2,
+    "activation_factory_test_passed": 1,
+    "final_failed": 0,
+    "repair_logs": {
+      "build-fixture-repair.log": "c37862521d7f226d2d90e6198fe97c2413feab7881c42ac33b64014439a3ad42",
+      "build-fixture-direct-repair.log": "f17e74ae6d4c64bbf7742b3b4c4070447c991e5a061c812e883aa883e88edd81",
+      "activation-fixture-repair.log": "0ea3575e1c4b57c29f9e75e0dbf01b1445e4a2abc62b3c91873059ccba6b41e0"
+    }
+  },
+  "actual_passive_inventory": {
+    "source_sha256": "82950e6c21135e54d1c99e9b69c659848bb0accdf9668d29d5a8c53386bb9c79",
+    "succeeded": true,
+    "media_count": 1,
+    "partitions": 6,
+    "boot_areas": [
+      {
+        "index": 0,
+        "sectors": 8192,
+        "readonly": true,
+        "force_readonly": true,
+        "removable": false
+      },
+      {
+        "index": 1,
+        "sectors": 8192,
+        "readonly": true,
+        "force_readonly": true,
+        "removable": false
+      }
+    ],
+    "in_memory_only": true,
+    "mutations": false,
+    "deployed": false,
+    "raw_private_metadata_published": false,
+    "private_receipt_sha256": "79fcdd1f9d058deb9902b2b24bf1fb2138f6303a206979ad6e5abb76b7fbd772"
+  },
+  "prototype_archive": {
+    "source_revision": "dd65c33f51d535c1f9f3ff7a15482fc5bb4c008d",
+    "not_for_deployment": true,
+    "compressed_bytes": 1474584233,
+    "compressed_sha256": "bf8c7f69803664ae5742b216cbf88f511c703c3bfdda24d4c73b865ad63d27d5",
+    "uncompressed_bytes": 7818182656,
+    "uncompressed_sha256": "49697c8eaf21f9b8d83784d3e3525aed3f2bdec38f1a707cdb83647e1362ec63",
+    "roundtrip_verified": true,
+    "raw_retired_after_verified_archive": true,
+    "elapsed_seconds": 216.5421811940032,
+    "no_deletion_credit": true
+  },
+  "public_source": {
+    "url": "https://codeload.github.com/drew442/sv08-mainline/tar.gz/7317a890b4cf812f2010c3fdf480edb0657e8d8b",
+    "bytes": 11130671,
+    "sha256": "84e89104e1d61700646ba1c33d9831b762893aa74da88a0917d03e7b8176e750",
+    "matching_project_files": 635
+  },
+  "limits": [
+    "Old DD65 artifact checks remain historical; those artifacts are superseded and not for deployment. Affected normal/internal recovery/OTA images require refresh.",
+    "Final independent SD composition awaits separately identified USB backup medium and reviewed complete policy.",
+    "No physical recovery boot, installation, owner enrollment, MCU/output operation or printing/release qualification.",
+    "Named implementer retained requested medium effort; effective runtime model/effort not independently observable."
+  ],
+  "private_evidence_root": "/home/drew/.sv08-release-20261117/boot-area-fix"
+}
