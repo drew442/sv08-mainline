@@ -202,3 +202,27 @@ and eMMC must remain distinct physical disks. Affected images will be refreshed
 from cached pinned inputs once the complete medium policy can be bound, avoiding
 another redundant artifact set. No printer or SD writes have occurred. The full
 release goal remains active; this is a source correction checkpoint.
+
+
+## Supplied USB and initial installation preparation, 2026-11-19
+
+[Source-bound recovery media evidence](recovery-media-evidence.json) records the
+actual USB identity extension, unchanged legacy identity shapes, fail-closed
+whole-topology guards and two authenticated SD manifest bindings. The USB retains
+its FAT32 filesystem; the existing read-only Beelink NFS source carries the full
+installation image. No removable media has been mounted or written.
+
+The offline installation-archive helper creates a new target-bound generation
+while preserving original archive/generations, identity and calibration. It
+quarantines inherited startup permission; unchanged activation/commissioning
+checks require fresh permission. Root preservation/ownership checks pass. Its
+production CLI also passed against the actual731 normal-A GPT filesystem on
+native ARM with synthetic legacy data. This proves the image reader and offline
+roundtrip, not an actual backup conversion or installation. The independent
+assessment conditions in the JSON remain mandatory for actual data.
+
+Production source is frozen at `c69618ea9ac060b8714d68c1751fd36bb653988c`
+for one cache-reusing image refresh. Historical artifacts and failed attempts
+remain recorded; source/record updates after this freeze do not relabel them.
+Physical authority, current target/precondition checks, preserved original backup
+and attended power-isolated media moves remain required before installation.
