@@ -73,7 +73,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "c58c1f75e9ff4db9b256ae38823629a7",
+        "session": "supported-release-20261119"
+      },
       "input_paths": [
         "runtime/sv08_state.py",
         "runtime/sv08_identity.py",
@@ -178,7 +182,7 @@
       "resumption": "Continue same C1-C5 with validated USB and installation archive changes preserved at1cc79a4. Correct demonstrated missing provider boot digest in supported SD wrapper; preserve legacy script output and all authentication guards.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate supported candidate source path",
       "validation": null,
       "verification": null
