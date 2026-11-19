@@ -73,7 +73,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "c2dcb1c204ed49e5ba534fdf071368b9",
+        "session": "supported-release-20261119"
+      },
       "input_paths": [
         "runtime/sv08_state.py",
         "runtime/sv08_identity.py",
@@ -176,7 +180,7 @@
       "resumption": "Owner supplied real backup USB; actual USB serial exists but reader aborts optional SCSI WWID ENXIO and lacks descriptor discovery. Same authorized C1-C5 scope, strengthen owned runtime/tests rather than fabricate identity or weaken protections. Carry all prior source/native attempts and bounded continuation.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate supported candidate source path",
       "validation": null,
       "verification": null
