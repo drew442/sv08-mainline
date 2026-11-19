@@ -59,7 +59,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "New real USB has no SCSI WWID (optional attribute returns ENXIO) but has actual USB-device serial/VID/PID. Existing reader never observes USB descriptors. Reopen same C1-C5 source task for shared stable discovery with strict nearest-device ownership, alias/multi-LUN/detach refusal; preserve historical731 source/artifact proofs and all budgets.",
       "checks": [
         "c1",
         "c2",
@@ -596,7 +596,7 @@
       "resumption": "Continue same C1-C5 source delivery after preserving blocked run. Add only affected activation regression fixture ownership; no product or physical scope expansion.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
-      "status": "validated",
+      "status": "blocked",
       "title": "Implement and validate supported candidate source path",
       "validation": {
         "actor": "root/coordinator",

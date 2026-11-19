@@ -4,7 +4,7 @@
   "source_task": "supported-release-candidate:implement",
   "source_allowance": {
     "process_seconds": 7200,
-    "generated_bytes": 1073741824,
+    "generated_bytes": 1342177280,
     "conservative_charge_before_integration_seconds": 900,
     "conservative_charge_before_integration_bytes": 134217728,
     "prior_source": "822242e",
@@ -17,8 +17,8 @@
       "commissioning test helper argument",
       "two dependency fixture omissions"
     ],
-    "conservative_current_charge_seconds": 3900,
-    "conservative_current_charge_bytes": 922746880,
+    "conservative_current_charge_seconds": 4120,
+    "conservative_current_charge_bytes": 947912704,
     "worker_followups": {
       "provenance": {
         "conservative_seconds": 30,
@@ -81,7 +81,7 @@
   },
   "native_allocation": {
     "process_seconds": 18000,
-    "generated_bytes": 133143986176,
+    "generated_bytes": 180388626432,
     "work": "/run/a733-guests/sv08-release-20261117",
     "workspace_logical_bytes_ceiling": 34359738368,
     "method": "Existing ARM64 development runner; private namespaces and inode-rich ext4 workspace, private tool extraction/exec mounts; no permanent host changes. Charge logical workspace plus generated files, no deletion credit; retain failed attempts. Full images only after source/validator applicability prerequisite closure.",
@@ -96,8 +96,8 @@
       "board_packages_hash_match": true
     },
     "images_built": true,
-    "conservative_current_charge_seconds": 12100,
-    "conservative_current_charge_bytes": 105226698752,
+    "conservative_current_charge_seconds": 14500,
+    "conservative_current_charge_bytes": 135291469824,
     "tools": {
       "git": "2.39.5",
       "debootstrap": "1.0.128+nmu2+deb12u2",
@@ -172,7 +172,7 @@
   },
   "combined_ceiling": {
     "process_seconds": 25200,
-    "generated_bytes": 134217728000
+    "generated_bytes": 181730803712
   },
   "physical_access": true,
   "target_preflight": {
@@ -411,6 +411,26 @@
     "roundtrip_verified": true,
     "raw_retired_after_verified_archive": true,
     "elapsed_seconds": 216.5421811940032,
+    "no_deletion_credit": true
+  },
+  "usb_identity_continuation": {
+    "date": "2026-11-19",
+    "finding": "New USB DISK3.0 backup medium31,014,191,104 bytes; FAT32, unmounted, removable1. No SCSI WWID/serial; optional device/wwid returns ENXIO. Actual nearest USB device has serial/VID/PID and direct class08 usb-storage interface. No raw serial published.",
+    "scope": "Same C1-C5 actual supported recovery: shared USB stable discovery, optional WWID unsupported error handling, strict ownership/alias/multi-LUN/detach guards; then refresh affected source-bound artifacts and final independent SD. Existing FAT USB and existing readonly NFS image source retained; no format or new server.",
+    "source_ceiling_seconds": 7200,
+    "source_ceiling_bytes": 1342177280,
+    "prior_source_charge_seconds": 4000,
+    "prior_source_charge_bytes": 939524096,
+    "additional_source_bytes": 268435456,
+    "native_ceiling_seconds": 18000,
+    "native_ceiling_bytes": 180388626432,
+    "prior_native_ceiling_bytes": 137438953472,
+    "prior_native_charge_seconds": 14500,
+    "prior_native_charge_bytes": 135291469824,
+    "additional_native_bytes": 42949672960,
+    "native_output_reason": "New actual hardware identity support changes runtime integration_inputs, requiring one refreshed normal/internal recovery/OTA/SD set; includes one7.8GB new image in existing Beelink read-only NFS export. Reuse pinned package/kernel/app caches and current731 parent roots, no OS rebootstrap. Retire redundant intermediates after verification; never refund cumulative output.",
+    "authority": "Coordinator bounded continuation under AGENTS.md standing consent and active first-supported-release goal; no physical SD/USB/eMMC write, target service/output, deployment or binary publication authority.",
+    "prior_consumption_attempts_preserved": true,
     "no_deletion_credit": true
   }
 }
