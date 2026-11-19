@@ -17,15 +17,28 @@ H12 attended SD reimage, H13 physical automatic update/fallback and PR17 native
 software recovery have completed evidence. Reuse applicable results; final-artifact
 or physical boundaries still need their own acceptance. Do not repeat destructive
 recovery/fallback merely to start printing. No physical task is marked passed here.
-Current 2026-11-19 continuation: the owner supplied the new 32 GB FAT32 USB on
-Beelink. It and the blank SD remain unmounted/unwritten. Actual USB descriptor
-identity support is source-tested and passively observed; legacy-state
-installation preparation is being implemented before rebuilding or requesting
-any destructive action. Reuse the existing read-only NFS image source and retain
-the USB FAT filesystem and tested rescue SD. Backup/restore use distinct immutable
-profiles; the actual archive name and safe revision-2→4 seed must be established
-before installation. See the active source task/current-goals record. Earlier
-artifact bindings below retain their stated source, not current USB qualification.
+Current 2026-11-19 continuation: both supplied media remain unmounted/unwritten.
+Production c696 normal/recovery/signed OTA and export-SD composition pass offline
+readbacks/source gates. Native execution exposed and corrected compressed-DTB
+lookup in the delivery-only766 wrapper; explicit producer/source/gitlink proof
+preserves all existing production bytes. Normal and SD images are hash-verified
+on Beelink. The USB retains FAT32; the existing read-only NFS source serves the
+normal image. Keep the tested rescue SD unchanged.
+
+Independent assessment is PASS WITH CONDITIONS for the exact blank-SD write and
+conditional initial boot/export; owner authority is still required. The next
+request covers the new SD prefix only, not an eMMC install. Fresh target/usage
+checks, assertions-enabled reviewed writer and direct readback are mandatory.
+Current printer idle/source/recovery state and orderly shutdown must be established
+before later power-isolated media moves. Export admission must match actual complete
+inventory; no topology repair/bypass. Preserve and independently verify the original
+archive before conversion or installation. No physical H phase is marked passed.
+See [current continuation](../../.codex/current-goals.md) and
+[exact artifact/session bindings](test-sv08-01-commissioning-session.md#recovery-media-ready-2026-11-19).
+
+**Historical731 checkpoint below:** its then-current missing-USB statements and
+artifact bindings retain their original scope; the continuation above supersedes
+those dependencies, without promoting any physical H phase to a pass.
 
 The supported candidate/clean-owner source checkpoint is in [PR39](https://github.com/drew442/sv08-mainline/pull/39).
 Its source task was reopened after an actual passive inventory call rejected the
