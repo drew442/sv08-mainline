@@ -260,6 +260,56 @@ class SupportedCandidate(unittest.TestCase):
 
 
 class IndependentSDPayloadTests(unittest.TestCase):
+    def test_explicit_source_pin(self):
+        import hashlib
+        from assemble_supported_candidate import recovery_source_check
+        producer='a'*40;current='b'*40
+        record={'release_manifest':{'project_source_revision':producer}}
+        sources={'runtime/protected.py':b'protected',
+                 'scripts/assemble_supported_candidate.py':b'old wrapper',
+                 'tests/test_supported_candidate.py':b'old test'}
+        tree=b''.join(b'100644 blob '+b'c'*40+b'\t'+name.encode()+b'\0' for name in sources)
+        blobs=b''.join(b'c'*40+b' blob '+str(len(raw)).encode()+b'\n'+raw+b'\n' for raw in sources.values())
+        hashes={name:hashlib.sha256(raw).hexdigest() for name,raw in sources.items()}
+        hashes['scripts/assemble_supported_candidate.py']='d'*64
+        hashes['tests/test_supported_candidate.py']='e'*64
+        def git(args,**kwargs):
+            self.assertEqual(kwargs['timeout'],30)
+            command=args[3]
+            if command=='merge-base':return b''
+            if command=='diff':
+                self.assertEqual(args[4:],['--quiet',producer,current,'--','upstream/'])
+                return b''
+            if command=='ls-tree':return tree
+            if command=='cat-file':return blobs
+            self.fail(str(args))
+        with patch('subprocess.check_output',side_effect=git), patch('project_license.source_files',return_value=hashes):
+            self.assertEqual(recovery_source_check(ROOT,record,current,False,producer),producer)
+            for pin in ('',True,42,'A'*40,'a'*39,'a'*41):
+                with self.subTest(pin=pin), self.assertRaisesRegex(ValueError,'SHA40'):
+                    recovery_source_check(ROOT,record,current,False,pin)
+            with self.assertRaisesRegex(ValueError,'current project source revision'):
+                recovery_source_check(ROOT,record,current,False,None)
+            with self.assertRaisesRegex(ValueError,'differs from pin'):
+                recovery_source_check(ROOT,record,current,False,'c'*40)
+            with self.assertRaisesRegex(ValueError,'clean current'):
+                recovery_source_check(ROOT,record,current,True,producer)
+            for mutation in ({**hashes,'runtime/protected.py':'0'*64},
+                             {**hashes,'runtime/added.py':'0'*64},
+                             {name:value for name,value in hashes.items() if name!='runtime/protected.py'}):
+                with patch('project_license.source_files',return_value=mutation):
+                    with self.assertRaisesRegex(ValueError,'protected project source'):
+                        recovery_source_check(ROOT,record,current,False,producer)
+            def changed_gitlink(args,**kwargs):
+                if args[3]=='diff':raise subprocess.CalledProcessError(1,args)
+                return git(args,**kwargs)
+            with patch('subprocess.check_output',side_effect=changed_gitlink):
+                with self.assertRaisesRegex(ValueError,'upstream gitlinks'):
+                    recovery_source_check(ROOT,record,current,False,producer)
+            with patch('subprocess.check_output',side_effect=subprocess.CalledProcessError(1,['git'])):
+                with self.assertRaisesRegex(ValueError,'available ancestor'):
+                    recovery_source_check(ROOT,record,current,False,producer)
+
     def test_export_restore_admission_and_integrity(self):
         import gzip
         import hashlib
@@ -270,15 +320,15 @@ class IndependentSDPayloadTests(unittest.TestCase):
             base=Path(directory);(base/'build').mkdir();source=base/'build/recovery';source.mkdir()
             board=copy.deepcopy(recovery.board_profile(ROOT/'configs/host-os/supported/recovery-sd.json'))
             envelope=source/'envelope';envelope.mkdir()
-            dtb=envelope/board['artifacts']['dtb']['path'];dtb.parent.mkdir(parents=True,exist_ok=True)
-            dtb.write_bytes(b'fixture dtb');board['artifacts']['dtb']['sha256']=recovery.sha(dtb)
+            dtb=b'fixture dtb';board['artifacts']['dtb']['sha256']=hashlib.sha256(dtb).hexdigest()
+            usr=envelope/'usr.squashfs';usr.write_bytes(b'fixture compressed usr')
             manifests=envelope/'etc/sv08';manifests.mkdir(parents=True,exist_ok=True)
             (manifests/'recovery-image.json').write_text('{"fixture":"provider"}\n')
-            (manifests/'recovery-envelope.manifest').write_text('fixture envelope inventory\n')
+            (manifests/'recovery-envelope.manifest').write_text('usr_sha256='+recovery.sha(usr)+'\n')
             raw=b'fixture kernel';(source/'vmlinuz').write_bytes(gzip.compress(raw))
             (source/'initrd.img').write_bytes(b'fixture initrd')
             (source/'recovery.ext4').write_bytes(b'fixture root')
-            record=dict(board_profile=board,integration_inputs=recovery.integration_inputs(),
+            record=dict(board_profile=board,usr_sha256=recovery.sha(usr),integration_inputs=recovery.integration_inputs(),
                         release_manifest=dict(project_source_revision='a'*40),
                         image_sha256=recovery.sha(source/'recovery.ext4'),envelope=recovery.inventory(envelope),
                         kernel_sha256=recovery.sha(source/'vmlinuz'),initrd_sha256=recovery.sha(source/'initrd.img'),
@@ -287,6 +337,10 @@ class IndependentSDPayloadTests(unittest.TestCase):
             # Use file digests as emitted by the builder, not truthy mode markers.
             profile=base/'profile.json';profile.write_text('{"fixture":"reviewed"}\n');digest=recovery.sha(profile)
             def run(*args):
+                if args[0]=='unsquashfs':
+                    self.assertEqual(args,('unsquashfs','-cat',usr,board['artifacts']['dtb']['path'][4:]))
+                    self.assertFalse((envelope/board['artifacts']['dtb']['path']).exists())
+                    return dtb
                 self.assertEqual(args[0],'mkimage');Path(args[-1]).write_bytes(b'compiled fixture script')
             from prepare_host_os import work_path
             def fixture_work_path(path):
@@ -308,9 +362,47 @@ class IndependentSDPayloadTests(unittest.TestCase):
                         self.assertEqual([token.rstrip('"') for token in args if token.startswith(arg)],
                                          [arg+record[field]])
                     self.assertNotEqual(record['manifest_sha256'],record['provider_manifest_sha256'])
+                    self.assertEqual((output/'boot/sv08.dtb').read_bytes(),dtb)
+                    self.assertEqual(result['producer_source_revision'],'a'*40)
+                    self.assertEqual(result['builder_source_revision'],'a'*40)
                     self.assertEqual((output/'boot/Image').read_bytes(),raw)
                     self.assertEqual(recovery.sha(output/'recovery.ext4'),record['image_sha256'])
                     self.assertEqual(recovery.inventory(source),before)
+                (source/'build.json').write_text(json.dumps({**record,'media_profile_sha256':digest}))
+                with patch('project_license.source_state',return_value=('b'*40,False)), \
+                     patch('assemble_supported_candidate.recovery_source_check',return_value='a'*40) as admission:
+                    result=sd_payloads(source,base/'build/pinned','a'*40)
+                    admission.assert_called_once_with(ROOT,{**record,'media_profile_sha256':digest},'b'*40,False,'a'*40)
+                    self.assertEqual(result['producer_source_revision'],'a'*40)
+                    self.assertEqual(result['builder_source_revision'],'b'*40)
+                before=recovery.inventory(source)
+                for label,effect in (('extraction',subprocess.CalledProcessError(1,['unsquashfs'])),
+                                     ('dtb-hash',lambda *args:b'changed dtb')):
+                    output=base/'build'/label
+                    with patch('assemble_board_diagnostic.run',side_effect=effect):
+                        with self.assertRaises((ValueError,subprocess.CalledProcessError)):
+                            sd_payloads(source,output)
+                    self.assertFalse(output.exists());self.assertEqual(recovery.inventory(source),before)
+                for label,changed in (('usr-record',{**record,'usr_sha256':'0'*64}),
+                                      ('usr-file',{**record,'usr_sha256':'1'*64})):
+                    (source/'build.json').write_text(json.dumps({**changed,'media_profile_sha256':digest}))
+                    output=base/'build'/label
+                    with self.assertRaisesRegex(ValueError,'compressed userspace'):sd_payloads(source,output)
+                    self.assertFalse(output.exists())
+                original_usr=usr.read_bytes();usr.write_bytes(b'changed compressed usr')
+                changed={**record,'media_profile_sha256':digest,'envelope':recovery.inventory(envelope)}
+                (source/'build.json').write_text(json.dumps(changed));output=base/'build/usr-content'
+                with self.assertRaisesRegex(ValueError,'compressed userspace'):sd_payloads(source,output)
+                self.assertFalse(output.exists());usr.write_bytes(original_usr)
+                manifest=manifests/'recovery-envelope.manifest';original_manifest=manifest.read_bytes()
+                for number,text in enumerate(('usr_sha256='+'0'*64+'\n',original_manifest.decode()*2)):
+                    manifest.write_text(text)
+                    changed={**record,'media_profile_sha256':digest,'envelope':recovery.inventory(envelope),
+                             'manifest_sha256':recovery.sha(manifest)}
+                    (source/'build.json').write_text(json.dumps(changed));output=base/'build'/f'usr-manifest-{number}'
+                    with self.assertRaisesRegex(ValueError,'compressed userspace'):sd_payloads(source,output)
+                    self.assertFalse(output.exists())
+                manifest.write_bytes(original_manifest)
                 invalid=[{},dict(media_profile_sha256=digest,restore_profile_sha256=digest)]
                 for key in ('media_profile_sha256','restore_profile_sha256'):
                     invalid.extend({key:value} for value in (None,'',True,42,'reviewed','A'*64,'g'*64))
