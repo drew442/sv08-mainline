@@ -15,10 +15,84 @@ from sv08_recovery import RecoveryController, installed_controller
 from sv08_state import Store
 
 
+class OwnerPasswordDialog(Gtk.Dialog):
+    """Masked native entries with an in-process touch keyboard; no OSK service."""
+    def __init__(self, parent):
+        super().__init__(title='Owner password', transient_for=parent, modal=True)
+        self.set_default_size(760, 440)
+        style = Gtk.CssProvider()
+        self.set_name('owner-password-dialog')
+        style.load_from_data(b'#owner-password-dialog button {min-height: 40px; padding: 4px 8px;} #owner-password-dialog label {font-size: 15px;}')
+        Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), style, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION+1)
+        self.add_button('Cancel', Gtk.ResponseType.CANCEL)
+        self.review_button = self.add_button('Review', Gtk.ResponseType.OK)
+        self.set_default_response(Gtk.ResponseType.CANCEL)
+        box = self.get_content_area(); box.set_spacing(4); box.set_border_width(8)
+        box.add(Gtk.Label(label='Sign in to Cockpit as sv08. Use 12–256 printable ASCII characters.', xalign=0, wrap=True))
+        self.entries = []
+        for title in ('_Password', '_Confirm password'):
+            row = Gtk.Box(spacing=8)
+            label = Gtk.Label(label=title, use_underline=True, xalign=0)
+            entry = Gtk.Entry(); entry.set_visibility(False); entry.set_max_length(256)
+            label.set_mnemonic_widget(entry); row.pack_start(label, False, False, 0); row.pack_start(entry, True, True, 0)
+            box.add(row); self.entries.append(entry)
+            entry.connect('focus-in-event', self.focus_entry)
+            entry.connect('changed', self.validate)
+        self.active_entry = self.entries[0]
+        self.feedback = Gtk.Label(xalign=0, wrap=True); box.add(self.feedback)
+        self.keyboard = Gtk.Grid(column_spacing=3, row_spacing=3, column_homogeneous=True)
+        box.add(self.keyboard); self.upper = False; self.symbols = False
+        self.draw_keyboard(); self.validate()
+
+    def focus_entry(self, entry, event): self.active_entry = entry
+
+    def key(self, button, text):
+        entry = self.active_entry
+        if text == 'Shift': self.upper = not self.upper; self.draw_keyboard(); return
+        if text == 'Symbols': self.symbols = not self.symbols; self.draw_keyboard(); return
+        if text == 'Next field':
+            self.active_entry = self.entries[1] if entry is self.entries[0] else self.entries[0]
+            self.active_entry.grab_focus_without_selecting(); return
+        selection = entry.get_selection_bounds()
+        if selection: entry.delete_text(*selection)
+        position = entry.get_position()
+        if text == 'Backspace':
+            if not selection and position > 0: entry.delete_text(position-1, position); position -= 1
+        else:
+            text = ' ' if text == 'Space' else text
+            entry.insert_text(text, position); position += len(text)
+        entry.grab_focus_without_selecting(); entry.set_position(position)
+
+    def draw_keyboard(self):
+        for child in self.keyboard.get_children(): self.keyboard.remove(child)
+        rows = ['1234567890', 'qwertyuiop', 'asdfghjkl', 'zxcvbnm']
+        if self.symbols: rows = ['!"#$%&\'()*', '+,-./:;<=>', '?@[\\]^_`{|', '}~']
+        for row, chars in enumerate(rows):
+            for column, char in enumerate(chars):
+                text = char.upper() if self.upper else char
+                button = Gtk.Button(label=text); button.set_can_focus(False)
+                button.connect('clicked', self.key, text); self.keyboard.attach(button, column, row, 1, 1)
+        for column, text in enumerate(('Shift','Symbols','Space','Backspace','Next field')):
+            button = Gtk.Button(label=text); button.set_can_focus(False)
+            button.connect('clicked', self.key, text); self.keyboard.attach(button, column*2, 4, 2, 1)
+        self.keyboard.show_all()
+
+    def validate(self, *_):
+        from sv08_owner import validate_password
+        try: validate_password(*(entry.get_text() for entry in self.entries)); error = ''
+        except ValueError as exc: error = str(exc)
+        self.feedback.set_text(error or 'Passwords match. Review the storage and account before saving.')
+        self.review_button.set_sensitive(not error)
+
+    def clear(self):
+        for entry in self.entries: entry.set_text('')
+
+
 class RecoveryWindow(Gtk.Window):
     def __init__(self, controller):
         super().__init__(title='SV08 Recovery')
         self.controller, self.busy, self.status = controller, False, None
+        self.owner_secret = None
         self.set_default_size(800, 480)
         self.connect('destroy', Gtk.main_quit)
         self.connect('delete-event', lambda *_: True)
@@ -43,7 +117,8 @@ class RecoveryWindow(Gtk.Window):
                  ('Create _fresh state', 'recovery.initialize', None),
                  ('_Use restored state', 'recovery.activate', None),
                  ('Use fresh _state', 'recovery.activate-fresh', None),
-                 ('Return to _previous state', 'recovery.rollback', None)]
+                 ('Return to _previous state', 'recovery.rollback', None),
+                 ('Set owner _password', 'recovery.owner', None)]
         for index, (label, action, arguments) in enumerate(items):
             button = Gtk.Button.new_with_mnemonic(label)
             button.connect('clicked', self.clicked, action, arguments)
@@ -91,10 +166,11 @@ class RecoveryWindow(Gtk.Window):
 
     def clicked(self, button, action, arguments):
         if action is None: self.refresh(); return
+        self.owner_secret = None
         if arguments is None:
             selections = ([('archive', self.status['archives']), ('target', self.status['restore_targets'])]
                           if action == 'recovery.data-restore' else
-                          [('target', self.status['restore_targets'])] if action in ('recovery.initialize','recovery.activate','recovery.activate-fresh','recovery.rollback') else
+                          [('target', self.status['restore_targets'])] if action in ('recovery.initialize','recovery.activate','recovery.activate-fresh','recovery.rollback','recovery.owner') else
                           [('image', self.status['images'])] if action == 'recovery.restore' else
                           [('destination', self.status['destinations'])])
             dialog = Gtk.Dialog(title='Choose recovery items', transient_for=self, modal=True)
@@ -109,15 +185,31 @@ class RecoveryWindow(Gtk.Window):
                 for item in choices: combo.append(item['id'], item['label'])
                 combo.set_active(0); combos[field] = combo
                 box.add(label); box.add(combo)
+            if action == 'recovery.owner':
+                for field, title, choices in (('state', '_State', [('current','Current state'), ('fresh','Fresh state'), ('restored','Restored state')]),
+                                               ('reset', '_Operation', [('enroll','Initial password setup'), ('reset','Reset existing owner password')])):
+                    label = Gtk.Label(label=title, use_underline=True, xalign=0)
+                    combo = Gtk.ComboBoxText(); label.set_mnemonic_widget(combo)
+                    for key, title in choices: combo.append(key, title)
+                    combo.set_active(0); combos[field] = combo; box.add(label); box.add(combo)
             choose.set_sensitive(all(choices for _, choices in selections))
             dialog.set_default_response(Gtk.ResponseType.CANCEL)
             dialog.show_all()
             response = dialog.run(); arguments = {field: combo.get_active_id() for field, combo in combos.items()}; dialog.destroy()
             if response != Gtk.ResponseType.OK: return
+        if action == 'recovery.owner':
+            arguments['reset'] = arguments['reset'] == 'reset'
+            dialog = OwnerPasswordDialog(self); dialog.show_all(); dialog.entries[0].grab_focus()
+            response = dialog.run()
+            if response == Gtk.ResponseType.OK:
+                self.owner_secret = tuple(entry.get_text() for entry in dialog.entries)
+            dialog.clear(); dialog.destroy()
+            if self.owner_secret is None: return
         self.work(lambda: self.controller.plan(action, arguments), self.review)
 
     def review(self, plan, error):
         if error:
+            self.owner_secret = None
             self.message.set_text(error)
             self.show_status()
             for button, action in self.buttons: button.set_sensitive(action is None)
@@ -126,6 +218,8 @@ class RecoveryWindow(Gtk.Window):
         labels = {'target': ('Storage', 'restore_targets'), 'archive': ('Archive', 'archives'),
                   'image': ('OS image', 'images'), 'destination': ('Save destination', 'destinations')}
         def display(key, value):
+            if key == 'reset': return 'Operation: '+('Reset existing owner password' if value else 'Initial password setup')
+            if key == 'state': return 'State: '+{'current':'Current state','fresh':'Fresh state','restored':'Restored state'}[value]
             title, choices = labels.get(key, (key.title(), ''))
             label = next((item['label'] for item in (self.status or {}).get(choices, []) if item['id'] == value), value)
             return f'{title}: {label}'
@@ -138,13 +232,19 @@ class RecoveryWindow(Gtk.Window):
         dialog.add_button('Apply change', Gtk.ResponseType.OK)
         dialog.set_default_response(Gtk.ResponseType.CANCEL)
         response = dialog.run(); dialog.destroy()
-        if response != Gtk.ResponseType.OK: self.refresh(); return
+        if response != Gtk.ResponseType.OK: self.owner_secret = None; self.refresh(); return
         def applied(result, error):
             self.message.set_text(error or result.get('message', 'Completed. Refresh to inspect the system.'))
             self.show_status()
             # Explicit refresh keeps the result visible and prevents double apply.
             for button, action in self.buttons: button.set_sensitive(action is None)
-        self.work(lambda: self.controller.apply(plan), applied)
+        secret = self.owner_secret; self.owner_secret = None
+        def apply():
+            if plan['action'] == 'recovery.owner':
+                if secret is None: raise ValueError('Enter the owner password again.')
+                return self.controller.enroll_owner(plan, *secret)
+            return self.controller.apply(plan)
+        self.work(apply, applied)
 
 
 def main():

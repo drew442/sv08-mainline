@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Supported named-printer candidate build profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format_version",
+    "purpose",
+    "hardware_profile",
+    "release",
+    "release_revision",
+    "project_source_revision",
+    "compatible",
+    "expected_cid_sha256",
+    "board_mmc_device_index",
+    "klipper_commit"
+  ],
+  "properties": {
+    "format_version": {
+      "const": 1
+    },
+    "purpose": {
+      "const": "supported-configured-printer-candidate"
+    },
+    "hardware_profile": {
+      "const": "test-sv08-01"
+    },
+    "release": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$"
+    },
+    "release_revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "project_source_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "compatible": {
+      "type": "string",
+      "pattern": "^sv08-test-sv08-01-[A-Za-z0-9._-]{1,48}$"
+    },
+    "expected_cid_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 of the measured 33-byte sysfs CID including newline; recheck exact medium before operations."
+    },
+    "board_mmc_device_index": {
+      "const": 1,
+      "description": "Reviewed U-Boot board index; not a Linux MMC number."
+    },
+    "klipper_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$",
+      "description": "Must equal upstream-lock.json and release definition recommendation."
+    },
+    "feed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "channel"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "maxLength": 2048,
+          "pattern": "^https://[^\\s]+/$"
+        },
+        "channel": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$"
+        }
+      },
+      "description": "Optional fixed HTTPS LAN delivery. Runtime additionally refuses credentials, query, fragment and cross-origin redirects. The explicit release CA anchors TLS and signed discovery; use a separate TLS leaf signed by it."
+    }
+  }
+}

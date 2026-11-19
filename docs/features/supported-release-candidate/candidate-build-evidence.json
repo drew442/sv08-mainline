@@ -1,0 +1,264 @@
+{
+  "format_version": 1,
+  "source_revision": "dd65c33f51d535c1f9f3ff7a15482fc5bb4c008d",
+  "artifacts_private": true,
+  "physical_printer_changes": false,
+  "printing_qualified": false,
+  "release_qualified": false,
+  "normal": {
+    "release": "0.1.0-supported-candidate.1",
+    "release_revision": 4,
+    "image_bytes": 7818182656,
+    "image_sha256": "49697c8eaf21f9b8d83784d3e3525aed3f2bdec38f1a707cdb83647e1362ec63",
+    "all_six_partition_readback": true,
+    "all_six_filesystems_checked": true,
+    "spl_and_both_environment_copies_readback": true,
+    "partition_images": {
+      "boot-a": {
+        "bytes": 201326592,
+        "sha256": "574abca4e9c8cefd360d6573ec9ab86ed52df1961f93a86c70b4dec6856e8481"
+      },
+      "root-a": {
+        "bytes": 2147483648,
+        "sha256": "b044a6c017593e9d21b6812fb4574f718db81bc81e59a2ae01525c64ccd950f7"
+      },
+      "boot-b": {
+        "bytes": 201326592,
+        "sha256": "21e07cbf494b581f7870ac4723a5ebdf7a96349c8c0f0f33ad63de8696e51141"
+      },
+      "root-b": {
+        "bytes": 2147483648,
+        "sha256": "d2a324abbbd0cf24c18f14b24d54b102383cee9dc5db90694b2bf1a5214d75cb"
+      },
+      "recovery": {
+        "bytes": 536870912,
+        "sha256": "da96fe5d2c21c52b72de435f74dc1e59bd7ca9d8f361b415e96f18eee0bbaa13"
+      },
+      "data": {
+        "bytes": 2565865472,
+        "sha256": "0be60b31387e4c5914ba26f489696f0d629e2e03ee2daefc74416fb0b7174085"
+      }
+    },
+    "owner_pam_inputs_unchanged": true
+  },
+  "internal_recovery": {
+    "image_bytes": 536870912,
+    "image_sha256": "6f3a97001b8b21fc2daaa5f6fb10f9c671e3c72c4ce5dadfb6478627d3c88431",
+    "independent_sd": "Base assembled; medium policy/owner admission needs identified spare SD and backup drive before independent-SD composition."
+  },
+  "update": {
+    "release": "0.1.0-supported-candidate.2",
+    "release_revision": 5,
+    "bundle_bytes": 545122734,
+    "bundle_sha256": "dba542811057ff68df1cf899aa29b4178ee06a36a58ef7abfa2d995d42c0d019",
+    "signer_trusted": true,
+    "payload_hashes": {
+      "rootfs": "a3881c4a8d875e577480f8cb74e5763021ca3e7ec310ae71611ac4b68fa3408d",
+      "boot": "36d94eaeb142f6835f37267575a9624d537870c42750d99617cc1a50dec56b3d"
+    },
+    "inner_release_matches": true,
+    "physical_install": false,
+    "rootfs_verity_installation_proven": false,
+    "retained_failure": {
+      "cause": "Inspection Python wrote one5024-byte bytecode cache after raw payload build",
+      "cache_sha256": "afeda8f994e8a9850d575a5906432e054d33eb51c5f3ff03e9d0615fc72e3b0e",
+      "cache_path": "attempt1-bytecode-cache/sv08_update_policy.cpython-313.pyc",
+      "first_trusted_inspection_preserved": true,
+      "repair": "Restore exact pre-signing inventory; repeat only trusted inspection with bytecode writes disabled",
+      "bundle_rebuilt": false
+    },
+    "source_root_restored": true,
+    "repaired_inspection_source_root_preserved": true
+  },
+  "storage": {
+    "block_size": 4096,
+    "available_bytes": 2434105344,
+    "available_inodes": 156789
+  },
+  "capacity_model": {
+    "assumptions_only": true,
+    "measured_printer_state": false,
+    "max_bundle_bytes": 1073741824,
+    "state_copy_bytes": 268435456,
+    "cases": [
+      {
+        "assumed_existing_bytes": 268435456,
+        "passed": true,
+        "admission": {
+          "required_bytes": 2154037248,
+          "required_inodes": 8256,
+          "headroom_bytes": 6553600
+        }
+      },
+      {
+        "assumed_existing_bytes": 536870912,
+        "passed": false,
+        "admission": null
+      }
+    ],
+    "runtime_source_sha256": "efe6bdac5dce776f35aa04b3f69c80f7b55efd4932de85d1356afb2ba5a98ecb"
+  },
+  "release_preparation": {
+    "checks": [
+      {
+        "id": "image",
+        "status": "passed"
+      },
+      {
+        "id": "public-project-source",
+        "status": "passed"
+      },
+      {
+        "id": "selected-software-notices",
+        "status": "passed"
+      }
+    ],
+    "format_version": 1,
+    "hardware_qualified": false,
+    "limitations": [
+      "Hardware, recovery execution, legal compliance and full reproducibility are not qualified.",
+      "Third-party corresponding-source completeness and opaque boot/data license coverage remain separate.",
+      "Artifact must travel alongside this evidence package and match its exact hash."
+    ],
+    "overall_release_qualified": false,
+    "profile": "selected-software",
+    "project_source_qualified": true,
+    "software_notice_inventory_checked": true
+  },
+  "anonymous_public_source": {
+    "url": "https://codeload.github.com/drew442/sv08-mainline/tar.gz/dd65c33f51d535c1f9f3ff7a15482fc5bb4c008d",
+    "sha256": "8c6213aec582ffc99f08ddedc9c213eb9e7a37d08a289b7505688ce17720d39d"
+  },
+  "receipts": {
+    "normal-finalized.json": {
+      "bytes": 1906,
+      "sha256": "775567c85812f4ef990c27c9f63b914f7c9bdf6b447dd68977d27dbbb7f0c5a7"
+    },
+    "normal-owner-pam-inputs.json": {
+      "bytes": 3467,
+      "sha256": "fa0ee55bac985381fee07927448c55223862a3190e415c03e3e3b4f2d49a8f25"
+    },
+    "normal-parent-preserved.json": {
+      "bytes": 1165,
+      "sha256": "062873cd967f94c03b576ecd489b08d88c38872aef2ed25f7b682ab23474ba01"
+    },
+    "recovery-base-assembly.json": {
+      "bytes": 9198,
+      "sha256": "2aa808623fa77733191d6be7795cf181817ad4a8a8ed84233aff55baf33ab5be"
+    },
+    "recovery-emmc-build.json": {
+      "bytes": 12321,
+      "sha256": "306d4f60484e832a190f998c5f3ca24ffc434d7504026de1f2f60196f4dfea70"
+    },
+    "composition.json": {
+      "bytes": 7138,
+      "sha256": "8bd19547ef0ebb4244df473c1c490a5ad34ac0d7019ae74ac856356121a8683f"
+    },
+    "candidate-readback-capacity.json": {
+      "bytes": 2580,
+      "sha256": "ad25e5a5fd29ad495860f09b7efa0365618c170b8e4f7925deb4d3e636eca123"
+    },
+    "update5-build.json": {
+      "bytes": 2573,
+      "sha256": "d6312eb93c95ab6b452a7b4d2f9f2136ac53631afd496c4d2b82572968f6e980"
+    },
+    "update5-payload-readback.json": {
+      "bytes": 762,
+      "sha256": "57bd9ec4d393c8d2ec45fa44d3c9a7062a5e3da978ec7d9388476e73ffebc808"
+    },
+    "release-report.json": {
+      "bytes": 756,
+      "sha256": "ab85d53eb31a77603ff6a3f757fde6ae434924cdcdb7061635cc96199cbe24a3"
+    },
+    "release-manifest.json": {
+      "bytes": 1433,
+      "sha256": "b9aa036784dfb849e72bfb974eef0610410ab52648f7b02370a39b64a640b5f3"
+    },
+    "profile.json": {
+      "bytes": 496,
+      "sha256": "63c3cb9baeff0d01c4ab9f2803147f879f8f125713ad43cf5e74a2fc12013116"
+    },
+    "update-profile.json": {
+      "bytes": 496,
+      "sha256": "8a2bd68f44382c85038d9efc9a79b4da6060bf6170ac2714d13a9f255a7cc0d6"
+    },
+    "public-source.json": {
+      "bytes": 47700,
+      "sha256": "f6e159f9d81546b87c720e73112389c57dbc9895251f262ed2986fcd7bf05086"
+    },
+    "storage-retirement.json": {
+      "bytes": 2128,
+      "sha256": "a179ea0eda006ac61aec38b19c5421895123ed25b73ae5da02e6f523e2a860d1"
+    }
+  },
+  "private_evidence_root": "/run/a733-guests/sv08-release-20261117/logs/final-dd65c33",
+  "workspace_available_bytes": 8468197376,
+  "limitations": [
+    "Actual normal board boot, browser login, MCU observation, physical commissioning, print/peripheral/update/recovery qualification and public artifact release remain pending.",
+    "Capacity assumptions are not a measurement of the printer data; runtime refuses insufficient space.",
+    "No full-image byte reproducibility or additional legal/completeness claim is made beyond the named release-preparation checks."
+  ],
+  "actual_bundle_capacity_model": {
+    "assumptions_only": true,
+    "measured_bundle_bytes": 545122734,
+    "assumed_existing_bytes": 536870912,
+    "assumed_state_copy_bytes": 268435456,
+    "admission": {
+      "required_bytes": 1625419776,
+      "required_inodes": 8256,
+      "headroom_bytes": 6553600
+    }
+  },
+  "workspace_after_build_available_bytes": 3378003968,
+  "redundant_component_retirement": {
+    "source_revision": "dd65c33f51d535c1f9f3ff7a15482fc5bb4c008d",
+    "full_normal_image_preserved": {
+      "bytes": 7818182656,
+      "sha256": "49697c8eaf21f9b8d83784d3e3525aed3f2bdec38f1a707cdb83647e1362ec63"
+    },
+    "signed_bundle_preserved": {
+      "bytes": 545122734,
+      "sha256": "dba542811057ff68df1cf899aa29b4178ee06a36a58ef7abfa2d995d42c0d019"
+    },
+    "independent_recovery_source_and_all_receipts_preserved": true,
+    "retired": {
+      "build/supported-emmc-dd65c33/boot-a.img": {
+        "bytes": 201326592,
+        "sha256": "574abca4e9c8cefd360d6573ec9ab86ed52df1961f93a86c70b4dec6856e8481"
+      },
+      "build/supported-emmc-dd65c33/root-a.img": {
+        "bytes": 2147483648,
+        "sha256": "b044a6c017593e9d21b6812fb4574f718db81bc81e59a2ae01525c64ccd950f7"
+      },
+      "build/supported-emmc-dd65c33/boot-b.img": {
+        "bytes": 201326592,
+        "sha256": "21e07cbf494b581f7870ac4723a5ebdf7a96349c8c0f0f33ad63de8696e51141"
+      },
+      "build/supported-emmc-dd65c33/root-b.img": {
+        "bytes": 2147483648,
+        "sha256": "d2a324abbbd0cf24c18f14b24d54b102383cee9dc5db90694b2bf1a5214d75cb"
+      },
+      "build/supported-emmc-dd65c33/recovery.img": {
+        "bytes": 536870912,
+        "sha256": "da96fe5d2c21c52b72de435f74dc1e59bd7ca9d8f361b415e96f18eee0bbaa13"
+      },
+      "build/supported-emmc-dd65c33/data.img": {
+        "bytes": 2565865472,
+        "sha256": "0be60b31387e4c5914ba26f489696f0d629e2e03ee2daefc74416fb0b7174085"
+      },
+      "build/update5-dd65c33/bundle/rootfs.img": {
+        "bytes": 2147483648,
+        "sha256": "a3881c4a8d875e577480f8cb74e5763021ca3e7ec310ae71611ac4b68fa3408d"
+      },
+      "build/update5-dd65c33/bundle/boot.img": {
+        "bytes": 201326592,
+        "sha256": "36d94eaeb142f6835f37267575a9624d537870c42750d99617cc1a50dec56b3d"
+      }
+    },
+    "reason": "Redundant raw component files after full-disk/readback, actual selected-software gate and trusted streamed bundle checks; keep full current artifacts and old compressed prototype.",
+    "no_deletion_credit": true,
+    "cumulative_native_generated_bytes_upper": 99857989632,
+    "workspace_available_bytes": 8468197376,
+    "workspace_available_inodes": 263061
+  }
+}

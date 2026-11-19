@@ -15,7 +15,7 @@ from sv08_boot_health import (CoordinatorDeadline, DiagnosticBackend, HealthFail
                               bounded_json, coordinator_deadline, main, COORDINATOR_SECONDS,
                               COORDINATOR_LIMIT_SECONDS, HEALTH_WINDOW_SECONDS,
                               observed_rauc_slot, record_failure, run, validate_boot)
-from sv08_state import Store
+from sv08_state import Store, atomic_json
 from sv08_transaction import Transaction
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from integrate_host_os import stage
@@ -253,13 +253,91 @@ class BootHealthTests(unittest.TestCase):
 
     def test_trial_health_called_once_and_gate_cleared_after_confirmation(self):
         target = self.trial(); gate = self.root / 'trial'; gate.touch()
+        original=dict(target);boot_path=self.root/'boot.json';atomic_json(boot_path,target)
         health = Mock(return_value=True)
-        self.assertEqual(run(target, self.tx, health, admitted, Mock(), ready=self.ready,
-                             trial_marker=gate, validate=lambda: self.validate(target)), 'idle')
+        publish=atomic_json
+        def observe_publication(path,value):
+            self.assertTrue(gate.exists());self.assertFalse(self.ready.exists())
+            self.assertIsNone(self.store.load()['pending'])
+            self.assertEqual(self.tx.load()['phase'],'complete')
+            with self.assertRaisesRegex(ValueError,'busy'):
+                with self.store.locked(nonblocking=True):pass
+            publish(path,value)
+        with patch('sv08_boot_health.atomic_json',side_effect=observe_publication):
+            self.assertEqual(run(target, self.tx, health, admitted, Mock(), ready=self.ready,
+                                 trial_marker=gate, validate=lambda: self.validate(target),boot_path=boot_path), 'idle')
         health.assert_called_once_with(target)
+        self.assertEqual(target,dict(original,trial=False))
+        self.assertEqual(bounded_json(boot_path),target)
+        self.validate(target)
         self.assertFalse(gate.exists())
         self.assertTrue(self.ready.exists())
         self.assertEqual(self.tx.load()['phase'], 'complete')
+        # Restart OS health in this same boot, without early preparation or a
+        # new kernel identity. It consumes the canonical record as normal.
+        restarted=bounded_json(boot_path);normal_health=Mock(return_value=True)
+        self.assertEqual(run(restarted,self.tx,Mock(side_effect=AssertionError('trial health repeated')),
+                             admitted,Mock(),ready=self.ready,trial_marker=gate,
+                             validate=lambda:self.validate(restarted),normal_health=normal_health,
+                             boot_path=boot_path),'idle')
+        normal_health.assert_called_once_with(restarted)
+        self.assertTrue(self.ready.exists())
+
+    def test_confirmed_boot_publication_failure_retains_trial_gate_and_no_ready(self):
+        target=self.trial();original=dict(target);gate=self.root/'trial';gate.touch()
+        boot_path=self.root/'boot.json';atomic_json(boot_path,target)
+        with patch('sv08_boot_health.atomic_json',side_effect=OSError('publication failed')):
+            with self.assertRaisesRegex(OSError,'publication failed'):
+                run(target,self.tx,Mock(return_value=True),admitted,Mock(),ready=self.ready,
+                    trial_marker=gate,validate=lambda:self.validate(target),boot_path=boot_path)
+        self.assertEqual(target,original);self.assertEqual(bounded_json(boot_path),original)
+        self.assertTrue(gate.exists());self.assertFalse(self.ready.exists())
+        self.assertEqual(self.tx.load()['phase'],'complete')
+        self.assertIsNone(self.store.load()['pending'])
+
+    def assert_confirmed_publication_blocked(self,changed,reason):
+        self.store.runtime=self.root/'runtime';self.store.runtime.mkdir()
+        target=self.trial();original=dict(target);gate=self.root/'trial';gate.touch()
+        boot_path=self.root/'boot.json';atomic_json(boot_path,target)
+        confirm=self.tx.confirm
+        def confirm_then_change(*args,**kwargs):
+            result=confirm(*args,**kwargs)
+            if changed=='record':atomic_json(boot_path,dict(target,boot_id=str(uuid.uuid4())))
+            elif changed=='transaction':
+                current=self.tx.load();current['id']='f'*32;self.tx.save(current,'complete')
+            elif changed=='pending':self.store.expect_trial('A','release-3','B')
+            elif changed=='shutdown':
+                from sv08_restart import publish
+                publish(self.store.runtime)
+            return result
+        with patch.object(self.tx,'confirm',side_effect=confirm_then_change):
+            with self.assertRaisesRegex(ValueError,reason):
+                run(target,self.tx,Mock(return_value=True),admitted,Mock(),ready=self.ready,
+                    trial_marker=gate,validate=lambda:self.validate(target),boot_path=boot_path)
+        self.assertEqual(target,original)
+        self.assertTrue(gate.exists());self.assertFalse(self.ready.exists())
+
+    def test_confirmed_boot_publication_rejects_changed_record(self):
+        self.assert_confirmed_publication_blocked('record','changed before')
+
+    def test_confirmed_boot_publication_rejects_changed_transaction(self):
+        self.assert_confirmed_publication_blocked('transaction','changed before')
+
+    def test_confirmed_boot_publication_rejects_new_pending_trial(self):
+        self.assert_confirmed_publication_blocked('pending','Pending trial remains')
+
+    def test_shutdown_after_confirmation_retains_trial_gate(self):
+        self.assert_confirmed_publication_blocked('shutdown','shutdown admission is closed')
+
+    def test_unconfirmed_trial_never_changes_boot_record_or_releases_gate(self):
+        target=self.trial();original=dict(target);gate=self.root/'trial';gate.touch()
+        boot_path=self.root/'boot.json';atomic_json(boot_path,target)
+        self.assertEqual(run(target,self.tx,Mock(side_effect=HealthFailure('failed')),admitted,Mock(),
+                             ready=self.ready,trial_marker=gate,validate=lambda:self.validate(target),
+                             boot_path=boot_path),'needs-health')
+        self.assertEqual(target,original);self.assertEqual(bounded_json(boot_path),original)
+        self.assertTrue(gate.exists());self.assertFalse(self.ready.exists())
+        self.assertEqual(self.tx.load()['phase'],'armed')
 
     def test_failed_health_retains_gate_and_requests_only_validated_fallback(self):
         target = self.trial(); gate = self.root / 'trial'; gate.touch()
