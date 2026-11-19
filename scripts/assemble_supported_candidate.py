@@ -55,6 +55,14 @@ def sd_payloads(recovery, work):
     if (len(bindings) != 1 or not isinstance(bindings[0], str) or
             re.fullmatch('[0-9a-f]{64}', bindings[0]) is None):
         raise ValueError('Independent recovery requires exactly one reviewed export or restore profile SHA256 binding')
+    for field, name in (('manifest_sha256', 'recovery-envelope.manifest'),
+                        ('provider_manifest_sha256', 'recovery-image.json')):
+        digest = record.get(field)
+        if not isinstance(digest, str) or re.fullmatch('[0-9a-f]{64}', digest) is None:
+            raise ValueError(f'Independent recovery requires valid {field} SHA256 binding')
+        manifest = recovery/'envelope/etc/sv08'/name
+        if not manifest.is_file() or sha(manifest) != digest:
+            raise ValueError(f'Independent recovery {field} differs from manifest file')
     raw = gzip.decompress((recovery/'vmlinuz').read_bytes())
     if hashlib.sha256(raw).hexdigest() != RAW_IMAGE: raise ValueError('Unreviewed SD kernel Image')
     from recovery_image import board_profile
@@ -66,7 +74,7 @@ def sd_payloads(recovery, work):
     (boot/'Image').write_bytes(raw)
     shutil.copyfile(recovery/'initrd.img',boot/'initrd.img');shutil.copyfile(dtb,boot/'sv08.dtb')
     payloads = {name:sha(boot/name) for name in ('Image','initrd.img','sv08.dtb')}
-    script = work/'boot.cmd';script.write_text(boot_script(payloads,record['manifest_sha256']))
+    script = work/'boot.cmd';script.write_text(boot_script(payloads,record['manifest_sha256'],record['provider_manifest_sha256']))
     run('mkimage','-A','arm64','-T','script','-C','none','-n','SV08 independent owner recovery','-d',script,boot/'boot.scr')
     (work/'loader-default.env').write_text(default_environment(sha(boot/'boot.scr')))
     shutil.copyfile(recovery/'recovery.ext4',work/'recovery.ext4')

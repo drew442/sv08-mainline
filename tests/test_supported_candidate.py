@@ -272,6 +272,9 @@ class IndependentSDPayloadTests(unittest.TestCase):
             envelope=source/'envelope';envelope.mkdir()
             dtb=envelope/board['artifacts']['dtb']['path'];dtb.parent.mkdir(parents=True,exist_ok=True)
             dtb.write_bytes(b'fixture dtb');board['artifacts']['dtb']['sha256']=recovery.sha(dtb)
+            manifests=envelope/'etc/sv08';manifests.mkdir(parents=True,exist_ok=True)
+            (manifests/'recovery-image.json').write_text('{"fixture":"provider"}\n')
+            (manifests/'recovery-envelope.manifest').write_text('fixture envelope inventory\n')
             raw=b'fixture kernel';(source/'vmlinuz').write_bytes(gzip.compress(raw))
             (source/'initrd.img').write_bytes(b'fixture initrd')
             (source/'recovery.ext4').write_bytes(b'fixture root')
@@ -279,7 +282,8 @@ class IndependentSDPayloadTests(unittest.TestCase):
                         release_manifest=dict(project_source_revision='a'*40),
                         image_sha256=recovery.sha(source/'recovery.ext4'),envelope=recovery.inventory(envelope),
                         kernel_sha256=recovery.sha(source/'vmlinuz'),initrd_sha256=recovery.sha(source/'initrd.img'),
-                        manifest_sha256=hashlib.sha256(b'envelope').hexdigest())
+                        manifest_sha256=recovery.sha(manifests/'recovery-envelope.manifest'),
+                        provider_manifest_sha256=recovery.sha(manifests/'recovery-image.json'))
             # Use file digests as emitted by the builder, not truthy mode markers.
             profile=base/'profile.json';profile.write_text('{"fixture":"reviewed"}\n');digest=recovery.sha(profile)
             def run(*args):
@@ -298,6 +302,12 @@ class IndependentSDPayloadTests(unittest.TestCase):
                     before=recovery.inventory(source);output=base/'build'/key
                     result=sd_payloads(source,output)
                     self.assertFalse(result['deployable']);self.assertFalse(result['physical_boot'])
+                    args=(output/'boot.cmd').read_text().splitlines()[0].split()
+                    for arg,field in (('sv08.envelope=', 'manifest_sha256'),
+                                      ('sv08.recovery=', 'provider_manifest_sha256')):
+                        self.assertEqual([token.rstrip('"') for token in args if token.startswith(arg)],
+                                         [arg+record[field]])
+                    self.assertNotEqual(record['manifest_sha256'],record['provider_manifest_sha256'])
                     self.assertEqual((output/'boot/Image').read_bytes(),raw)
                     self.assertEqual(recovery.sha(output/'recovery.ext4'),record['image_sha256'])
                     self.assertEqual(recovery.inventory(source),before)
@@ -311,6 +321,22 @@ class IndependentSDPayloadTests(unittest.TestCase):
                         output=base/'build'/('invalid-'+str(number));before=recovery.inventory(source)
                         with self.assertRaisesRegex(ValueError,'exactly one reviewed'):sd_payloads(source,output)
                         self.assertFalse(output.exists());self.assertEqual(recovery.inventory(source),before)
+                for field in ('manifest_sha256','provider_manifest_sha256'):
+                    for number,value in enumerate((None,'',True,42,'reviewed','A'*64,'g'*64,'0'*64,'missing')):
+                        with self.subTest(manifest=field,value=value):
+                            changed={**record,'media_profile_sha256':digest,field:value}
+                            if value == 'missing':del changed[field]
+                            (source/'build.json').write_text(json.dumps(changed))
+                            output=base/'build'/f'{field}-{number}'
+                            with self.assertRaisesRegex(ValueError,field):sd_payloads(source,output)
+                            self.assertFalse(output.exists())
+                    manifest=manifests/('recovery-envelope.manifest' if field=='manifest_sha256' else 'recovery-image.json')
+                    contents=manifest.read_bytes();manifest.unlink()
+                    changed={**record,'media_profile_sha256':digest,'envelope':recovery.inventory(envelope)}
+                    (source/'build.json').write_text(json.dumps(changed))
+                    output=base/'build'/f'{field}-absent-file'
+                    with self.assertRaisesRegex(ValueError,field):sd_payloads(source,output)
+                    self.assertFalse(output.exists());manifest.write_bytes(contents)
                 for field,value in [('integration_inputs',{}),('image_sha256','0'*64),('envelope',{}),
                                     ('kernel_sha256','0'*64),('initrd_sha256','0'*64),
                                     ('release_manifest',dict(project_source_revision='b'*40))]:
