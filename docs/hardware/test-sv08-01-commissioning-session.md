@@ -544,3 +544,51 @@ with its earlier 5,200 seconds/1,220 MiB carried forward. The named implementer 
 requested at medium effort for the disposable recipe; effective runtime effort
 has not been independently observed. Source-only preparation, independent action
 assessment, actual SD boot and still-open release acceptance remain distinct.
+
+
+## Diagnostic SD ready, 2026-11-20
+
+The diagnostic-only 738,197,504-byte image is now built and staged privately on
+Beelink. SHA256 is `b50750e4a0cf6cc22684430c07082cd9bf97d4dce1bfd906979bc8111b21e819`.
+The sole boot-script change appends `systemd.debug_shell` for the upstream local
+tty9 root console. Full recovery root bytes remain identical (`0340048f251836ff030b2fc4d7195d84f4b9604a19bc84f49b3001f12304eada`),
+as do kernel/initrd/DTB, policy and envelope/provider. SD-only loader configuration
+and BL31 are unchanged; its volatile environment binds the new script digest.
+The original script was reproduced byte for byte at its recorded header epoch.
+
+Four retained source checks passed; actual regular-file assembly and GPT,
+loader/root extent and all FAT payload readbacks passed. Parent inventories are
+unchanged. Beelink's root-owned mode 0600 staged image also passed SHA256 readback.
+This is a disposable diagnostic artifact, not an accepted release or physical
+write/boot result. Receipts are `diagnostic-controller/card-build/{preparation,
+readback}.json` and `diagnostic-staging.json` under the private phase directory.
+
+The named independent action reviewer returned PASS WITH CONDITIONS for the exact
+prefix write and one diagnostic boot. The writer differs from its previously
+reviewed/tested predecessor only in image filename, image hash and receipt name;
+its hash is `ebeee87cf55e48532fd154f1bfdd6081143c94961f1fc7c27d583480fbdf9f77`.
+Fresh expected partition-layout checking is an **external precheck**, in addition
+to its CID/capacity/unmounted/swap/holders/open-owner guards. Require full direct
+write readback and a successful postcheck before any return-to-printer request.
+No tail write, resize or GPT repair is authorised by this recipe. The review is
+coordinator-transcribed in `diagnostic-action-review.json`; it is source-only
+assessment, not an independently repeated hardware result.
+
+At 05:51:18 UTC the coordinator freshly observed PSU OFF, printer bridge absent and
+relay present. The current owner request is to transfer only the new SD from the
+printer host slot to Beelink's reader, leaving the tested rescue aside and the
+backup USB in the printer. Keep Beelink/relay powered. No write is attempted until
+that card is physically present and fresh admission checks pass. After verified
+write, request its return and explicit fitted/hands-clear confirmation before
+capture-ready USB power restoration. Diagnostics may use only the supplied
+read-only inventory/policy/mount/diskstats command. Existing automatic preparation
+can mount media only if its unchanged complete policy passes; no export or
+manual admission bypass is authorised. Observe mounts and ordinary clean shutdown.
+
+The earlier 2.5 GiB diagnostic allocation omitted Beelink staging and the physical
+704 MiB prefix. A recorded additional 1.5 GiB covers these copies without deletion
+credit. The cumulative ceiling is now **21,600 process-seconds/176 GiB**, a total
+continuation of 1,800 seconds/4 GiB over the earlier 19,800 seconds/172 GiB. Observed
+local logical output is 2,217,648,108 bytes plus the retired 134,217,728-byte FAT;
+staging adds 738,197,504 bytes and the planned physical prefix adds the same.
+Previous charges/attempts remain carried. The source allowance is unchanged.
