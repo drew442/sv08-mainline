@@ -702,3 +702,54 @@ checks and source-bound records. Native measured old assembly sizes are 801,287,
 and 923,001,001 bytes; the private workspace has sufficient space for fresh roots.
 Do not use the quarantined image or request media movement until fresh code,
 component-source qualification, byte checks and action assessment pass.
+
+
+## Corrected recovery component ready, 2026-11-20
+
+Source `9eba1cdbf955a316940a2f98fccf1904d37d6319` fixes the exact measured SELinux API
+admission and missing console login, with a separate volatile UID/GID1000 home.
+The four source paths passed 74 focused and 61 related unique checks (135 total).
+The related activation fixture initially used forbidden `/tmp` ancestry; its
+16 failed cases passed with the assigned private TMPDIR, retaining the guard and
+failed log. No unchanged successful checks were repeated. Root GUI HOME and init
+are unchanged. Actual login remains a next-boot check.
+
+Native fresh assembly of 285 pinned cached packages passed in 210.593 seconds,
+SD derivation in 35.414 seconds, filesystem build in 222.982 seconds, and standard
+payload preparation passed (475.169 seconds total). No old assembly/cache was
+relabeled. Corresponding project source verified through anonymous immutable
+HTTPS archive bytes for 9eba1cd; no overall release/redistribution claim follows.
+Normal/internal-recovery/OTA artifacts retain their truthful c696 provenance.
+
+The 704 MiB image SHA256 is
+`acc875e91bddd7e1f4dcf7a112adfba45db18b903a572f02f0fef7cca82aa212`.
+Actual GPT, SPL/root extents, every FAT payload, zero eMMC environment regions
+and both boot-manifest bindings passed readback. Kernel/initrd/DTB, SD-only
+configuration, BL31/DRAM/rail settings are unchanged. No debug argument remains.
+The corrected profile matches all observed media and updates all three SD roles;
+reader-side writer CID remains its actual reader value, not the printer trailer.
+Beelink staging is root-owned 0600 and its complete readback matches the image.
+
+The independent changed-image assessment returned PASS WITH CONDITIONS for exact
+prefix write, one host-only boot, actual login and conditional GUI export. Fresh
+power/card/layout/inactivity/hash checks, direct write readback, preparation and
+live archive plan/size/free-space/FAT limits remain mandatory. Backup-copy private
+destinations and capacity must be bound before copying; no unspecified destination
+is covered. No eMMC installation, MCU, motion or heat operation is included.
+
+Source fixes are integrated/pushed in draft PR39 at 7f4e77a; all four hosted workflows
+pass there: package/release 44700471421, agent 44700471431, deterministic Cockpit
+44700471396 and installed Cockpit 44700471417. Runtime/scripts/config/tests match
+source 9eba1cd byte for byte. The source task remains running for the current
+acceptance/evidence continuation; old validated records remain historical.
+
+Private evidence is under the phase's `kernel-api-fix/`: `binding-check.json`,
+`native-build.log`, `native-qualified.log`, `card-build/readback.json`,
+`action-packet.json` and coordinator-transcribed `action-review.json`; staging is
+`fixed-export-staging.json` in the phase root. The exact staged writer hash is
+`e78131a73fd8caf7ebcc45948c6719272e4d51817f7e78575fecec8196ac2fdb`.
+Current handoff requests the new card back in Beelink's reader, with the old
+rescue aside and backup USB unchanged in the printer. No new physical write or
+export has occurred since the diagnostic. Cumulative ceilings remain 23,400 seconds/
+190 GiB native output and 7,200 seconds/1.75 GiB source; all prior/quarantined outputs
+and attempts carry forward without deletion credit.

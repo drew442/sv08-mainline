@@ -27,12 +27,19 @@ versus the policy's true/reader `01`; all other media fields match. Exact measur
 values now replace all SD role references, without relaxing the identity guard.
 Only read-only SD root/userspace were mounted; SD/eMMC/USB write counters were zero.
 
-The diagnostic host was cleanly shut down and USB power held off again. No media
-move is requested yet. A corrected export SD is being prepared from the identical
-cached userspace; normal/internal-recovery/OTA images stay unchanged. Finish byte
-checks and changed-policy action assessment before requesting another card move.
-Keep Beelink powered, tested rescue aside and backup USB in the printer. See the
-[measured continuation](test-sv08-01-commissioning-session.md#measured-policy-continuation-2026-11-20).
+The diagnostic host is cleanly shut down and USB power held off. A fresh recovery
+component at `9eba1cd` now includes the measured policy, exact SELinux API admission
+and working console entry point/separate volatile home. Fresh cached-package
+assembly, public-source qualification and complete SD byte checks pass; all four
+PR workflows pass at `7f4e77a`. The profile-only image remains quarantined.
+
+The independent changed-image assessment returned GO with conditions for the exact
+new-card prefix write, one host-only boot, and live login/export checks. Current
+owner action is to move **only the new SD** from the printer's host slot to
+Beelink's reader. Keep tested rescue aside, backup USB in the printer and Beelink
+powered. Fresh identity/layout/inactivity/hash checks and full write readback
+remain required before its return; no new boot/export/installation is claimed.
+See the [ready component record](test-sv08-01-commissioning-session.md#corrected-recovery-component-ready-2026-11-20).
 
 | Existing H scope | Remaining action | Before requesting attendance |
 | --- | --- | --- |
