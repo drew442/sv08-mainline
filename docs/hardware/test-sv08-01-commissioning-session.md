@@ -371,3 +371,334 @@ deletion credits. Original package/app/kernel/license inputs are retained.
 These are construction/offline/native-source receipts, not installed hardware,
 printing or release qualification. No new SD/USB/eMMC writes, printer service/boot
 changes, outputs, deployment or public binary release occurred.
+
+
+## SD card written, 2026-11-19
+
+This post-source physical record supersedes earlier unwritten-card statements.
+Validated source snapshots and historical evidence remain unchanged. The owner
+explicitly authorised writing the new blank SD in Beelink and confirmed that the
+tested rescue SD is available; authority covers this card write. The current
+card CID digest differs from the historically tested rescue-card digest.
+
+Fresh08:09:47Z preflight confirmed the exact SD capacity15,931,539,456bytes, CID-file
+SHA256 `599fd94c2cf7c3604aad8f72f28cbc9b48edf0e88016be0658a8b61f603a1ce3`,
+SD type, unmounted whole disk/child and unchanged reviewed writer/image. The
+assertions-enabled reviewed writer independently rechecked source hash, target
+CID/capacity, all child mounts/holders/users/swaps and held exclusive block FD.
+One write completed08:11:24Z: exactly738,197,504bytes, offsetzero; fsync and
+full direct-I/O prefix readback both match
+`b1d992da6b77d1c20abff03017e4ba28803e2fa53c595da08029688a2afe83e3`.
+No tail write, resize or GPT repair occurred. USB and printer eMMC were not targets.
+
+08:13:10Z post-check confirms both expected partitions: FAT128MiB at32768sectors,
+UUID `5356-3038`; ext4512MiB at294912sectors, UUID
+`27ea34a6-fb05-4814-aaee-251071577ae1`. Both PARTUUIDs match the image recipe.
+Whole/children are unmounted, with no holders or open users. USB is still its
+original unmounted FAT32 partition. The first read-only collector assumed the
+whole-disk `slaves` sysfs directory existed on partitions; corrected invocation
+permits absence only for verified partitions while requiring the whole-disk
+directory and retaining every usage/layout/identity check. No write was repeated.
+
+Private exact write-receipt SHA256 `5150ebc7f55aba73be712a150aaa1037027af2d119a997579080e8df05a7aa21`;
+post-check receipt SHA256 `38a642a9ab0d70d2f4ff0f9a8d78b373638b84aecfe887b11ff5de59ca921e34`.
+Raw card identifiers, full receipts, failed collector diagnosis and unchanged
+writer remain in the assigned private preparation directory and Beelink's
+`/var/tmp/sv08-release-20261119/`. No credentials or owner backup were inspected.
+
+Primary exact-write suballowance300process-seconds/1GiB was drawn from the existing
+continuation, with conservative charge150seconds/740MiB. Cumulative native charge
+is now17,150seconds/167GiB under18,000seconds/168GiB; previous source charge and
+all attempts remain carried, without deletion credits. No printer boot or printing
+acceptance is inferred from writing the SD.
+
+Next: an attended first recovery boot/export under its reviewed conditions.
+Establish current idle/output/source state, authorise orderly old-system shutdown,
+observe completion and fully remove PSU/USB back-power before moving this SD and
+USB into the printer. Keep the tested rescue SD unchanged. Current owner authority
+does not cover shutdown/boot/export or an eMMC image write. Actual complete media
+inventory must match the immutable export policy; any mismatch stops admission.
+After successful export, independently preserve/verify the original archive before
+conversion or installation. No physical printer/service, firmware, heater or
+motion changes have been made.
+
+
+## First recovery session, 2026-11-20
+
+Owner confirms: “nothing is printing, the heaters are off, you may proceed as needed”
+in response to the requested orderly shutdown/first recovery boot/export phase.
+The previously tested rescue SD remains available. These facts and the completed
+new-card write satisfy the corresponding conditions of the existing exact-operation
+assessment; image, policy, loader, protected media and stop conditions are unchanged.
+
+Fresh preflight observed original stable immutableB/`0.1.0-physical-update.2`,
+release-revision2, no trial/pending image transaction, terminal historical update
+phasefailed, automatic updatesdisabled, no package/firmware processes and inactive
+Klipper. The first disposable collector refused all systemd jobs, including the
+normal web-auth/Mainsail/graphical startup chain. The diagnosed correction permits
+only those observed non-installation start jobs; all update/package/firmware and
+unknown-job protections remain. No product code or service configuration changed.
+
+An ordinary `systemctl poweroff` was issued once at04:58:15UTC. SSH closed before
+the requester could acknowledge completion (exit255); positive independent serial
+observations confirm all filesystems unmounted, all swaps deactivated, final sync
+and `reboot: Power down`. This is not an inferred halt from SSH loss.
+Immutable console prefix18,086bytes has SHA256
+`c203a7d9ad20258d7d090f418bf16d3ebf710e0366b301d6929553d4d55b0d7a`.
+Private shutdown confirmation, request transcript and collector-attempt diagnosis
+are retained under `.sv08-release-20261117/first-export-20261120/`. No raw UART
+transcript or private data is published.
+
+The existing receive-only collector remains source SHA256
+`5c4e6cd4f1e8039949c83654c1265ffad51c269230268ca445e4491d7bf2b0ed`:1152008N1,
+no transmit and noHUPCL. Beelink transient unit
+`sv08-export-capture-20261120.service`, mainPID107941, started04:56:30UTC;
+RuntimeMaxSec900 and32MiB per-file limit bound its two log files to64MiB. This
+is a live handle, not evidence of a new boot. Owner was given power-isolated
+new-SD/USB transfer instructions, using the host slot used by the rescue SD;
+stand the printer upright, keep Ethernet/PSUoff and reconnect USB serial only
+after media is fitted. New boot/GUI/media admission/export are still unproven.
+
+Before this phase, the coordinator allocated a bounded1,800seconds/4GiB continuation
+for one capped capture, actual500MiB-class export and independently verified copies.
+Cumulative native ceiling is19,800seconds/172GiB; previous17,150seconds/167GiB,
+all attempts and logical32GiB workspace remain carried without deletion credit.
+Source allowance is unchanged. Reuse current artifacts; no new OS image.
+
+Stop on unexpected outputs, repeated boot, policy/auth/inventory/mount errors.
+Actual complete media inventory, including expected SD-removable status, must match
+the immutable policy. Preserve and independently verify the completed original
+archive before target-bound preparation or any later installation. The allocation
+and authority here do not claim commissioning, printing or release qualification.
+
+
+## First SD boot and refusal, 2026-11-20
+
+This supersedes the preceding request for manual power/screen handling. The owner
+confirmed “New card fitted; hands clear”, distinguishing it from the old tested
+rescue card. Coordinator controls are the existing Beelink `sv08-power` utility
+(as its configured user), identified NC-wired HW-667 USB relay, and GLKVM. The
+PSU stayed OFF throughout; only host USB power was restored once at 05:19:50 UTC.
+The relay's off/restore operation received a specific independent assessment.
+
+The card image `b1d992da6b77d1c20abff03017e4ba28803e2fa53c595da08029688a2afe83e3`
+booted kernel `6.18.51-sv08-candidate1`. Its expected envelope/provider bindings
+verified and the serial marker was `SV08_RECOVERY_VERIFIED: independent envelope
+and compressed userspace`. GLKVM showed the actual recovery page after a modifier
+key woke its blanked display. These observations establish this SD boot, not
+successful export, normal installation or printing qualification.
+
+`sv08-recovery-prepare.service` stopped at its full reviewed-inventory comparison:
+“Observed media topology differs from immutable reviewed policy”. No source or
+USB destination mount had occurred. The structured boot report shows only the SD
+root and compressed `/usr` as persistent mounts, both read-only; other mounts are
+kernel APIs/tmpfs. The particular mismatch is **unobserved**. The inferred SD
+removable flag is a hypothesis, not a measured correction. Do not change the
+policy or mount media manually to bypass admission.
+
+GLKVM VT2 reached getty, but serial logs establish `can't exec /bin/login: No such
+file or directory`. The documented convenience account is therefore unusable
+through this path. A source read of the exact cached assembly confirms that the
+pinned BusyBox has its login applet; a complete supported console repair and
+actual login check remain required. No credential file was inspected.
+
+A fresh independent assessment approved one guarded HID Power-key request. Actual
+logind accepted it; at 05:37:00 UTC serial evidence confirmed all filesystems unmounted,
+swaps deactivated and `reboot: Power down`. The 10,023-byte confirmation prefix has
+SHA256 `db9e408cb8186ecc60d065fd8e265b48b969e29fdc69ba9c4b86b9e70096716a`.
+Only then was USB power held off. Its immediate zero-delay enumeration assertion
+failed; four later samples over 1.5 seconds observed bridge absent and relay present.
+No off retry, automatic restoration or additional boot occurred. PSU remained OFF.
+
+GLKVM capture used its installed producer/settings in a temporary process, with
+cleanup on exit, without changing configuration/authentication or installing tools.
+Retain failed legacy-socket, unsupported-JPEG, absent-producer, unavailable-SFTP,
+missing-hook and stale-socket evidence. UART capture units `sv08-export-capture-
+20261120.service` and `…20261120b.service` each reached their 900-second cap; the
+later 300-second `…20261120c.service` is stopped with MainPID 0. No capture process
+is presumed active after that point.
+
+Private evidence is under `~/.sv08-release-20261117/first-export-20261120/`, indexed
+by `first-boot-result-private.json`; raw stable device identifiers stay private.
+The Beelink copies remain in `/var/tmp/sv08-release-20261119/first-export-20261120*`.
+No actual user-data archive exists yet. The tested rescue, original eMMC, normal
+image source and preceding evidence remain preserved.
+
+Next prepare a diagnostic-only SD using the unchanged sealed recovery root,
+kernel/initrd/DTB and media policy, appending only `systemd.debug_shell` for a
+local temporary console. Rebind the SD-only loader to that exact script and
+verify all bytes before requesting a card move/write. This avoids repeating the
+historically stopped UART-input variants; proposed serial-controller preparation
+was stopped after source reads, without a controller or any UART transmission.
+The diagnostic boot will not count as normal production acceptance. Collect the
+actual normalized topology before deciding any policy/source correction.
+
+The diagnostic continuation carries every previous attempt and charge. Native
+ceiling increases from 19,800 seconds/172 GiB by 1,800 seconds/2.5 GiB to
+**21,600 process-seconds/174.5 GiB**; the 32 GiB workspace remains included and deleting
+files earns no credit. Conservative prior charge is 19,400 seconds/167.016 GiB.
+Scope is one card-based diagnostic boot/collection, reused payloads and SD-only
+loader derivation; no normal/internal-recovery/OTA rebuild, installation or output
+activation is included. The separate source ceiling remains 7,200 seconds/1.25 GiB,
+with its earlier 5,200 seconds/1,220 MiB carried forward. The named implementer was
+requested at medium effort for the disposable recipe; effective runtime effort
+has not been independently observed. Source-only preparation, independent action
+assessment, actual SD boot and still-open release acceptance remain distinct.
+
+
+## Diagnostic SD ready, 2026-11-20
+
+The diagnostic-only 738,197,504-byte image is now built and staged privately on
+Beelink. SHA256 is `b50750e4a0cf6cc22684430c07082cd9bf97d4dce1bfd906979bc8111b21e819`.
+The sole boot-script change appends `systemd.debug_shell` for the upstream local
+tty9 root console. Full recovery root bytes remain identical (`0340048f251836ff030b2fc4d7195d84f4b9604a19bc84f49b3001f12304eada`),
+as do kernel/initrd/DTB, policy and envelope/provider. SD-only loader configuration
+and BL31 are unchanged; its volatile environment binds the new script digest.
+The original script was reproduced byte for byte at its recorded header epoch.
+
+Four retained source checks passed; actual regular-file assembly and GPT,
+loader/root extent and all FAT payload readbacks passed. Parent inventories are
+unchanged. Beelink's root-owned mode 0600 staged image also passed SHA256 readback.
+This is a disposable diagnostic artifact, not an accepted release or physical
+write/boot result. Receipts are `diagnostic-controller/card-build/{preparation,
+readback}.json` and `diagnostic-staging.json` under the private phase directory.
+
+The named independent action reviewer returned PASS WITH CONDITIONS for the exact
+prefix write and one diagnostic boot. The writer differs from its previously
+reviewed/tested predecessor only in image filename, image hash and receipt name;
+its hash is `ebeee87cf55e48532fd154f1bfdd6081143c94961f1fc7c27d583480fbdf9f77`.
+Fresh expected partition-layout checking is an **external precheck**, in addition
+to its CID/capacity/unmounted/swap/holders/open-owner guards. Require full direct
+write readback and a successful postcheck before any return-to-printer request.
+No tail write, resize or GPT repair is authorised by this recipe. The review is
+coordinator-transcribed in `diagnostic-action-review.json`; it is source-only
+assessment, not an independently repeated hardware result.
+
+At 05:51:18 UTC the coordinator freshly observed PSU OFF, printer bridge absent and
+relay present. The current owner request is to transfer only the new SD from the
+printer host slot to Beelink's reader, leaving the tested rescue aside and the
+backup USB in the printer. Keep Beelink/relay powered. No write is attempted until
+that card is physically present and fresh admission checks pass. After verified
+write, request its return and explicit fitted/hands-clear confirmation before
+capture-ready USB power restoration. Diagnostics may use only the supplied
+read-only inventory/policy/mount/diskstats command. Existing automatic preparation
+can mount media only if its unchanged complete policy passes; no export or
+manual admission bypass is authorised. Observe mounts and ordinary clean shutdown.
+
+The earlier 2.5 GiB diagnostic allocation omitted Beelink staging and the physical
+704 MiB prefix. A recorded additional 1.5 GiB covers these copies without deletion
+credit. The cumulative ceiling is now **21,600 process-seconds/176 GiB**, a total
+continuation of 1,800 seconds/4 GiB over the earlier 19,800 seconds/172 GiB. Observed
+local logical output is 2,217,648,108 bytes plus the retired 134,217,728-byte FAT;
+staging adds 738,197,504 bytes and the planned physical prefix adds the same.
+Previous charges/attempts remain carried. The source allowance is unchanged.
+
+
+## Diagnostic SD written, 2026-11-20
+
+The owner confirmed the new card in Beelink's reader. At 06:55:50 UTC the fresh
+precheck matched its exact CID/capacity, expected two-partition layout and
+filesystem IDs, with no mounts, swap, holders or open users. Root-owned staged
+image and writer hashes matched the reviewed bindings. PSU OFF and USB hold-off
+were independently observed through the coordinator's existing controls.
+
+One prefix write completed at 06:57:41 UTC. All **738,197,504 bytes** passed full
+direct readback against diagnostic image SHA256
+`b50750e4a0cf6cc22684430c07082cd9bf97d4dce1bfd906979bc8111b21e819`.
+No tail write, resize, GPT repair or retry occurred. The 06:58:08 UTC postcheck
+matched capacity, partition extents/IDs and CID-file hash
+`599fd94c2cf7c3604aad8f72f28cbc9b48edf0e88016be0658a8b61f603a1ce3`,
+and confirmed both partitions unmounted with no holders/slaves/open users. The
+backup USB stayed in the printer; no assertion about a Beelink USB device was
+substituted. Original rescue and printer eMMC remain preserved.
+
+At 06:58:33 UTC PSU was still OFF, printer bridge absent and relay present.
+The owner is now asked to return only this new SD to the host slot, keeping
+Beelink/relay powered, and confirm fitted/hands clear. No diagnostic boot has
+occurred. Start the bounded receive-only capture before the one reviewed USB
+restoration; verify kernel/envelope/provider and diagnostic argument before
+collecting the actual media topology through the supplied local command.
+
+Private receipts/logs remain in the phase directory, indexed by
+`diagnostic-write-phase.json`; their Beelink originals are
+`diagnostic-card-write-private.json` and `diagnostic-card-postwrite.json` under
+`/var/tmp/sv08-release-20261119/`. Source/script hashes, actual prefix/readback,
+postcheck and pending handoff are bound separately from future boot acceptance.
+Conservative cumulative native charge is now 20,150 process-seconds/171 GiB
+against the unchanged 21,600 seconds/176 GiB ceiling, including prior attempts,
+transient FAT, staged copy and physical prefix, without deletion credits. This
+passes only the SD-write step; export, installation and printing remain open.
+
+
+## Measured-policy continuation, 2026-11-20
+
+The diagnostic measured two SD-policy differences: removable false rather than
+true, and a different final CID byte (printer `e1`, reader `01`), with the other
+15 bytes unchanged. No identity normalization or relaxed comparison is introduced.
+The correction uses the exact printer observation for the recovery/media/SD-boot
+roles; source and USB destination identities stay unchanged. Actual normalized
+media now exactly matches the corrected profile. The old profile is preserved.
+
+The diagnostic boot observed only SD root and `/usr` persistent mounts, both RO,
+and zero SD/eMMC/USB block-write counters. An ordinary reviewed Power-key request
+produced clean unmount and `Power down`; USB was then held off and observed absent.
+No export occurred. Preserve the evidence before preparing the next SD image.
+The missing `/bin/login` remains an explicit supported-recovery follow-up; the
+temporary debug console is diagnostic-only and must not enter the export image.
+
+A bounded continuation adds 1,800 process-seconds/8 GiB for the corrected SD
+policy/envelope/payload/loader/image, staging/write, and actual initial export
+with independently verified preserved copies. Cached userspace and original
+normal/internal-recovery/OTA artifacts stay unchanged. Cumulative native ceiling
+is **23,400 seconds/184 GiB**, carrying all previous attempts and copies without
+deletion credit. Conservative prior charge is 20,800 seconds/172 GiB. Source ceiling
+remains 7,200 seconds/1.25 GiB. Native workspace has 9,543,946,240 bytes free before this
+phase. This grants no new installation, MCU, motion or heater action; changed SD
+bytes/policy require their own operation assessment before a write/boot/export.
+
+
+The diagnostic's actual local tty9 console was observed before the one supplied
+read-only command was entered through GLKVM. Structured output has private SHA256
+`759221f6b9ac255fa486807b0cdd9d41c03cde781091cfe11e94417ad0b947d6`;
+`media-diagnostic-private.json` and `media-mismatch-sanitized.json` retain raw and
+sanitized records in the phase directory. All three media are present; only the
+SD removable flag and CID trailer differ. The SD's partition layout is identical.
+Preparation had inferred removable status from DTB and reused the reader's CID;
+those were not measurements of the printer kernel. Future target policies must
+use actual target-kernel observations rather than assuming reader properties
+are interchangeable. No identity byte is masked or ignored by this repair.
+
+After the single reviewed Power-key request, serial confirmed clean unmount and
+`Power down` at 07:46:14 UTC. The 78,948-byte confirmation prefix SHA256 is
+`c569da8707f6197b0459cb932e4027902918182306bec7f2f822a23e17a8cb14`.
+USB hold-off was observed in five samples at 07:47:05 UTC, with PSU OFF and relay
+present. Capture `sv08-export-capture-20261120d.service` is stopped, MainPID 0.
+There is no remaining diagnostic shell or presumed active receiver. The next
+export image omits the diagnostic flag and preserves both manifest checks.
+
+
+Offline replay of the recorded mount list exposed another concrete failure:
+`admitted_system_mount` rejects `/sys/fs/selinux` (`selinuxfs`) with the measured
+root/source/options tuple. The policy-only image passed construction/readbacks but
+is **quarantined before staging or another card request**. The same source task
+is reopened under its existing run, C1–C5 and allowance history. Its prior
+validation remains historical at `3e4b833`/candidate `0c8aad2`; no old evidence
+hash is refreshed. Source repair admits only the exact measured kernel API and
+restores BusyBox console login with a separate volatile home. No SELinux control
+or media protection is disabled.
+
+The existing component-identity path permits a fresh corrected standalone SD
+recovery at new clean source R while retaining the unchanged c696 normal/internal
+recovery/OTA artifacts. Its stale runtime assembly/cache may not be relabelled:
+fresh assembly/SD derivation/build from cached pinned packages is required.
+No normal 7.8GB image rebuild or mixed-source unified release claim is needed for
+this initial backup component. Final release convergence remains a separate gate.
+
+A further 6 GiB native-output continuation covers the demonstrated source repair's
+fresh recovery roots and superseded policy-only outputs without deletion credit;
+ceiling is now 23,400 seconds/190 GiB, with time unchanged. Source output ceiling
+adds 512 MiB to 1.75 GiB (time 7,200 seconds unchanged) for focused source/disposable
+checks and source-bound records. Native measured old assembly sizes are 801,287,439
+and 923,001,001 bytes; the private workspace has sufficient space for fresh roots.
+Do not use the quarantined image or request media movement until fresh code,
+component-source qualification, byte checks and action assessment pass.

@@ -5,6 +5,35 @@ Use [one configured-printer commissioning session](test-sv08-01-commissioning-se
 not separate repeated sensor/firmware/print appointments. No physical operation
 is authorised by this queue or the delivery-overhaul PR.
 
+## Current checkpoint — 2026-11-20
+
+This supersedes older preparation/dispatch statements below. The owner confirmed
+that the newly prepared card is fitted, the old tested rescue card is set aside,
+and hands are clear. The coordinator operates PSU power through Beelink's
+`sv08-power`, USB host power through the identified HW-667 relay, and screen/input
+through GLKVM. Do not ask the owner to unplug power or report the screen.
+
+The new independent SD booted its verified sealed userspace. Its storage preparer
+refused a topology mismatch **before mounting printer data or the backup USB**.
+The actual differing field is not yet known; no policy bypass or export occurred.
+GLKVM shows the recovery page. VT2 starts, but cannot execute missing `/bin/login`;
+the convenience account therefore has no working login through that path.
+
+A separately assessed single GLKVM Power-key request produced clean unmount and
+`Power down`. USB power was then held off and observed absent; PSU remains OFF.
+The fitted diagnostic SD booted and its attended console collected the actual
+inventory. The mismatch is proven: SD removable false and final CID byte `e1`
+versus the policy's true/reader `01`; all other media fields match. Exact measured
+values now replace all SD role references, without relaxing the identity guard.
+Only read-only SD root/userspace were mounted; SD/eMMC/USB write counters were zero.
+
+The diagnostic host was cleanly shut down and USB power held off again. No media
+move is requested yet. A corrected export SD is being prepared from the identical
+cached userspace; normal/internal-recovery/OTA images stay unchanged. Finish byte
+checks and changed-policy action assessment before requesting another card move.
+Keep Beelink powered, tested rescue aside and backup USB in the printer. See the
+[measured continuation](test-sv08-01-commissioning-session.md#measured-policy-continuation-2026-11-20).
+
 | Existing H scope | Remaining action | Before requesting attendance |
 | --- | --- | --- |
 | H01 | Owner confirmed the saved fitted parts on 2026-11-17; resolve only remaining essential wiring/MCU/sensor associations, without requiring a factory bed | Reuse the declaration and existing evidence; do not repeat the complete part inventory |
@@ -17,24 +46,30 @@ H12 attended SD reimage, H13 physical automatic update/fallback and PR17 native
 software recovery have completed evidence. Reuse applicable results; final-artifact
 or physical boundaries still need their own acceptance. Do not repeat destructive
 recovery/fallback merely to start printing. No physical task is marked passed here.
-Current 2026-11-19 continuation: both supplied media remain unmounted/unwritten.
-Production c696 normal/recovery/signed OTA and export-SD composition pass offline
-readbacks/source gates. Native execution exposed and corrected compressed-DTB
-lookup in the delivery-only766 wrapper; explicit producer/source/gitlink proof
-preserves all existing production bytes. Normal and SD images are hash-verified
-on Beelink. The USB retains FAT32; the existing read-only NFS source serves the
-normal image. Keep the tested rescue SD unchanged.
+Current attended session, 2026-11-20: the owner confirmed nothing is printing,
+heaters are off and authorised proceeding with the requested shutdown/recovery
+backup phase. Fresh passive checks found stable immutable B/revision2, no pending
+image transaction, terminal failed historical update, disabled automatic updates,
+no package/firmware process and inactive Klipper. Normal authentication startup
+jobs were pending; these were cancelled by the ordinary shutdown path.
 
-Independent assessment is PASS WITH CONDITIONS for the exact blank-SD write and
-conditional initial boot/export; owner authority is still required. The next
-request covers the new SD prefix only, not an eMMC install. Fresh target/usage
-checks, assertions-enabled reviewed writer and direct readback are mandatory.
-Current printer idle/source/recovery state and orderly shutdown must be established
-before later power-isolated media moves. Export admission must match actual complete
-inventory; no topology repair/bypass. Preserve and independently verify the original
-archive before conversion or installation. No physical H phase is marked passed.
-See [current continuation](../../.codex/current-goals.md) and
-[exact artifact/session bindings](test-sv08-01-commissioning-session.md#recovery-media-ready-2026-11-19).
+Orderly shutdown is positively observed: console reports all filesystems unmounted,
+all swaps deactivated and `reboot: Power down`. SSH closed during shutdown; it is
+not the sole halt evidence. The reviewed receive-only collector is active under
+`sv08-export-capture-20261120.service` on Beelink, capped900seconds/64MiB total
+file allowance. Owner has the staged instructions: remove PSU/USB back-power,
+move only prepared new SD and USB, stand upright, retain Ethernet/PSUoff and then
+reconnect USB serial for one initial recovery boot. Keep tested rescue SD unchanged.
+Boot, actual inventory admission and export remain unproven; do not select other
+recovery operations or repeat a failed boot. No eMMC install or output action.
+
+[Current shutdown/session evidence](test-sv08-01-commissioning-session.md#first-recovery-session-2026-11-20)
+supersedes prior pending-authority/power-state notes. Earlier SD write/direct
+readback remains valid; USB was unmounted and unchanged before the move.
+A bounded continuation adds1,800process-seconds/4GiB for receive-only capture,
+one actual export and independently verified preserved copies: cumulative ceiling
+19,800seconds/172GiB, carrying previous17,150seconds/167GiB and logical32GiB
+workspace/all attempts without deletion credit. No new OS image is planned.
 
 **Historical731 checkpoint below:** its then-current missing-USB statements and
 artifact bindings retain their original scope; the continuation above supersedes
