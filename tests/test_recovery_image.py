@@ -3,6 +3,8 @@ import importlib.util
 import json
 import hashlib
 import io
+import os
+import subprocess
 from contextlib import contextmanager
 from pathlib import Path
 import tempfile
@@ -20,6 +22,84 @@ SPEC=importlib.util.spec_from_file_location('recovery_image',Path(__file__).reso
 m=importlib.util.module_from_spec(SPEC);SPEC.loader.exec_module(m)
 
 class RecoveryImageTests(unittest.TestCase):
+    def login_fixture(self, root):
+        (root/'usr/bin').mkdir(parents=True)
+        (root/'bin').symlink_to('usr/bin')
+        busybox=root/'usr/bin/busybox'
+        busybox.write_text('pinned executable fixture')
+        busybox.chmod(0o755)
+        return root/'usr/bin/login'
+
+    def test_recovery_login_applet_serves_exact_getty_path_and_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);login=self.login_fixture(root)
+            m.configure_recovery_login(root)
+            self.assertEqual(os.readlink(login),'busybox')
+            self.assertEqual((root/'bin/login').resolve(),root/'usr/bin/busybox')
+            self.assertEqual((root/'bin/login').stat().st_mode & 0o7777,0o755)
+            m.configure_recovery_login(root)
+            login.unlink();login.write_text('upstream login');login.chmod(0o755)
+            m.configure_recovery_login(root)
+            self.assertFalse(login.is_symlink())
+            self.assertEqual(login.read_text(),'upstream login')
+
+    def test_recovery_login_refuses_bad_aliases_or_nonexecutables(self):
+        for kind in ('alias','dangling','directory','nonexecutable','missing-busybox','bad-layout'):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
+                root=Path(directory);login=self.login_fixture(root)
+                if kind=='alias':login.symlink_to('/usr/bin/login')
+                elif kind=='dangling':login.symlink_to('missing')
+                elif kind=='directory':login.mkdir()
+                elif kind=='nonexecutable':login.write_text('not executable')
+                elif kind=='missing-busybox':(root/'usr/bin/busybox').unlink()
+                else:
+                    (root/'bin').unlink();(root/'bin').mkdir()
+                with self.assertRaises(ValueError):m.configure_recovery_login(root)
+                self.assertFalse(login.is_symlink() and os.readlink(login)=='busybox')
+
+    def test_recovery_account_uses_separate_volatile_home(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);self.login_fixture(root)
+            repo=root/'source';policy=repo/'configs/host-os/recovery-password.json'
+            policy.parent.mkdir(parents=True)
+            # Synthetic policy only: never inspect the source password hash.
+            policy.write_text(json.dumps(dict(username='recovery',password='recovery',password_hash='$6$fixture')))
+            (root/'etc').mkdir()
+            original='root:x:0:0:root:/root:/bin/bash\n'
+            (root/'etc/passwd').write_text(original)
+            with patch.object(m,'REPO',repo):m.configure_recovery_password(root)
+            self.assertEqual((root/'etc/passwd').read_text(),original+
+                'recovery:x:1000:1000:SV08 recovery:/run/recovery-user:/bin/bash\n')
+
+    def test_console_home_uses_upstream_tmpfiles_and_preserves_gui_home(self):
+        source=(m.REPO/'configs/host-os/recovery-init').read_text()
+        self.assertIn('/bin/busybox chmod 0700 /run/recovery-home',source)
+        self.assertNotIn('/run/recovery-user',source)
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);self.login_fixture(root)
+            repo=root/'source';policy=repo/'configs/host-os/recovery-password.json'
+            policy.parent.mkdir(parents=True)
+            policy.write_text(json.dumps(dict(username='recovery',password='recovery',password_hash='$6$fixture')))
+            (root/'etc').mkdir()
+            with patch.object(m,'REPO',repo):m.configure_recovery_password(root)
+            config=root/'usr/lib/tmpfiles.d/sv08-recovery-user.conf'
+            self.assertEqual(config.read_text(),'d /run/recovery-user 0700 1000 1000 -\n')
+            if shutil.which('systemd-tmpfiles') and os.geteuid() in (0,1000) and os.getegid() in (0,1000):
+                # Run only our staged rule against a disposable root. Numeric
+                # identities avoid consulting the host's account database.
+                subprocess.run(['systemd-tmpfiles','--root='+str(root),'--create',
+                    'sv08-recovery-user.conf'],check=True)
+                home=root/'run/recovery-user';info=home.stat()
+                self.assertEqual((info.st_uid,info.st_gid,info.st_mode & 0o777),(1000,1000,0o700))
+                if os.geteuid()==1000:
+                    (home/'write-probe').write_text('volatile account data')
+                self.assertFalse((root/'run/recovery-home').exists())
+            units=root/'etc/systemd/system';units.mkdir(parents=True)
+            m.stage_recovery_units(units)
+            display=(units/'sv08-recovery-display.service.d/independent.conf').read_text()
+            self.assertIn('Environment=HOME=/run/recovery-home\n',display)
+            self.assertNotIn('/run/recovery-user',display)
+
     @contextmanager
     def build_fixture(self):
         # Redirect only fixture storage; production path checks remain enabled.
@@ -98,7 +178,8 @@ class RecoveryImageTests(unittest.TestCase):
             runtime=root/'usr/lib/sv08';runtime.mkdir(parents=True)
             for name in ('sv08_recovery_activation.py','sv08_recovery_restore_prepare.py','sv08_restore.py', 'sv08_recovery_restore_media.py', 'sv08_recovery_media.py', 'sv08_recovery_prepare.py',
                          'sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py','sv08_recovery_links.py','sv08_state.py',
-                         'sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py'):
+                         'sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py',
+                         'sv08_owner.py','sv08_recovery_owner.py','sv08_web.py','sv08_printer_stack.py'):
                 (runtime/name).write_text(name)
             bound=m.installed_provider_inputs(root)
             destination_hashes = {
@@ -324,6 +405,13 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
         digest=self.license.digest(archive);(intake/(digest+'.deb')).write_bytes(archive)
         lock=self.repo/'lock.json';lock.write_text(json.dumps(dict(packages=[dict(
             package='fixture',version='1',architecture='arm64',sha256=digest,bytes=len(archive))])))
+        package=json.loads(lock.read_text())['packages'][0]
+        package.update(url='https://snapshot.debian.org/archive/fixture',filename='pool/fixture.deb',
+            source='fixture',source_version='1',installed_kib=1,depends='',pre_depends='')
+        lock.write_text(json.dumps(dict(format_version=1,snapshot='20260901T000000Z',architecture='arm64',packages=[])))
+        supplement=self.repo/'supplement.json'
+        supplement.write_text(json.dumps(dict(format_version=1,snapshot='20260901T000000Z',
+            architecture='arm64',roots=['fixture'],packages=[package])))
         work=self.repo/'build/assembled'
         maintainer_calls=[]
         def run(args,**kw):
@@ -350,11 +438,13 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
              patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
              patch.object(m,'configure_recovery_password'),patch.object(m,'installed_provider_inputs',return_value={}), \
              patch.object(m,'stage_recovery_units',side_effect=late_units),patch.object(stage_admin_ui,'stage',side_effect=stage_checked):
-            m.assemble(SimpleNamespace(work=work,intake=intake,lock=lock,execute=True,release_manifest=self.manifest))
+            result=m.assemble(SimpleNamespace(work=work,intake=intake,lock=lock,package_supplement=supplement,execute=True,release_manifest=self.manifest))
         self.assertEqual(len(maintainer_calls),2)
         record=self.public(work/'rootfs')
         self.assertIn('usr/lib/systemd/system/sv08-recovery-display.service',record['staged_files'])
         receipt=json.loads((work/'assembly.json').read_text())
+        self.assertEqual(receipt['package_supplement_sha256'],m.sha(supplement))
+        self.assertEqual(result['package_supplement_sha256'],m.sha(supplement))
         self.assertEqual(receipt['root'],m.inventory(work/'rootfs'))
         self.assertEqual(receipt['release_manifest']['sha256'],self.license.digest(self.raw))
 
@@ -576,5 +666,87 @@ class IntakeTests(unittest.TestCase):
                 with self.assertRaisesRegex((ValueError,OSError),error):m.intake(self.args)
                 self.assertEqual(self.urlopen.call_count,3)
                 self.assertEqual(list(self.args.work.iterdir()),[])
+
+
+class PackageSupplementTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.root=Path(self.temp.name);(self.root/'build').mkdir()
+        self.patch=patch.object(m,'REPO',self.root);self.patch.start();self.addCleanup(self.patch.stop)
+        self.lock=self.root/'lock.json';self.supplement=self.root/'supplement.json'
+        self.base=dict(format_version=1,snapshot='20260901T000000Z',architecture='arm64',packages=[dict(package='base')])
+        self.item=dict(package='openssl',version='1',architecture='arm64',bytes=4,sha256=hashlib.sha256(b'test').hexdigest(),filename='pool/openssl.deb',url='https://snapshot.debian.org/archive/fixture',source='openssl',source_version='1',installed_kib=1,depends='',pre_depends='')
+        self.value=dict(format_version=1,snapshot=self.base['snapshot'],architecture='arm64',roots=['openssl'],packages=[self.item])
+        self.lock.write_text(json.dumps(self.base));self.save()
+        self.args=SimpleNamespace(lock=self.lock,package_supplement=self.supplement)
+
+    def save(self):self.supplement.write_text(json.dumps(self.value))
+
+    def test_additive_preserves_inputs_and_binds_exact_bytes(self):
+        before=(self.lock.read_bytes(),self.supplement.read_bytes())
+        lock,digest,packages,path,binding=m.package_inputs(self.args,self.root/'build/output')
+        self.assertEqual(packages,self.base['packages']+[self.item])
+        self.assertEqual(binding,dict(package_supplement_sha256=hashlib.sha256(before[1]).hexdigest()))
+        m.check_package_supplement(path,binding)
+        self.assertEqual(before,(self.lock.read_bytes(),self.supplement.read_bytes()))
+        self.supplement.write_bytes(before[1]+b' ')
+        with self.assertRaisesRegex(ValueError,'content changed'):m.check_package_supplement(path,binding)
+
+    def test_refuses_overrides_duplicates_and_incompatible_metadata(self):
+        cases=[('snapshot','old'),('architecture','amd64'),('format_version',True),('packages',[]),('packages',[self.item]*17),('packages',[self.item,self.item]),('packages',[dict(self.item,package='base')])]
+        for key,value in cases:
+            with self.subTest(key=key,value=value):
+                original=self.value[key];self.value[key]=value;self.save()
+                with self.assertRaises(ValueError):m.package_inputs(self.args,self.root/'build/output')
+                self.value[key]=original
+        self.assertFalse((self.root/'build/output').exists())
+
+    def test_legacy_api_has_no_supplement(self):
+        result=m.package_inputs(SimpleNamespace(lock=self.lock),self.root/'build/output')
+        self.assertEqual(result[2],self.base['packages']);self.assertIsNone(result[3]);self.assertEqual(result[4],{})
+
+    def test_intake_rechecks_supplement_and_preserves_base(self):
+        self.base['packages']=[];self.lock.write_text(json.dumps(self.base));original=self.lock.read_bytes()
+        args=SimpleNamespace(**vars(self.args),work=self.root/'build/intake',execute=True)
+        with patch.object(m.os,'geteuid',return_value=1000),patch.object(m.urllib.request,'urlopen',return_value=io.BytesIO(b'test')):
+            result=m.intake(args)
+        self.assertEqual(result['packages'],1);self.assertEqual(self.lock.read_bytes(),original)
+        self.assertEqual(result['package_supplement_sha256'],m.sha(self.supplement))
+        args.work=self.root/'build/stale'
+        class Changed(io.BytesIO):
+            def read(response,size=-1):
+                self.supplement.write_text('{}')
+                return super().read(size)
+        with patch.object(m.os,'geteuid',return_value=1000),patch.object(m.urllib.request,'urlopen',return_value=Changed(b'test')):
+            with self.assertRaisesRegex(ValueError,'supplement content changed'):m.intake(args)
+
+    def test_supplement_archives_keep_hash_size_and_control_checks(self):
+        self.base['packages']=[];self.lock.write_text(json.dumps(self.base))
+        intake=self.root/'intake';intake.mkdir()
+        archive=intake/(self.item['sha256']+'.deb');archive.write_bytes(b'test')
+        args=SimpleNamespace(**vars(self.args),work=self.root/'build/assembly',intake=intake,execute=False)
+        control='Package: openssl\nVersion: 1\nArchitecture: arm64\n'
+        with patch.object(m,'integration_inputs',return_value={}),patch.object(m,'run',return_value=SimpleNamespace(stdout=control)):
+            result=m.assemble(args)
+            self.assertEqual(result['package_supplement_sha256'],m.sha(self.supplement))
+            archive.write_bytes(b'bad!')
+            with self.assertRaisesRegex(ValueError,'Missing/changed archive'):m.assemble(args)
+            archive.write_bytes(b'test')
+        with patch.object(m,'integration_inputs',return_value={}),patch.object(m,'run',return_value=SimpleNamespace(stdout=control.replace('Version: 1','Version: 2'))):
+            with self.assertRaisesRegex(ValueError,'control differs'):m.assemble(args)
+        self.assertFalse(args.work.exists())
+
+    def test_missing_openssl_refused_before_output_or_commands(self):
+        source=self.root/'build/source';root=source/'rootfs'
+        for name in ('usr/bin','usr/lib/sv08','boot'):(root/name).mkdir(parents=True,exist_ok=True)
+        (root/'usr/bin/busybox').write_bytes(b'busybox')
+        (root/'usr/lib/sv08/sv08_owner.py').write_text('# owner')
+        (root/'boot'/('vmlinuz-'+m.KERNEL)).write_bytes(b'kernel')
+        (source/'assembly.json').write_text('{}')
+        output=self.root/'build/output'
+        with patch.object(m,'integration_inputs',return_value={}),patch.object(m,'run') as run:
+            with self.assertRaisesRegex(ValueError,'fresh assemble.*default --package-supplement'):
+                m.build(SimpleNamespace(work=output,assembly=source,execute=True))
+        self.assertFalse(output.exists());run.assert_not_called()
 
 if __name__=='__main__':unittest.main()

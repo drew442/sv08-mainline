@@ -1,0 +1,129 @@
+{
+  "format_version": 1,
+  "date": "2026-11-19",
+  "source_revision": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+  "source_sha256": {
+    "runtime/sv08_recovery_media.py": "83501819ec5ef93fe06c56d9850bcf790e4d187066d861cd81b8e54142379ad4",
+    "scripts/prepare_recovery_installation_archive.py": "daf4ba192f3b4faa21ec16c01844ae8e8903c1105e45a49c40003be84cfa263b",
+    "tests/test_recovery_installation_archive.py": "41c3aec44f46215132915bbfa64da0a7a87f978303b936625e5afea9e92b2059",
+    "scripts/assemble_supported_candidate.py": "b2d673abe7ebf413ec9b209baadfea4e513c653061f24635833f33a43a5b8576",
+    "scripts/build_sd_recovery_host.py": "2007ecbd2b2d4fab5f420a45bb393eea9236ffb0f5f41227a17925055506b2b5",
+    "tests/test_supported_candidate.py": "44d54f02a8cdb3da962b53855762841b1ce377c6408f41da80af9b962956a2bc",
+    "tests/test_sd_recovery_host.py": "fb5e004516328e90d4f8de9c38d34e2934d94d47be529994f412377925cf25a3"
+  },
+  "medium": {
+    "usb_bytes": 31014191104,
+    "sd_bytes": 15931539456,
+    "existing_usb_fat32_preserved": true,
+    "identity": "Actual nearest USB-device own serial plus VID/PID, no borrowed hub identity; raw identifiers remain private.",
+    "measured_scope": "Unmodified candidate Kernel identity code invoked in memory against Beelink USB. Not whole-host/recovery admission."
+  },
+  "checks": [
+    {
+      "scope": "USB reader and preparation/restore contracts",
+      "tests": 63,
+      "passed": 63,
+      "receipt_sha256": "19f95e2a6fde9ae564cf1bfa832f4bd64feb4df19bdfcc3ab93bcc3d7fb7176b"
+    },
+    {
+      "scope": "Supported SD wrapper/export/restore admission and legacy loader contract, mocked compilation",
+      "tests": 19,
+      "passed": 19,
+      "logs": {
+        "sdhost.log": "3102f5da3850724bba37398fb882ad2b4da9b5644b324c795c9a786dab53256e",
+        "supported.log": "a85aeab44718052f5de6193a5a379f096d03759a35e914dc9f67ca202c1f00a2"
+      }
+    },
+    {
+      "scope": "Root helper preservation and previously skipped root journal ownership",
+      "tests": 9,
+      "passed": 9,
+      "receipt": {
+        "command": [
+          "sudo",
+          "-n",
+          "env",
+          "TMPDIR=/root/sv08-installation-seed-20261119",
+          "SV08_TEST_ROOT=/root/sv08-installation-seed-20261119",
+          "SV08_RESTORE_SCRATCH=/root/sv08-installation-seed-20261119",
+          "PYTHONDONTWRITEBYTECODE=1",
+          "PYTHONPATH=runtime:scripts:tests",
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "test_recovery_installation_archive",
+          "test_restore.RestoreTests.test_root_journal_and_machine_directory_roundtrip_preserve_mode_and_group"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.2352091958746314,
+        "log_sha256": "1a2ce620cc1bffcaa43e23d18c95178a92eeeea57f8051aac0dc25d59cf51dce"
+      }
+    },
+    {
+      "scope": "Actual-image production CLI with synthetic legacy data",
+      "receipt": {
+        "source_revision": "1cc79a453b28378b1e242d6abd133abe29caf5d3",
+        "target_source_revision": "7317a890b4cf812f2010c3fdf480edb0657e8d8b",
+        "exit_code": 0,
+        "elapsed_seconds": 73.93304870702559,
+        "log_sha256": "7bf626574e58e66588a2e914aec8e1784d995f50061d697ed6bc477ca3eb6379",
+        "scope": "Actual pinned GPT normal-A image, read-only kernel mount and production CLI; synthetic legacy data only. No hardware, actual backup or release qualification.",
+        "allowance": {
+          "process_seconds": 600,
+          "generated_bytes": 134217728
+        },
+        "physical_operation": false,
+        "roundtrip": true,
+        "receipt_sha256": "6ce735b27b351bb2d4e6de59d24b24db22db659ed3adb7194431287defc877c7",
+        "image_sha256": "f8eaeac00354895b4bfdab9274cd68ddb1a35d65c683748610220752d5efc61a",
+        "helper_sha256": "daf4ba192f3b4faa21ec16c01844ae8e8903c1105e45a49c40003be84cfa263b",
+        "generated_bytes_upper": 500330
+      }
+    }
+  ],
+  "independent_assessment": {
+    "role": "high_consequence_reviewer",
+    "requested": "pinned Sol/medium",
+    "effective": "not independently observable",
+    "result": "PASS WITH CONDITIONS",
+    "helper_sha256": "daf4ba192f3b4faa21ec16c01844ae8e8903c1105e45a49c40003be84cfa263b",
+    "conditions": [
+      "Actual-image-bound prerequisite must pass; native synthetic check now passes at exact731 image.",
+      "Before relying on actual output: recheck backup SHA and source slot/release/schema/revision/generation.",
+      "Require successful conversion, roundtrip, output SHA and completed matching receipt; tar-only/interrupted work is not usable.",
+      "Independently preserve original actual backup outside installation write boundary.",
+      "Physical writer/target/recovery/authority requires a separate exact assessment."
+    ]
+  },
+  "public_matching_source": {
+    "source_revision": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+    "anonymous_archive_sha256": "18402419fb02713664ddc0e07ba8e2aa49120e05128ce1261e0ddcf74dc10626",
+    "download_bytes": 11152085,
+    "matching_files": 637
+  },
+  "limitations": [
+    "No new SD/USB/eMMC writes, media mounts, firmware flashing, target service changes or printer outputs.",
+    "Native actual-image preparation uses synthetic data and historical731 image; real backup/final image binding remains mandatory.",
+    "Export and restore require separate immutable policies and power-isolated media exchange; actual export filename/SHA unknown until export.",
+    "Current image refresh is running; existing731 artifacts do not qualify the new USB/provider path.",
+    "No physical boot, printing or release qualification."
+  ],
+  "unchanged_native_validator_reuse": {
+    "original_evidence": "native-evidence.json",
+    "all_loaded_module_inputs_match": true,
+    "loaded_module_sha256": {
+      "sv08_printer_calibration": "7de25521519d4531b78236e63412e485f4d1fb0aed7b6d16471d716cc5918aea",
+      "sv08_printer_catalog": "03063026baad1896066ed80e18db5ab8737bb44781ee5ddf33edcd9a112edf19",
+      "sv08_printer_compose": "fa4d791f873427dc36d96eef147ed16906f50abd3cbed2be356a911ddc5aa932",
+      "sv08_printer_definitions": "0d169d57deb0002cd0a21596299fd5382b40d5fe94c7e4eb0b215d7f000d4763",
+      "sv08_printer_fields": "85e26a74397445d084bc19507cb25697949bd662154aea687212cd3284d69961",
+      "sv08_printer_firmware": "291755d55b0191a2ca55889272126adf1d5e92a3e0516a319d29d051ee84a396",
+      "sv08_printer_generate": "cebc0b679907cbb920e0ad0a3aaa49eebb9688f35b3c6c6f9e37664a5f39f750",
+      "sv08_printer_publish": "77fe141910f601962a67efc5d225a5115d49887e6923e73d3b35aca3193b4c3e",
+      "sv08_printer_stack": "7b6a3b58ce1ef9bcab57396c52a838a669de16f47192638b195ef8355f154406",
+      "sv08_state": "c9626cae6e2415170865f45f02b80b1b6eb01a7f3384cadab77afd676856afae"
+    },
+    "scope": "Original native ARM64/KVM factory and selected-config readiness under unchanged8sCPU/256MiB/10s readiness. Current USB code and installation helper are outside validator route. No repeat or physical printing claim."
+  }
+}

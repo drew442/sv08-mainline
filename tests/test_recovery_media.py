@@ -1,4 +1,5 @@
 import copy
+from contextlib import contextmanager
 import errno
 import json
 import hashlib
@@ -18,6 +19,370 @@ from sv08_recovery_media import (Kernel, MediaProvider, PROTOCOL, WRITER_MODEL,
                                  reviewed_inventory, trusted_file)
 from sv08_recovery import RecoveryController, installed_controller
 from sv08_state import Store
+
+
+class SysfsInventoryTests(unittest.TestCase):
+    """Real discovery over disposable sysfs files, never host block devices."""
+    def setUp(self):
+        temporary=tempfile.TemporaryDirectory();self.addCleanup(temporary.cleanup)
+        self.root=Path(temporary.name);self.sysfs=self.root/'sys';self.dev=self.root/'dev';self.dev.mkdir()
+        (self.sysfs/'class/block').mkdir(parents=True);(self.sysfs/'dev/block').mkdir(parents=True)
+        self.card=self.sysfs/'devices/platform/mmc_host/mmc3/mmc3:001a'
+        self.disk=self.card/'block/mmcblk3'
+        self.numbers={}
+        self.node(self.disk,'179:32',234567,3,ro='0')
+        (self.card/'type').write_text('MMC\n');(self.card/'cid').write_text('synthetic-cid\n')
+        (self.disk/'device').symlink_to(self.card)
+        self.partition=self.disk/'mmcblk3p1'
+        self.node(self.partition,'179:33',123456,0,ro='0')
+        (self.partition/'partition').write_text('1\n');(self.partition/'start').write_text('2048\n')
+        self.areas=[]
+        for index,device in enumerate(('179:40','179:48')):
+            area=self.disk/('mmcblk3boot'+str(index));self.areas.append(area)
+            self.node(area,device,8192,10+index)
+            (area/'force_ro').write_text('1\n')
+
+    def node(self,path,device,sectors,sequence,ro='1'):
+        path.mkdir(parents=True)
+        for key,value in dict(dev=device,size=sectors,diskseq=sequence,ro=ro,removable=0,
+                              uevent='DEVNAME='+path.name).items():
+            (path/key).write_text(str(value)+'\n')
+        for key in ('holders','slaves'):(path/key).mkdir()
+        (self.sysfs/'class/block'/path.name).symlink_to(path)
+        (self.sysfs/'dev/block'/device).symlink_to(path)
+        (self.dev/path.name).write_text('synthetic filesystem signature')
+        self.numbers[path.name]=device
+
+    @contextmanager
+    def discovered(self):
+        original_stat=os.stat
+        def fake_block(path,*args,**kwargs):
+            path=Path(path)
+            if path.parent==self.dev and path.name in self.numbers:
+                major,minor=map(int,self.numbers[path.name].split(':'))
+                return SimpleNamespace(st_mode=stat.S_IFBLK|0o600,st_rdev=os.makedev(major,minor))
+            return original_stat(path,*args,**kwargs)
+        def probe(path):
+            self.assertNotIn('boot',path.name,'Boot area reached blkid despite a fake FS signature')
+            return dict(TYPE='ext4',UUID='fixture-partition') if path==self.dev/self.partition.name else {}
+        with patch.object(Kernel,'sysfs_root',self.sysfs),patch.object(Kernel,'device_root',self.dev), \
+             patch('sv08_recovery_media.os.stat',fake_block),patch.object(Kernel,'_probe',side_effect=probe):
+            yield Kernel()
+
+    def test_discovers_owned_protected_areas_without_independent_stable_id_or_probe(self):
+        with self.discovered() as kernel:
+            observed=kernel.inventory()
+            (self.disk/'ro').write_text('1\n')
+            protected_after_user_area_ro=kernel.inventory()[0]['boot_areas']
+            (self.areas[0]/'diskseq').write_text('12\n')
+            resequenced=kernel.inventory()
+            (self.areas[0]/'size').write_text('8193\n')
+            resized=kernel.inventory()
+        self.assertEqual(len(observed),1);disk=observed[0]
+        self.assertEqual(disk['stable'],{'device/cid':'synthetic-cid'})
+        self.assertEqual(len(disk['partitions']),1)
+        self.assertEqual([area['device'] for area in disk['boot_areas']],['179:40','179:48'])
+        self.assertEqual([area['diskseq'] for area in disk['boot_areas']],[10,11])
+        self.assertTrue(all(area['readonly'] and area['force_readonly'] and not area['removable']
+                            and area['disk_device']=='179:32' and 'stable' not in area
+                            for area in disk['boot_areas']))
+        self.assertEqual(protected_after_user_area_ro,disk['boot_areas'])
+        reviewed=reviewed_inventory(observed)
+        self.assertEqual(reviewed[0]['boot_areas'],[dict(index=0,sectors=8192),dict(index=1,sectors=8192)])
+        self.assertEqual(resequenced[0]['boot_areas'][0]['diskseq'],12)
+        self.assertNotEqual(resequenced,observed);self.assertEqual(reviewed_inventory(resequenced),reviewed)
+        self.assertEqual(resized[0]['boot_areas'][0]['sectors'],8193)
+        self.assertNotEqual(reviewed_inventory(resized),reviewed)
+        for field in ('sectors','index'):
+            changed=copy.deepcopy(observed);changed[0]['boot_areas'][0][field]+=1
+            self.assertNotEqual(reviewed_inventory(changed),reviewed)
+        changed=copy.deepcopy(observed);changed[0]['boot_areas'].pop()
+        self.assertNotEqual(reviewed_inventory(changed),reviewed)
+
+    def test_boot_area_cannot_be_selected_even_with_filesystem_signature(self):
+        from sv08_recovery_prepare import PreparationKernel
+        with self.discovered() as kernel,patch('sv08_recovery_media.subprocess.run') as command:
+            for area in self.areas:
+                with self.assertRaisesRegex(ValueError,'cannot be selected'):
+                    kernel.block(dict(device=(area/'dev').read_text().strip(),filesystem='ext4'))
+                with self.assertRaisesRegex(ValueError,'cannot be selected'):kernel._identity(area)
+                with patch('sv08_recovery_prepare.os.open',side_effect=AssertionError('Auxiliary opened')):
+                    for whole in (False,True):
+                        with self.assertRaisesRegex(ValueError,'cannot be selected'):
+                            PreparationKernel._open_identity(dict(sysfs=str(area)),whole=whole)
+            command.assert_not_called()
+
+    def test_missing_wrong_type_parent_ancestry_and_name_fail_closed(self):
+        with self.discovered() as kernel:
+            (self.card/'type').write_text('SD\n')
+            with self.assertRaisesRegex(ValueError,'ownership or type'):kernel.inventory()
+            (self.card/'type').unlink()
+            with self.assertRaises(OSError):kernel.inventory()
+            (self.card/'type').write_text('MMC\n')
+            parent_link=self.sysfs/'class/block/mmcblk3';parent_link.unlink()
+            with self.assertRaisesRegex(ValueError,'owning medium'):kernel.inventory()
+            parent_link.symlink_to(self.disk)
+            device_link=self.disk/'device';device_link.unlink();device_link.mkdir()
+            (device_link/'type').write_text('MMC\n')
+            with self.assertRaisesRegex(ValueError,'ownership or type'):kernel.inventory()
+            (device_link/'type').unlink();device_link.rmdir();device_link.symlink_to(self.card)
+            area=self.areas[0];wrong=self.card/area.name;area.rename(wrong)
+            link=self.sysfs/'class/block'/area.name;link.unlink();link.symlink_to(wrong)
+            with self.assertRaisesRegex(ValueError,'owning medium'):kernel.inventory()
+            wrong.rename(area);link.unlink();link.symlink_to(area)
+            malformed=self.disk/'mmcblk3boot2';self.node(malformed,'179:56',8192,12)
+            with self.assertRaisesRegex(ValueError,'cannot be selected'):kernel.inventory()
+
+    def test_missing_changed_properties_and_topology_fail_closed(self):
+        with self.discovered() as kernel:
+            for key,value in (('ro','0'),('force_ro','0'),('removable','1'),('size','0'),('diskseq','0'),
+                              ('uevent','DEVNAME=mmcblk99boot0'),('partition','1')):
+                path=self.areas[0]/key;old=path.read_bytes() if path.exists() else None
+                path.write_text(value+'\n')
+                with self.subTest(key=key),self.assertRaises(ValueError):kernel.inventory()
+                if old is None:path.unlink()
+                else:path.write_bytes(old)
+            for key in ('force_ro','removable','diskseq','size'):
+                path=self.areas[0]/key;old=path.read_bytes();path.unlink()
+                with self.subTest(missing=key),self.assertRaises(OSError):kernel.inventory()
+                path.write_bytes(old)
+            for key in ('holders','slaves'):
+                path=self.areas[0]/key/'unexpected';path.touch()
+                with self.subTest(key=key),self.assertRaisesRegex(ValueError,'holder or slave'):kernel.inventory()
+                path.unlink()
+            (self.sysfs/'class/block'/self.areas[1].name).unlink()
+            with self.assertRaisesRegex(ValueError,'Incomplete'):kernel.inventory()
+
+    def test_generic_non_mmc_inventory_keeps_legacy_shape(self):
+        import shutil
+        shutil.rmtree(self.sysfs);(self.sysfs/'class/block').mkdir(parents=True)
+        (self.sysfs/'dev/block').mkdir(parents=True)
+        disk=self.sysfs/'devices/pci/virtio0/block/vda';self.node(disk,'254:7',4096,21)
+        (disk/'serial').write_text('synthetic-virtio\n')
+        with self.discovered() as kernel:observed=kernel.inventory()
+        self.assertEqual(len(observed),1);self.assertNotIn('boot_areas',observed[0])
+        self.assertEqual(observed[0]['transport'],'virtio')
+
+    def test_provider_census_rejects_auxiliary_mount_before_selected_mounts(self):
+        provider=MediaProvider.__new__(MediaProvider);provider.kernel=Kernel()
+        observed=dict(media=[dict(boot_areas=[dict(device='179:48')])])
+        with patch.object(provider,'complete_inventory',return_value={**observed,'active_loops':[{}]}), \
+             patch.object(provider.kernel,'mounts',return_value=[dict(device='179:48',path='/fake')]):
+            with self.assertRaisesRegex(ValueError,'boot area has an unexpected mount'):provider.snapshot()
+
+
+class UsbIdentityTests(unittest.TestCase):
+    """Descriptor identity is bound to real USB ownership in disposable sysfs."""
+    node = SysfsInventoryTests.node
+    discovered = SysfsInventoryTests.discovered
+
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        self.sysfs, self.dev = self.root/'sys', self.root/'dev'
+        self.dev.mkdir()
+        for name in ('class/block', 'dev/block', 'bus/usb/drivers/usb-storage',
+                     'bus/usb/drivers/uas'):
+            (self.sysfs/name).mkdir(parents=True)
+        self.hub = self.sysfs/'devices/pci/usb1'
+        self.owner = self.hub/'1-2'
+        self.interface = self.owner/'1-2:1.0'
+        self.scsi = self.interface/'host4/target4:0:0/4:0:0:0'
+        self.disk = self.scsi/'block/sda'
+        self.numbers = {}
+        self.node(self.disk, '8:0', 40000, 32)
+        (self.disk/'device').symlink_to(self.scsi)
+        self.partition = self.disk/'sda1'
+        self.node(self.partition, '8:1', 30000, 0)
+        (self.partition/'partition').write_text('1\n')
+        (self.partition/'start').write_text('2048\n')
+        for node, kind in ((self.hub, 'usb_device'), (self.owner, 'usb_device'),
+                           (self.interface, 'usb_interface')):
+            (node/'subsystem').symlink_to(self.sysfs/'bus/usb')
+            (node/'uevent').write_text('DEVTYPE='+kind+'\n')
+        (self.interface/'driver').symlink_to(self.sysfs/'bus/usb/drivers/usb-storage')
+        (self.interface/'bInterfaceClass').write_text('08\n')
+        (self.owner/'idVendor').write_text('AB12\n')
+        (self.owner/'idProduct').write_text('0034\n')
+        (self.owner/'serial').write_text('media-serial\n')
+        (self.hub/'serial').write_text('controller-serial\n')
+        self.expected = {'usb/serial': 'media-serial',
+                         'usb/device': ['ab12', '0034', 'media-serial']}
+
+    def observations(self, kernel):
+        # block() probes its selected mounted node; inventory probes all nodes.
+        with patch('sv08_recovery_media.subprocess.run', return_value=SimpleNamespace(
+                stdout='TYPE=ext4\nUUID=fixture-partition\n')):
+            return kernel.block(dict(device='8:1', filesystem='ext4')), kernel.inventory()
+
+    def test_both_entry_points_fallback_and_changed_descriptor_inventory(self):
+        with self.discovered() as kernel:
+            block, inventory = self.observations(kernel)
+            self.assertEqual(block['stable'], self.expected)
+            self.assertEqual(inventory[0]['stable'], self.expected)
+            self.assertEqual(inventory[0]['transport'], 'usb-scsi')
+            old = reviewed_inventory(inventory)
+            (self.owner/'serial').write_text('replacement\n')
+            changed, inventory = self.observations(kernel)
+            self.assertNotEqual(changed['stable'], block['stable'])
+            self.assertNotEqual(durable_identity(changed), durable_identity(block))
+            self.assertNotEqual(reviewed_inventory(inventory), old)
+
+    def test_legacy_values_preserved_and_each_attribute_read_once(self):
+        values = {'wwid': 'disk-wwid', 'device/wwid': 'scsi-wwid',
+                  'device/cid': 'cid', 'device/serial': 'scsi-serial', 'serial': 'disk-serial'}
+        for name, value in values.items():
+            (self.disk/name).write_text(value+'\n')
+        original = Path.read_text
+        for entry in ('block', 'inventory'):
+            reads = []
+            def read(path, *args, **kwargs):
+                reads.append(path)
+                return original(path, *args, **kwargs)
+            with self.discovered() as kernel, patch.object(Path, 'read_text', read), \
+                 patch('sv08_recovery_media.subprocess.run', return_value=SimpleNamespace(
+                     stdout='TYPE=ext4\nUUID=fixture-partition\n')):
+                observed = (kernel.block(dict(device='8:1', filesystem='ext4')) if entry == 'block'
+                            else kernel.inventory()[0])
+            self.assertEqual(observed['stable'], values)
+            for name in values:
+                self.assertEqual(reads.count(self.disk/name), 1, (entry, name))
+            self.assertNotIn(self.owner/'serial', reads)
+
+    def test_optional_wwid_errors_require_an_independent_identity(self):
+        (self.scsi/'wwid').write_text('unreadable')
+        original = Path.read_text
+        for code in (errno.ENXIO, errno.EINVAL, errno.EIO, errno.EACCES, errno.ENODEV, errno.ENOENT):
+            def read(path, *args, **kwargs):
+                if path == self.disk/'device/wwid':
+                    raise OSError(code, 'injected optional WWID read failure')
+                return original(path, *args, **kwargs)
+            with self.subTest(errno=code), self.discovered() as kernel, patch.object(Path, 'read_text', read):
+                if code in (errno.ENXIO, errno.EINVAL):
+                    block, inventory = self.observations(kernel)
+                    self.assertEqual(block['stable'], self.expected)
+                    self.assertEqual(inventory[0]['stable'], self.expected)
+                else:
+                    for call in (lambda: self.observations(kernel), kernel.inventory):
+                        with self.assertRaises(OSError): call()
+        # Unsupported WWID errors can also coexist with a usable legacy serial.
+        (self.disk/'serial').write_text('legacy\n')
+        def unsupported(path, *args, **kwargs):
+            if path == self.disk/'device/wwid': raise OSError(errno.ENXIO, 'unsupported')
+            return original(path, *args, **kwargs)
+        with self.discovered() as kernel, patch.object(Path, 'read_text', unsupported):
+            block, inventory = self.observations(kernel)
+            self.assertEqual(block['stable'], {'serial': 'legacy'})
+            self.assertEqual(inventory[0]['stable'], {'serial': 'legacy'})
+        (self.disk/'serial').unlink()
+        (self.owner/'serial').write_text('\n')
+        with self.discovered() as kernel, patch.object(Path, 'read_text', unsupported):
+            with self.assertRaises(ValueError): self.observations(kernel)
+            with self.assertRaises(ValueError): kernel.inventory()
+
+    def test_nearest_descriptor_never_borrows_hub_and_io_fails_closed(self):
+        for name, value in (('serial', ''), ('serial', 'bad\x01serial'),
+                            ('idVendor', '123'), ('idProduct', 'zzzz')):
+            path = self.owner/name
+            old = path.read_bytes()
+            path.write_text(value+'\n')
+            with self.subTest(name=name, value=value), self.discovered() as kernel:
+                with self.assertRaises(ValueError): self.observations(kernel)
+                with self.assertRaises(ValueError): kernel.inventory()
+            path.write_bytes(old)
+        for name in ('serial', 'idVendor', 'idProduct'):
+            path = self.owner/name
+            old = path.read_bytes()
+            path.unlink()
+            with self.subTest(missing=name), self.discovered() as kernel:
+                with self.assertRaises(OSError): self.observations(kernel)
+                with self.assertRaises(OSError): kernel.inventory()
+            path.write_bytes(old)
+        original = Path.read_text
+        for code in (errno.ENXIO, errno.EINVAL, errno.EACCES, errno.EIO, errno.ENODEV):
+            def read(path, *args, **kwargs):
+                if path == self.owner/'serial': raise OSError(code, 'descriptor unavailable')
+                return original(path, *args, **kwargs)
+            with self.subTest(errno=code), self.discovered() as kernel, patch.object(Path, 'read_text', read):
+                with self.assertRaises(OSError): self.observations(kernel)
+                with self.assertRaises(OSError): kernel.inventory()
+
+    def test_wrong_usb_ancestry_interface_and_root_hub_refuse(self):
+        for path, value in ((self.interface/'bInterfaceClass', '09'),
+                            (self.interface/'uevent', 'DEVTYPE=usb_device'),
+                            (self.owner/'uevent', 'DEVTYPE=usb_interface')):
+            old = path.read_bytes()
+            path.write_text(value+'\n')
+            with self.subTest(path=path), self.discovered() as kernel:
+                with self.assertRaises(ValueError): self.observations(kernel)
+                with self.assertRaises(ValueError): kernel.inventory()
+            path.write_bytes(old)
+        for path, target in ((self.interface/'driver', self.sysfs/'bus/usb/drivers'),
+                             (self.owner/'subsystem', self.sysfs/'bus')):
+            old = path.readlink()
+            path.unlink(); path.symlink_to(target)
+            with self.discovered() as kernel:
+                with self.assertRaises(ValueError): self.observations(kernel)
+                with self.assertRaises(ValueError): kernel.inventory()
+            path.unlink(); path.symlink_to(old)
+        # Missing the actual device/interface metadata exposes the hub as the
+        # nearest USB ancestor; its own valid serial must not become identity.
+        for node in (self.interface, self.owner): (node/'subsystem').unlink()
+        with self.discovered() as kernel:
+            with self.assertRaises(ValueError): self.observations(kernel)
+            with self.assertRaises(ValueError): kernel.inventory()
+
+    def test_multi_lun_refuses_even_with_distinct_wwids(self):
+        (self.disk/'wwid').write_text('first-lun\n')
+        second = self.interface/'host4/target4:0:0/4:0:0:1/block/sdb'
+        self.node(second, '8:16', 40000, 33)
+        (second/'wwid').write_text('second-lun\n')
+        with self.discovered() as kernel:
+            with self.assertRaisesRegex(ValueError, 'LUN'): self.observations(kernel)
+            with self.assertRaisesRegex(ValueError, 'LUN'): kernel.inventory()
+
+    def test_uas_and_cross_interface_lun_ownership(self):
+        driver = self.interface/'driver'
+        driver.unlink(); driver.symlink_to(self.sysfs/'bus/usb/drivers/uas')
+        with self.discovered() as kernel:
+            block, inventory = self.observations(kernel)
+            self.assertEqual(block['stable'], inventory[0]['stable'])
+        second = self.owner/'1-2:1.1/host5/target5:0:0/5:0:0:0/block/sdb'
+        self.node(second, '8:16', 40000, 33)
+        (self.disk/'wwid').write_text('first-interface\n')
+        (second/'wwid').write_text('second-interface\n')
+        with self.discovered() as kernel:
+            with self.assertRaisesRegex(ValueError, 'LUN'): self.observations(kernel)
+            with self.assertRaisesRegex(ValueError, 'LUN'): kernel.inventory()
+
+    def test_unsupported_wwid_without_any_identity_refuses(self):
+        # A non-USB disk has no descriptor fallback; unsupported WWID alone
+        # remains a refusal rather than an invented filesystem/device identity.
+        import shutil
+        shutil.rmtree(self.sysfs/'devices')
+        for directory in ('class/block', 'dev/block'):
+            for link in (self.sysfs/directory).iterdir(): link.unlink()
+        self.disk = self.sysfs/'devices/pci/virtio0/block/vda'
+        self.node(self.disk, '254:0', 40000, 34)
+        (self.disk/'wwid').write_text('unreadable')
+        original = Path.read_text
+        def read(path, *args, **kwargs):
+            if path == self.disk/'wwid': raise OSError(errno.EINVAL, 'unsupported')
+            return original(path, *args, **kwargs)
+        with self.discovered() as kernel, patch.object(Path, 'read_text', read):
+            with self.assertRaises(OSError): kernel.inventory()
+            with self.assertRaises(OSError): kernel.block(dict(device='254:0', filesystem='ext4'))
+
+    def test_serial_aliases_keep_all_conflicting_values(self):
+        for legacy in ({'serial': 'other', 'device/serial': 'media-serial'},
+                       {'device/serial': 'other', 'serial': 'media-serial'}):
+            for left, right in ((self.expected, legacy), (legacy, self.expected)):
+                self.assertTrue(same_identity(left, right))
+        self.assertFalse(same_identity(self.expected, {'serial': 'other'}))
+        self.assertFalse(same_identity(self.expected,
+            {'usb/device': ['ab12', '0034', 'other'], 'usb/serial': 'other'}))
+        self.assertFalse(same_identity(self.expected, {'idVendor': 'ab12', 'idProduct': '0034'}))
 
 
 class RecoveryMediaTests(unittest.TestCase):
@@ -42,6 +407,7 @@ class RecoveryMediaTests(unittest.TestCase):
 
     def test_only_exact_selected_kernel_api_mounts_are_admitted(self):
         text = '''
+33 27 0:6 / /sys/fs/selinux rw,nosuid,noexec,relatime - selinuxfs selinuxfs rw
 34 27 0:7 / /sys/kernel/security rw,nosuid,nodev,noexec,relatime - securityfs securityfs rw
 37 27 0:31 / /sys/fs/pstore rw,nosuid,nodev,noexec,relatime - pstore pstore rw
 38 27 0:32 / /sys/fs/bpf rw,nosuid,nodev,noexec,relatime - bpf bpf rw,mode=700
@@ -71,6 +437,16 @@ class RecoveryMediaTests(unittest.TestCase):
             mount_table(line+line.replace('41 ', '42 ', 1))
         with self.assertRaisesRegex(ValueError, 'non-block'):
             Kernel().block({'device':'0:35'})
+
+    def test_measured_selinux_mount_rejects_extra_options(self):
+        mount = dict(path='/sys/fs/selinux', root='/', filesystem='selinuxfs',
+                     source='selinuxfs', options=['noexec', 'nosuid', 'relatime', 'rw'],
+                     super_options=['rw'], optional=[])
+        self.assertTrue(admitted_system_mount(mount, set()))
+        for field, value in (('options', ['nodev', *mount['options']]),
+                             ('super_options', ['rw', 'unreviewed'])):
+            with self.subTest(field=field):
+                self.assertFalse(admitted_system_mount({**mount, field:value}, set()))
 
     @staticmethod
     def proc_fixture(root, namespace='mnt:[1]', pid_namespace='pid:[1]'):
@@ -393,6 +769,17 @@ class RecoveryMediaTests(unittest.TestCase):
                             with self.subTest(known_key=known_key, order=order, side=side):
                                 blocks['/media/usb']['stable'] = dict(order) if side == 'destination' else protected
                                 policy['system_media'][-1] = protected if side == 'destination' else dict(order)
+                                with self.assertRaisesRegex(ValueError, 'shares a system/source medium'):
+                                    provider.snapshot()
+                usb = {'usb/serial': 'shared-serial',
+                       'usb/device': ['1234', '5678', 'shared-serial']}
+                for pairs in ([('serial', 'other'), ('device/serial', 'shared-serial')],
+                              [('device/serial', 'other'), ('serial', 'shared-serial')]):
+                    for order in (pairs, list(reversed(pairs))):
+                        for side in ('destination', 'inventory'):
+                            with self.subTest(usb_alias=order, side=side):
+                                blocks['/media/usb']['stable'] = usb if side == 'destination' else dict(order)
+                                policy['system_media'][-1] = dict(order) if side == 'destination' else usb
                                 with self.assertRaisesRegex(ValueError, 'shares a system/source medium'):
                                     provider.snapshot()
                 policy['system_media'][-1] = protected

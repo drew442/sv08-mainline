@@ -1,0 +1,202 @@
+{
+  "source_revision": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+  "normal": {
+    "bytes": 7818182656,
+    "sha256": "7cbf00915e670e999d86bdfa985889c564a5d982562211bade4831e4ef7968b9",
+    "all_six_partition_readbacks": true,
+    "spl_and_both_environment_readbacks": true,
+    "all_filesystems_checked": true
+  },
+  "internal_recovery": {
+    "bytes": 536870912,
+    "sha256": "c95163aaf5f74feb2b4a3ce8e4af5ba68c96f77b20535f2482f2d0a63ec590fc"
+  },
+  "update": {
+    "bytes": 545130926,
+    "sha256": "42b5caa8b421e2a812d1300238656b75fb8af4f317cfdd9b03b04c67c75ecab5",
+    "signer_trusted": true,
+    "streamed_payload_hashes": {
+      "rootfs": "d4f348946ec823712948caeaa36208586a255654fc3ba5d524e7dbde3110cdd7",
+      "boot": "8fbf65a782a59866979161cdd1c51cc458b92eb1f98bf267b10e29f8e60421a0"
+    },
+    "inner_release_matches": true,
+    "source_root_preserved": true,
+    "actual_installation": false,
+    "rootfs_verity_installation_proven": false
+  },
+  "release_preparation": {
+    "checks": [
+      {
+        "id": "image",
+        "status": "passed"
+      },
+      {
+        "id": "public-project-source",
+        "status": "passed"
+      },
+      {
+        "id": "selected-software-notices",
+        "status": "passed"
+      }
+    ],
+    "format_version": 1,
+    "hardware_qualified": false,
+    "limitations": [
+      "Hardware, recovery execution, legal compliance and full reproducibility are not qualified.",
+      "Third-party corresponding-source completeness and opaque boot/data license coverage remain separate.",
+      "Artifact must travel alongside this evidence package and match its exact hash."
+    ],
+    "overall_release_qualified": false,
+    "profile": "selected-software",
+    "project_source_qualified": true,
+    "software_notice_inventory_checked": true
+  },
+  "actual_software_roots": 3,
+  "phases": {
+    "recovery": [
+      {
+        "phase": "assemble",
+        "exit_code": 0,
+        "elapsed_seconds": 210.67273517302237,
+        "log_sha256": "e7b862987c21e8be34359b4994a1473cee4de4f15ef2b79ee7538c1aaf74d29b"
+      },
+      {
+        "phase": "derive-emmc",
+        "exit_code": 0,
+        "elapsed_seconds": 35.184377680008765,
+        "log_sha256": "66b13bf42668d2179558fe59f739ce2f701603839184280e7ca1ce50420a6cf4"
+      },
+      {
+        "phase": "build-emmc",
+        "exit_code": 0,
+        "elapsed_seconds": 221.50920256599784,
+        "log_sha256": "18a1ae45e45845a332f0cb7c5589ffdb46da65c0b847fac6ddcb71a506c605bd"
+      },
+      {
+        "phase": "derive-sd",
+        "exit_code": 0,
+        "elapsed_seconds": 36.02918823598884,
+        "log_sha256": "b5af26bdbf6d9110bb7a8b5828ee0bd449e5a6d74019108721c944766b236c24"
+      }
+    ],
+    "normal": [
+      {
+        "phase": "compose",
+        "exit_code": 0,
+        "elapsed_seconds": 112.99831604299834,
+        "log_sha256": "6f20bd383302516979a77797f0996e6af5fad4e5de51a30889f1d31b3c0d4246"
+      },
+      {
+        "phase": "readback",
+        "exit_code": 0,
+        "elapsed_seconds": 23.20139331999235,
+        "log_sha256": "652ac21121cc7ed53f8206a11b8d0d444773bfb06ceec4f50b7400a5e5310db2"
+      },
+      {
+        "phase": "selected-software",
+        "exit_code": 0,
+        "elapsed_seconds": 215.82723155600252,
+        "log_sha256": "ab85d53eb31a77603ff6a3f757fde6ae434924cdcdb7061635cc96199cbe24a3"
+      }
+    ],
+    "update": [
+      {
+        "phase": "prepare-update-root-c69618e.py",
+        "exit_code": 0,
+        "elapsed_seconds": 46.97571612102911,
+        "log_sha256": "203471c42b1c63dfc7f4388944bd28bf2d5ce0c33090159c3c753e4bfdd92452"
+      },
+      {
+        "phase": "build-update-payloads-c69618e.py",
+        "exit_code": 0,
+        "elapsed_seconds": 20.073372275976,
+        "log_sha256": "47bbd3acf54a527bc0e1627d8012045800dd5a0c3c7e559dc7ba046f35bcb29d"
+      },
+      {
+        "phase": "sign-update-c69618e.py",
+        "exit_code": 0,
+        "elapsed_seconds": 165.9953540089773,
+        "log_sha256": "bca2ff1aa40dee67ec043300941babf53cb69f959eaddf72359f772a38b8a8b5"
+      },
+      {
+        "phase": "readback-update-c69618e.py",
+        "exit_code": 0,
+        "elapsed_seconds": 6.844309852051083,
+        "log_sha256": "3fad3f70b643d0a7130d17ce53e059c5c085afd9d0d43f2d586170d8296bed67"
+      }
+    ]
+  },
+  "receipts": {
+    "normal-finalized": {
+      "path": "build/normal-c69618e/supported-finalized.json",
+      "sha256": "b84be2552dcffa19a42098cf23332981ad8710f09cd2df78cccc8903c6b6193f",
+      "bytes": 1906
+    },
+    "normal-parent": {
+      "path": "build/normal-c69618e/copy-parent.json",
+      "sha256": "0936afd4f49171a829bd4d116798c55e86d42d569afc87958041a844c0532e35",
+      "bytes": 1164
+    },
+    "normal-owner": {
+      "path": "build/normal-c69618e/unchanged-owner-pam-inputs.json",
+      "sha256": "46c5441c895c5f7a751d3008ba14e41d296447db5787596862fb24f00d0269b2",
+      "bytes": 3471
+    },
+    "recovery-base": {
+      "path": "build/recovery-base-c69618e/assembly.json",
+      "sha256": "ac3b46fc8b57a61dc8dac75d15dea985d52139e79251a091be91093b20c2bfe6",
+      "bytes": 9198
+    },
+    "recovery-build": {
+      "path": "build/recovery-emmc-c69618e/build.json",
+      "sha256": "18a1ae45e45845a332f0cb7c5589ffdb46da65c0b847fac6ddcb71a506c605bd",
+      "bytes": 12321
+    },
+    "normal-composition": {
+      "path": "build/supported-emmc-c69618e/composition.json",
+      "sha256": "10922d47f60890f1ab3f1fa948cceaefc4b6e2cfb0b5677a98810bedffaa2816",
+      "bytes": 7138
+    },
+    "update-build": {
+      "path": "build/update5-c69618e/bundle-build.json",
+      "sha256": "a622183bcf0a9119d81369f8761d6720357ba3e5882bca8e3d83aa6dec512d0c",
+      "bytes": 2007
+    },
+    "update-readback": {
+      "path": "build/update5-c69618e/payload-readback.json",
+      "sha256": "3fad3f70b643d0a7130d17ce53e059c5c085afd9d0d43f2d586170d8296bed67",
+      "bytes": 762
+    },
+    "release-report": {
+      "path": "build/release-evidence-c69618e/report.json",
+      "sha256": "ab85d53eb31a77603ff6a3f757fde6ae434924cdcdb7061635cc96199cbe24a3",
+      "bytes": 756
+    },
+    "release-manifest": {
+      "path": "build/release-evidence-c69618e/release-manifest.json",
+      "sha256": "4d320e4108a5a9040f97bede5739f7500a57833bc935f408640861df5ce6e31f",
+      "bytes": 1433
+    }
+  },
+  "generated_size_observation": {
+    "current_logical_bytes": {
+      "normal-c69618e": 1438888758,
+      "recovery-base-c69618e": 801526579,
+      "recovery-emmc-root-c69618e": 923037755,
+      "recovery-emmc-c69618e": 864031905,
+      "recovery-sd-root-c69618e": 923037302,
+      "supported-emmc-c69618e": 8213005607,
+      "normal-update-c69618e": 1439110621,
+      "update5-c69618e": 2942670165,
+      "release-evidence-c69618e": 24441342
+    },
+    "retired_new_component_bytes": 7800356864,
+    "known_new_logical_bytes": 25370106898,
+    "temporary_generation_not_fully_measured": true
+  },
+  "physical_boot": false,
+  "printing_qualified": false,
+  "release_qualified": false,
+  "sd": "Actual media identified; export SD pending source-bound composition and separate physical authority",
+  "private_workspace": "/run/a733-guests/sv08-release-20261117"
+}

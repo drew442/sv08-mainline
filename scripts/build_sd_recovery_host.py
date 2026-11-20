@@ -105,8 +105,14 @@ done </newroot/etc/sv08/sd-envelope.links
     return text
 
 
-def boot_script(payloads, binding):
-    lines = [f'setenv bootargs "root=PARTUUID={PARTUUID} ro panic=0 console=tty0 console=ttyS0,115200 sv08.envelope={binding}"']
+def boot_script(payloads, binding, provider_binding=None):
+    """Bind supported providers while preserving legacy two-argument scripts."""
+    provider_arg = ''
+    if provider_binding is not None:
+        if not isinstance(provider_binding, str) or re.fullmatch('[0-9a-f]{64}', provider_binding) is None:
+            raise ValueError('Recovery provider SHA256 binding required')
+        provider_arg = f' sv08.recovery={provider_binding}'
+    lines = [f'setenv bootargs "root=PARTUUID={PARTUUID} ro panic=0 console=tty0 console=ttyS0,115200 sv08.envelope={binding}{provider_arg}"']
     for name, address in [('Image', '${kernel_addr_r}'), ('initrd.img', '${ramdisk_addr_r}'), ('sv08.dtb', '${fdt_addr_r}')]:
         lines += [f'if load mmc 0:1 {address} {name}; then',
                   f'  hash sha256 {address} ${{filesize}} sv08_digest',

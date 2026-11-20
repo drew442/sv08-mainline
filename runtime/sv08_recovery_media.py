@@ -7,6 +7,7 @@ verify that contract's current root, namespace and simple block topology; flock
 does not constrain arbitrary privileged software. See host-recovery-media.md.
 """
 from contextlib import contextmanager
+import errno
 import fcntl
 import hashlib
 import json
@@ -31,6 +32,8 @@ PROC_DISAPPEARED = (FileNotFoundError, ProcessLookupError)
 # this selected-userspace composition finite: a filesystem type alone never
 # authorizes another path, and generic /sys or /dev ancestry is insufficient.
 KERNEL_API_MOUNTS = {
+    '/sys/fs/selinux': ('selinuxfs', 'selinuxfs',
+        ('noexec', 'nosuid', 'relatime', 'rw'), ('rw',)),
     '/sys/kernel/security': ('securityfs', 'securityfs',
         ('nodev', 'noexec', 'nosuid', 'relatime', 'rw'), ('rw',)),
     '/sys/fs/pstore': ('pstore', 'pstore',
@@ -63,6 +66,23 @@ def canonical_json(value):
 def require(condition, reason):
     if not condition:
         raise ValueError(reason)
+
+
+def boot_area_name(name):
+    return re.fullmatch(r'(mmcblk[0-9]+)boot([01])', name)
+
+
+def require_selectable(node):
+    require(not re.match(r'mmcblk[0-9]+boot', node.name),
+            'Protected eMMC boot areas cannot be selected as media')
+
+
+def inventory_nodes(observed):
+    """All nodes for protection census, including auxiliaries that cannot be selected."""
+    for disk in observed:
+        yield disk
+        yield from disk['partitions']
+        yield from disk.get('boot_areas', [])
 
 
 def clean_path(value):
@@ -172,6 +192,9 @@ class MediaLease:
 
 
 class Kernel:
+    sysfs_root = Path('/sys')
+    device_root = Path('/dev')
+
     def mounts(self):
         return mount_table(Path('/proc/self/mountinfo').read_text())
 
@@ -277,8 +300,9 @@ class Kernel:
         """Simple physical disks/partitions only; resolve only selected mounts."""
         device = mount['device']
         require(re.fullmatch(r'[1-9][0-9]*:[0-9]+', device), 'Unsupported non-block filesystem')
-        node = (Path('/sys/dev/block') / device).resolve(strict=True)
-        require(node.is_relative_to('/sys/devices') and (node / 'dev').read_text().strip() == device,
+        node = (self.sysfs_root / 'dev/block' / device).resolve(strict=True)
+        require_selectable(node)
+        require(node.is_relative_to(self.sysfs_root / 'devices') and (node / 'dev').read_text().strip() == device,
                 'Unresolved block topology')
         partition = (node / 'partition').exists()
         disk = node.parent if partition else node
@@ -287,7 +311,7 @@ class Kernel:
             require(not list((item / 'slaves').iterdir()) if (item / 'slaves').exists() else True,
                     'Unsupported stacked storage')
             require(not list((item / 'holders').iterdir()), 'Block device has an unexpected holder')
-        virtual = node.is_relative_to('/sys/devices/virtual')
+        virtual = node.is_relative_to(self.sysfs_root / 'devices/virtual')
         if virtual:
             require(fixture is not None and node == disk and (disk / 'loop').is_dir(),
                     'Unsupported virtual/stacked storage')
@@ -300,18 +324,14 @@ class Kernel:
                     (disk / 'loop/sizelimit').read_text().strip() == '0', 'Unsupported loop mapping')
             stable = dict(disposable_backing=backing, identity=fixture['images'][backing])
         else:
-            stable = {}
-            for name in ('wwid', 'device/wwid', 'device/cid', 'device/serial', 'serial'):
-                file = disk / name
-                if file.is_file() and file.read_text().strip():
-                    stable[name] = file.read_text().strip()
-            require(bool(stable), 'Stable physical medium identity is unavailable')
+            stable = self._stable_identity(disk)
         sequence = int((disk / 'diskseq').read_text())
         require(sequence > 0, 'Kernel disk sequence is unavailable')
         uevent = dict(line.split('=', 1) for line in (node / 'uevent').read_text().splitlines())
         name = uevent['DEVNAME']
         require('/' not in name and re.fullmatch(r'[a-zA-Z0-9_-]+', name), 'Unsupported device node')
-        path = Path('/dev') / name
+        require_selectable(Path(name))
+        path = self.device_root / name
         info = os.stat(path, follow_symlinks=False)
         require(stat.S_ISBLK(info.st_mode) and f'{os.major(info.st_rdev)}:{os.minor(info.st_rdev)}' == device,
                 'Mounted block node identity changed')
@@ -336,6 +356,86 @@ class Kernel:
                     filesystem_uuid=filesystem['UUID'], filesystem=filesystem['TYPE'],
                     partuuid=filesystem.get('PART_ENTRY_UUID', ''))
 
+    def _usb_owner(self, disk):
+        """Resolve the nearest actual USB interface/device, never a hub serial."""
+        usb = self.sysfs_root / 'bus/usb'
+        for ancestor in disk.parents:
+            subsystem = ancestor / 'subsystem'
+            if not subsystem.is_symlink():
+                continue
+            if subsystem.resolve(strict=True) != usb:
+                continue
+            event = dict(line.split('=', 1) for line in
+                         (ancestor / 'uevent').read_text().splitlines())
+            require(event.get('DEVTYPE') == 'usb_interface',
+                    'Unsupported nearest USB interface topology')
+            device = ancestor.parent
+            require((device / 'subsystem').resolve(strict=True) == usb and
+                    device.is_relative_to(self.sysfs_root / 'devices'),
+                    'Unsupported USB device ancestry')
+            event = dict(line.split('=', 1) for line in
+                         (device / 'uevent').read_text().splitlines())
+            driver = (ancestor / 'driver').resolve(strict=True)
+            require(event.get('DEVTYPE') == 'usb_device' and
+                    re.fullmatch(r'[0-9]+-[0-9]+(?:\.[0-9]+)*', device.name) is not None and
+                    (ancestor / 'bInterfaceClass').read_text().strip() == '08' and
+                    driver.parent == usb / 'drivers' and driver.name in ('usb-storage', 'uas'),
+                    'Unsupported USB mass-storage ownership')
+            return device
+        require('/usb' not in str(disk.relative_to(self.sysfs_root / 'devices')),
+                'Unresolved USB storage ancestry')
+        return None
+
+    def _stable_identity(self, disk):
+        """Observe legacy attributes once; use descriptors only without legacy ID.
+
+        Fallback stable shape: usb/serial is a conservative serial alias, while
+        usb/device is [lowercase VID, lowercase PID, serial], an indivisible
+        binding. VID/PID alone are never aliases. Legacy policy shapes stay exact.
+        """
+        owner = self._usb_owner(disk)
+        if owner is not None:
+            # One USB descriptor identifies a device, not each of its LUNs.
+            # Census all whole disks, including other storage interfaces, even
+            # when each LUN supplies a distinct otherwise usable WWID.
+            disks = []
+            for link in (self.sysfs_root / 'class/block').iterdir():
+                node = link.resolve(strict=True)
+                if node.is_relative_to(owner) and not (node / 'partition').exists():
+                    disks.append(node)
+            require(disks == [disk], 'Multiple or ambiguous whole-disk USB LUNs')
+        stable = {}
+        unsupported = []
+        for name in ('wwid', 'device/wwid', 'device/cid', 'device/serial', 'serial'):
+            item = disk / name
+            try:
+                info = item.stat()
+            except FileNotFoundError:
+                continue
+            require(stat.S_ISREG(info.st_mode), 'Invalid stable medium attribute')
+            try:
+                value = item.read_text().strip()
+            except OSError as error:
+                if name in ('wwid', 'device/wwid') and error.errno in (errno.ENXIO, errno.EINVAL):
+                    unsupported.append(error)
+                    continue
+                raise
+            if value:
+                stable[name] = value
+        if not stable and owner is not None:
+            vendor = (owner / 'idVendor').read_text().strip()
+            product = (owner / 'idProduct').read_text().strip()
+            serial = (owner / 'serial').read_text().strip()
+            require(re.fullmatch(r'[0-9a-fA-F]{4}', vendor) is not None and
+                    re.fullmatch(r'[0-9a-fA-F]{4}', product) is not None and
+                    bool(serial) and not any(ord(char) < 32 or ord(char) == 127 for char in serial),
+                    'Invalid USB descriptor identity')
+            stable = {'usb/serial': serial, 'usb/device': [vendor.lower(), product.lower(), serial]}
+        if not stable and unsupported:
+            raise unsupported[0]
+        require(stable, 'Stable physical medium identity is unavailable')
+        return stable
+
     def _probe(self, node):
         result = subprocess.run(['/usr/sbin/blkid', '-p', '-o', 'export', str(node)],
                                 check=False, capture_output=True, text=True, timeout=5)
@@ -349,7 +449,8 @@ class Kernel:
         return value == '1'
 
     def _identity(self, sysfs):
-        require(sysfs.is_relative_to('/sys/devices'), 'Unresolved block topology')
+        require_selectable(sysfs)
+        require(sysfs.is_relative_to(self.sysfs_root / 'devices'), 'Unresolved block topology')
         topology_value = {}
         for topology in ('holders', 'slaves'):
             directory = sysfs / topology
@@ -361,7 +462,8 @@ class Kernel:
         uevent = dict(line.split('=', 1) for line in (sysfs / 'uevent').read_text().splitlines())
         name = uevent['DEVNAME']
         require(re.fullmatch(r'[A-Za-z0-9_-]+', name) is not None, 'Unsupported block device name')
-        path = Path('/dev') / name
+        require_selectable(Path(name))
+        path = self.device_root / name
         info = os.stat(path, follow_symlinks=False)
         require(stat.S_ISBLK(info.st_mode) and
                 f'{os.major(info.st_rdev)}:{os.minor(info.st_rdev)}' == device,
@@ -381,11 +483,63 @@ class Kernel:
                     filesystem_uuid=probe.get('UUID', ''), filesystem=probe.get('TYPE', ''),
                     partuuid=probe.get('PART_ENTRY_UUID', ''), **topology_value)
 
+    def _boot_area(self, node, disk):
+        """Observe a protected MMC hardware region, never probe it as a filesystem.
+
+        Its index/extent belongs to the owning card's identity. Kernel sequence,
+        inode and protection flags remain independent live observations.
+        """
+        match = boot_area_name(node.name)
+        card = (disk / 'device').resolve(strict=True)
+        require(match is not None and match[1] == disk.name and node.parent == disk and
+                disk.is_relative_to(self.sysfs_root / 'devices') and
+                disk.parent.name == 'block' and card in disk.parents and
+                re.fullmatch(r'mmc[0-9]+:[0-9A-Fa-f]+', card.name) is not None and
+                not (node / 'partition').exists() and not (disk / 'partition').exists() and
+                (disk / 'device/type').read_text().strip() == 'MMC',
+                'Unsupported eMMC boot-area ownership or type')
+        topology = {key: sorted(item.name for item in (node / key).iterdir())
+                    for key in ('holders', 'slaves')}
+        require(not topology['holders'] and not topology['slaves'],
+                'Protected eMMC boot area has a holder or slave')
+        uevent = dict(line.split('=', 1) for line in (node / 'uevent').read_text().splitlines())
+        require(uevent['DEVNAME'] == node.name, 'eMMC boot-area device name changed')
+        path = self.device_root / node.name
+        device = (node / 'dev').read_text().strip()
+        info = os.stat(path, follow_symlinks=False)
+        require(stat.S_ISBLK(info.st_mode) and
+                f'{os.major(info.st_rdev)}:{os.minor(info.st_rdev)}' == device,
+                'eMMC boot-area node identity changed')
+        sequence, sectors = int((node / 'diskseq').read_text()), int((node / 'size').read_text())
+        readonly, force_readonly = self._flag(node / 'ro'), self._flag(node / 'force_ro')
+        removable = self._flag(node / 'removable')
+        require(sequence > 0 and sectors > 0 and readonly and force_readonly and not removable,
+                'Protected eMMC boot-area extent or write protection changed')
+        return dict(index=int(match[2]), node=str(path), device=device, sysfs=str(node),
+                    sysfs_inode=node.stat().st_ino, disk=str(disk),
+                    disk_device=(disk / 'dev').read_text().strip(), diskseq=sequence,
+                    sectors=sectors, readonly=readonly, force_readonly=force_readonly,
+                    removable=removable, **topology)
+
     def inventory(self):
         result = []
-        links = list(Path('/sys/class/block').iterdir())
+        links = list((self.sysfs_root / 'class/block').iterdir())
+        nodes = {link.name: link.resolve(strict=True) for link in links}
+        require(all(name == node.name for name, node in nodes.items()) and
+                len(set(nodes.values())) == len(nodes), 'Ambiguous block class topology')
+        areas = {}
+        for name, node in nodes.items():
+            match = boot_area_name(name)
+            if match:
+                require(match[1] in nodes and node.parent == nodes[match[1]],
+                        'eMMC boot area lacks its owning medium')
+                areas.setdefault(match[1], []).append(self._boot_area(node, nodes[match[1]]))
+            else:
+                require_selectable(node)
         for link in sorted(links):
-            disk = link.resolve(strict=True)
+            disk = nodes[link.name]
+            if boot_area_name(disk.name):
+                continue
             if (disk / 'partition').exists() or disk.name.startswith(('loop', 'ram', 'zram')):
                 continue
             require(not list((disk / 'slaves').iterdir()) and not list((disk / 'holders').iterdir()),
@@ -401,25 +555,24 @@ class Kernel:
                 transport = 'mmc'
             else:
                 raise ValueError('Unsupported block transport: '+disk.name)
-            stable = {}
-            for name in ('wwid', 'device/wwid', 'device/cid', 'device/serial', 'serial'):
-                item = disk / name
-                if item.is_file():
-                    value = item.read_text().strip()
-                    if value:
-                        stable[name] = value
-            require(stable, 'Stable medium identity is unavailable: '+disk.name)
-            children = sorted((link.resolve() for link in links
-                               if (link.resolve().parent == disk and
-                                   (link.resolve() / 'partition').exists())),
+            stable = self._stable_identity(disk)
+            children = sorted((node for node in nodes.values()
+                               if node.parent == disk and (node / 'partition').exists()),
                               key=lambda child: int((child / 'partition').read_text()))
             require(len(children) <= 16, 'Recovery medium has too many partitions')
             whole = self._identity(disk)
-            result.append(dict(**whole, name=disk.name, stable=stable, transport=transport,
-                               partitions=[self._identity(child) for child in children]))
+            value = dict(**whole, name=disk.name, stable=stable, transport=transport,
+                         partitions=[self._identity(child) for child in children])
+            if disk.name in areas:
+                value['boot_areas'] = sorted(areas[disk.name], key=lambda area: area['index'])
+                require([area['index'] for area in value['boot_areas']] == [0, 1],
+                        'Incomplete eMMC boot-area pair')
+            result.append(value)
         require(1 <= len(result) <= 8, 'Recovery requires a bounded complete media inventory')
-        require(sum(1 + len(disk['partitions']) for disk in result) <= 64,
+        require(sum(1 for _ in inventory_nodes(result)) <= 64,
                 'Recovery media topology is too large')
+        devices = [item['device'] for item in inventory_nodes(result)]
+        require(len(set(devices)) == len(devices), 'Aliased block device inventory')
         return result
 
     def active_loops(self):
@@ -472,6 +625,9 @@ def reviewed_inventory(observed):
                                        ('partition', 'start', 'sectors', 'filesystem_uuid',
                                         'filesystem', 'partuuid')}
                                       for part in disk['partitions']]))
+        if 'boot_areas' in disk:
+            result[-1]['boot_areas'] = [{name: area[name] for name in ('index', 'sectors')}
+                                      for area in disk['boot_areas']]
     return sorted(result, key=lambda value: json.dumps(value['stable'], sort_keys=True))
 
 
@@ -496,7 +652,9 @@ def durable_identity(block):
 def same_identity(left, right):
     # Keep every value: two differently named attributes may normalize to the
     # same key, and either value can identify a protected system medium.
-    return any(left_key.removeprefix('device/') == right_key.removeprefix('device/') and
+    def alias(key):
+        return 'serial' if key == 'usb/serial' else key.removeprefix('device/')
+    return any(alias(left_key) == alias(right_key) and
                left_value == right_value
                for left_key, left_value in left.items()
                for right_key, right_value in right.items())
@@ -617,6 +775,11 @@ class MediaProvider(ExportAdapter):
         active_usr_loop = (complete_inventory['active_loops'][0]
                            if complete_inventory is not None else None)
         mounts = self.kernel.mounts()
+        if complete_inventory is not None:
+            auxiliary = {area['device'] for disk in complete_inventory['media']
+                         for area in disk.get('boot_areas', [])}
+            require(not any(m['device'] in auxiliary for m in mounts),
+                    'Protected eMMC boot area has an unexpected mount')
         require(not any(m['optional'] for m in mounts), 'Recovery mounts must be private and unambiguous')
         proc = [m for m in mounts if m['path'] == '/proc']
         require(len(proc) == 1 and proc[0]['filesystem'] == 'proc' and proc[0]['root'] == '/' and

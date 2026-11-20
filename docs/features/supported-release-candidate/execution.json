@@ -17,8 +17,8 @@
       "commissioning test helper argument",
       "two dependency fixture omissions"
     ],
-    "conservative_current_charge_seconds": 4400,
-    "conservative_current_charge_bytes": 964689920,
+    "conservative_current_charge_seconds": 5200,
+    "conservative_current_charge_bytes": 1279262720,
     "worker_followups": {
       "provenance": {
         "conservative_seconds": 30,
@@ -59,6 +59,28 @@
         "generated_bytes_upper": 33554432,
         "tests": 54,
         "passed": 54
+      },
+      "usb_and_installation_preparation": {
+        "usb_source": "51299a17fee70f3a25d6224e4e8a4ed853b40ef1",
+        "helper_source": "1cc79a453b28378b1e242d6abd133abe29caf5d3",
+        "sd_provider_source": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+        "roles": [
+          "project_researcher/default-low",
+          "project_planner/pinned-medium",
+          "project_implementer/explicit-medium",
+          "project_implementer/default-low",
+          "high_consequence_reviewer/pinned-medium"
+        ],
+        "effective_model_effort": "not independently observable",
+        "source_evidence": "recovery-media-evidence.json",
+        "failed_attempts": [
+          "Optional SCSI WWID probe returned ENXIO; descriptor discovery read-only.",
+          "Standalone restore-media test lacked runtime import path; corrected invocation.",
+          "Archive fixture corruption left a valid WAL; corrected main and WAL corruption.",
+          "First root regression invocation lacked private restore scratch; corrected environment.",
+          "Boot binding worker first edit command used unavailable python alias; corrected to python3 before edits."
+        ],
+        "prior_attempts_and_deleted_outputs_remain_charged": true
       }
     },
     "workflow_submission": {
@@ -69,7 +91,12 @@
     "continuation_attempts": [
       "99 related checks:96pass,3errors (two absent localbuilddir, one stale testfactory)",
       "Symlink scratch repair refused by builder; replaced with empty direct builddir, affected2PASS; no production guard change"
-    ]
+    ],
+    "previous_checkpoint_charge": {
+      "source_commit": "e3a869fb28d350b534be53bcc5f4abaff2022efc",
+      "seconds": 4700,
+      "bytes": 1216348160
+    }
   },
   "integration_worker": {
     "name": "/root/supported_provenance",
@@ -96,8 +123,8 @@
       "board_packages_hash_match": true
     },
     "images_built": true,
-    "conservative_current_charge_seconds": 14500,
-    "conservative_current_charge_bytes": 135291469824,
+    "conservative_current_charge_seconds": 17000,
+    "conservative_current_charge_bytes": 178241142784,
     "tools": {
       "git": "2.39.5",
       "debootstrap": "1.0.128+nmu2+deb12u2",
@@ -115,7 +142,9 @@
       "Six-partition factory-capacity composition PASS; actual partition/SPL/environment readback matches. Capacity model uses measured filesystem and explicitly assumed usage;512MiB existing usage with max bundle+256MiB copy correctly refuses.",
       "Selected-software release gate first invocation used wrong disposable Debian inventory root (normal lacks selected recovery closure); corrected to current recovery base and full default gate PASS. Historical input/failed log preserved. Current admission archive5310237 selects its existing measured reproduction proof.",
       "Native lifecycle staging first stopped before any guest: host Python lacks tarfile extraction filter. Existing GNU tar repaired only disposable invocation; original empty staging and failed log retained. Two distinct ARM64/KVM boots then passed six explicit stub-health/permission cases each.",
-      "Repaired sourceDD65: refreshed normal root,285-package recovery base/board/image, factory-capacity six-partition disk and signed revision5 payload built; all byte readbacks and default selected-software gate PASS. Trusted inspection initially generated one5024-byte Python cache after payload build: preserved cache/failure, restored exact source-root inventory, repeated only inspection with bytecode disabled PASS; no image/bundle rebuild."
+      "Repaired sourceDD65: refreshed normal root,285-package recovery base/board/image, factory-capacity six-partition disk and signed revision5 payload built; all byte readbacks and default selected-software gate PASS. Trusted inspection initially generated one5024-byte Python cache after payload build: preserved cache/failure, restored exact source-root inventory, repeated only inspection with bytecode disabled PASS; no image/bundle rebuild.",
+      "Actual current installation helper CLI passed on native ARM using real731 GPT normal-A image, verified read-only kernel mount and synthetic legacyB data,73.933s. Both manifests are now explicitly bound by supported SD script; source-only19 tests pass. No physical operation.",
+      "Current-source normal/recovery/OTA refresh passed all readbacks/default selected-software gate. Export SD build passed using exact identical-current-usr cache; first payload wrapper failed because DTB is compressed. Corrected only delivery wrapper/test with explicit ancestor/shipping-source/upstream/integration proof; native retry and finalSD readbacks PASS with original producer bytes unchanged. SD and normal artifacts hash-verified on Beelink; no physical device write."
     ],
     "native_boundaries": "native-evidence.json",
     "initial_generated_bytes_ceiling": 68719476736,
@@ -459,5 +488,18 @@
     "implementation_suballowance_seconds": 1500,
     "implementation_suballowance_bytes": 201326592,
     "review": "Self-validate offline; targeted independent assessment before relying on derived data for destructive installation; exact physical action separately assessed/authorised."
+  },
+  "current_frozen_production_source": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+  "current_native_refresh": {
+    "source_revision": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+    "state": "constructed/readback/source-notice gates passed; physical authority/acceptance pending",
+    "private_receipts": "/run/a733-guests/sv08-release-20261117/logs/refresh-c69618e-pipeline.json",
+    "scope": "One cache-reusing current-source normal/internal recovery/revision5 OTA/export SD set; preserve verified731 compressed prototype and receipts; never repeat OS bootstrap or retire caches.",
+    "native_subcheck": "installation-native0700",
+    "physical_operation": false,
+    "production_source_revision": "c69618ea9ac060b8714d68c1751fd36bb653988c",
+    "delivery_source_revision": "766b0257c55be3675493e7cc38bb05bd2b73af66",
+    "evidence": "sd-delivery-evidence.json",
+    "no_production_rebuild_for_delivery_only_fix": true
   }
 }

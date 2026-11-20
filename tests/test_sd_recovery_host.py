@@ -80,6 +80,20 @@ class SDHost(unittest.TestCase):
         service=(M.CONFIG/'sd-host-ssh.service').read_text()
         self.assertNotIn('network-online.target',service)
         self.assertIn('Requires=sd-host-keys.service',service)
+    def test_boot_provider_binding(self):
+        payloads=dict.fromkeys(('Image','initrd.img','sv08.dtb'),'b'*64)
+        legacy=M.boot_script(payloads,'a'*64)
+        self.assertEqual(legacy.splitlines()[0],
+                         f'setenv bootargs "root=PARTUUID={M.PARTUUID} ro panic=0 console=tty0 console=ttyS0,115200 sv08.envelope={"a"*64}"')
+        modern=M.boot_script(payloads,'a'*64,'c'*64)
+        self.assertEqual(modern,legacy.replace('sv08.envelope='+ 'a'*64,
+                                               'sv08.envelope='+ 'a'*64+' sv08.recovery='+ 'c'*64))
+        self.assertEqual(modern.count('sv08.recovery='),1)
+        self.assertEqual(M.boot_script(payloads,'a'*64,None),legacy)
+        for value in ('',True,42,'A'*64,'g'*64,'a'*63,'a'*65):
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError,'provider SHA256'):
+                M.boot_script(payloads,'a'*64,value)
+
     def test_sd_boot_only(self):
         script=M.boot_script(dict.fromkeys(('Image','initrd.img','sv08.dtb'),'b'*64),'a'*64)
         self.assertEqual(script.count('load mmc 0:1'),3)
