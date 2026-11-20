@@ -5,6 +5,27 @@ Use [one configured-printer commissioning session](test-sv08-01-commissioning-se
 not separate repeated sensor/firmware/print appointments. No physical operation
 is authorised by this queue or the delivery-overhaul PR.
 
+## Current checkpoint — 2026-11-20
+
+This supersedes older preparation/dispatch statements below. The owner confirmed
+that the newly prepared card is fitted, the old tested rescue card is set aside,
+and hands are clear. The coordinator operates PSU power through Beelink's
+`sv08-power`, USB host power through the identified HW-667 relay, and screen/input
+through GLKVM. Do not ask the owner to unplug power or report the screen.
+
+The new independent SD booted its verified sealed userspace. Its storage preparer
+refused a topology mismatch **before mounting printer data or the backup USB**.
+The actual differing field is not yet known; no policy bypass or export occurred.
+GLKVM shows the recovery page. VT2 starts, but cannot execute missing `/bin/login`;
+the convenience account therefore has no working login through that path.
+
+A separately assessed single GLKVM Power-key request produced clean unmount and
+`Power down`. USB power was then held off and observed absent; PSU remains OFF.
+No media move is requested yet. Prepare a reviewed diagnostic SD with unchanged
+sealed recovery and only a temporary debug-console boot argument, then request
+the necessary card transfer. Preserve the historical stop on UART-input variants;
+no new serial-input attempt was made. See the [session continuation](test-sv08-01-commissioning-session.md#first-sd-boot-and-refusal-2026-11-20).
+
 | Existing H scope | Remaining action | Before requesting attendance |
 | --- | --- | --- |
 | H01 | Owner confirmed the saved fitted parts on 2026-11-17; resolve only remaining essential wiring/MCU/sensor associations, without requiring a factory bed | Reuse the declaration and existing evidence; do not repeat the complete part inventory |

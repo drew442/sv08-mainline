@@ -470,3 +470,77 @@ Actual complete media inventory, including expected SD-removable status, must ma
 the immutable policy. Preserve and independently verify the completed original
 archive before target-bound preparation or any later installation. The allocation
 and authority here do not claim commissioning, printing or release qualification.
+
+
+## First SD boot and refusal, 2026-11-20
+
+This supersedes the preceding request for manual power/screen handling. The owner
+confirmed “New card fitted; hands clear”, distinguishing it from the old tested
+rescue card. Coordinator controls are the existing Beelink `sv08-power` utility
+(as its configured user), identified NC-wired HW-667 USB relay, and GLKVM. The
+PSU stayed OFF throughout; only host USB power was restored once at 05:19:50 UTC.
+The relay's off/restore operation received a specific independent assessment.
+
+The card image `b1d992da6b77d1c20abff03017e4ba28803e2fa53c595da08029688a2afe83e3`
+booted kernel `6.18.51-sv08-candidate1`. Its expected envelope/provider bindings
+verified and the serial marker was `SV08_RECOVERY_VERIFIED: independent envelope
+and compressed userspace`. GLKVM showed the actual recovery page after a modifier
+key woke its blanked display. These observations establish this SD boot, not
+successful export, normal installation or printing qualification.
+
+`sv08-recovery-prepare.service` stopped at its full reviewed-inventory comparison:
+“Observed media topology differs from immutable reviewed policy”. No source or
+USB destination mount had occurred. The structured boot report shows only the SD
+root and compressed `/usr` as persistent mounts, both read-only; other mounts are
+kernel APIs/tmpfs. The particular mismatch is **unobserved**. The inferred SD
+removable flag is a hypothesis, not a measured correction. Do not change the
+policy or mount media manually to bypass admission.
+
+GLKVM VT2 reached getty, but serial logs establish `can't exec /bin/login: No such
+file or directory`. The documented convenience account is therefore unusable
+through this path. A source read of the exact cached assembly confirms that the
+pinned BusyBox has its login applet; a complete supported console repair and
+actual login check remain required. No credential file was inspected.
+
+A fresh independent assessment approved one guarded HID Power-key request. Actual
+logind accepted it; at 05:37:00 UTC serial evidence confirmed all filesystems unmounted,
+swaps deactivated and `reboot: Power down`. The 10,023-byte confirmation prefix has
+SHA256 `db9e408cb8186ecc60d065fd8e265b48b969e29fdc69ba9c4b86b9e70096716a`.
+Only then was USB power held off. Its immediate zero-delay enumeration assertion
+failed; four later samples over 1.5 seconds observed bridge absent and relay present.
+No off retry, automatic restoration or additional boot occurred. PSU remained OFF.
+
+GLKVM capture used its installed producer/settings in a temporary process, with
+cleanup on exit, without changing configuration/authentication or installing tools.
+Retain failed legacy-socket, unsupported-JPEG, absent-producer, unavailable-SFTP,
+missing-hook and stale-socket evidence. UART capture units `sv08-export-capture-
+20261120.service` and `…20261120b.service` each reached their 900-second cap; the
+later 300-second `…20261120c.service` is stopped with MainPID 0. No capture process
+is presumed active after that point.
+
+Private evidence is under `~/.sv08-release-20261117/first-export-20261120/`, indexed
+by `first-boot-result-private.json`; raw stable device identifiers stay private.
+The Beelink copies remain in `/var/tmp/sv08-release-20261119/first-export-20261120*`.
+No actual user-data archive exists yet. The tested rescue, original eMMC, normal
+image source and preceding evidence remain preserved.
+
+Next prepare a diagnostic-only SD using the unchanged sealed recovery root,
+kernel/initrd/DTB and media policy, appending only `systemd.debug_shell` for a
+local temporary console. Rebind the SD-only loader to that exact script and
+verify all bytes before requesting a card move/write. This avoids repeating the
+historically stopped UART-input variants; proposed serial-controller preparation
+was stopped after source reads, without a controller or any UART transmission.
+The diagnostic boot will not count as normal production acceptance. Collect the
+actual normalized topology before deciding any policy/source correction.
+
+The diagnostic continuation carries every previous attempt and charge. Native
+ceiling increases from 19,800 seconds/172 GiB by 1,800 seconds/2.5 GiB to
+**21,600 process-seconds/174.5 GiB**; the 32 GiB workspace remains included and deleting
+files earns no credit. Conservative prior charge is 19,400 seconds/167.016 GiB.
+Scope is one card-based diagnostic boot/collection, reused payloads and SD-only
+loader derivation; no normal/internal-recovery/OTA rebuild, installation or output
+activation is included. The separate source ceiling remains 7,200 seconds/1.25 GiB,
+with its earlier 5,200 seconds/1,220 MiB carried forward. The named implementer was
+requested at medium effort for the disposable recipe; effective runtime effort
+has not been independently observed. Source-only preparation, independent action
+assessment, actual SD boot and still-open release acceptance remain distinct.
