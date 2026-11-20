@@ -592,3 +592,39 @@ continuation of 1,800 seconds/4 GiB over the earlier 19,800 seconds/172 GiB. Obs
 local logical output is 2,217,648,108 bytes plus the retired 134,217,728-byte FAT;
 staging adds 738,197,504 bytes and the planned physical prefix adds the same.
 Previous charges/attempts remain carried. The source allowance is unchanged.
+
+
+## Diagnostic SD written, 2026-11-20
+
+The owner confirmed the new card in Beelink's reader. At 06:55:50 UTC the fresh
+precheck matched its exact CID/capacity, expected two-partition layout and
+filesystem IDs, with no mounts, swap, holders or open users. Root-owned staged
+image and writer hashes matched the reviewed bindings. PSU OFF and USB hold-off
+were independently observed through the coordinator's existing controls.
+
+One prefix write completed at 06:57:41 UTC. All **738,197,504 bytes** passed full
+direct readback against diagnostic image SHA256
+`b50750e4a0cf6cc22684430c07082cd9bf97d4dce1bfd906979bc8111b21e819`.
+No tail write, resize, GPT repair or retry occurred. The 06:58:08 UTC postcheck
+matched capacity, partition extents/IDs and CID-file hash
+`599fd94c2cf7c3604aad8f72f28cbc9b48edf0e88016be0658a8b61f603a1ce3`,
+and confirmed both partitions unmounted with no holders/slaves/open users. The
+backup USB stayed in the printer; no assertion about a Beelink USB device was
+substituted. Original rescue and printer eMMC remain preserved.
+
+At 06:58:33 UTC PSU was still OFF, printer bridge absent and relay present.
+The owner is now asked to return only this new SD to the host slot, keeping
+Beelink/relay powered, and confirm fitted/hands clear. No diagnostic boot has
+occurred. Start the bounded receive-only capture before the one reviewed USB
+restoration; verify kernel/envelope/provider and diagnostic argument before
+collecting the actual media topology through the supplied local command.
+
+Private receipts/logs remain in the phase directory, indexed by
+`diagnostic-write-phase.json`; their Beelink originals are
+`diagnostic-card-write-private.json` and `diagnostic-card-postwrite.json` under
+`/var/tmp/sv08-release-20261119/`. Source/script hashes, actual prefix/readback,
+postcheck and pending handoff are bound separately from future boot acceptance.
+Conservative cumulative native charge is now 20,150 process-seconds/171 GiB
+against the unchanged 21,600 seconds/176 GiB ceiling, including prior attempts,
+transient FAT, staged copy and physical prefix, without deletion credits. This
+passes only the SD-write step; export, installation and printing remain open.

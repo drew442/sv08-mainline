@@ -21,14 +21,15 @@ the convenience account therefore has no working login through that path.
 
 A separately assessed single GLKVM Power-key request produced clean unmount and
 `Power down`. USB power was then held off and observed absent; PSU remains OFF.
-The diagnostic SD image is built, read back and staged on Beelink. Its independent
-action assessment passed with conditions: fresh exact-card/layout/inactivity and
-hash checks, full direct write readback, then one attended diagnostic boot.
-Current owner action is to move **only the newly prepared SD** from the printer's
-host slot to Beelink's SD reader; keep the old tested rescue aside and the backup
-USB in the printer. PSU and USB power were freshly observed OFF/held off before
-this request. Keep Beelink powered. Preserve the historical stop on UART-input
-variants; no new serial-input attempt was made. See the [session continuation](test-sv08-01-commissioning-session.md#diagnostic-sd-ready-2026-11-20).
+The diagnostic SD was written once to the freshly identified new card on Beelink;
+full direct readback matched, and the postcheck confirms unmounted/no open users.
+Its independent action assessment passed with conditions. Current owner action is
+to return **only the new SD** to the printer's host slot and explicitly confirm
+fitted/hands clear. Keep the old tested rescue aside, backup USB in the printer
+and Beelink powered. PSU OFF and USB hold-off were freshly observed; no new boot
+has occurred. Receive-only capture must be ready before the reviewed one-time
+restoration. Preserve the historical stop on UART-input variants; no new serial
+input was sent. See the [write and handoff record](test-sv08-01-commissioning-session.md#diagnostic-sd-written-2026-11-20).
 
 | Existing H scope | Remaining action | Before requesting attendance |
 | --- | --- | --- |
