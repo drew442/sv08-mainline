@@ -269,12 +269,32 @@ def mask_recovery_units(units):
 
 
 
+def configure_recovery_login(root):
+    """Expose the pinned BusyBox login applet through the merged-/usr path."""
+    if not (root/'bin').is_symlink() or os.readlink(root/'bin') != 'usr/bin':
+        raise ValueError('Recovery login requires the selected merged-/usr layout')
+    login = root/'usr/bin/login'
+    if login.is_symlink():
+        if os.readlink(login) != 'busybox':
+            raise ValueError('Unexpected recovery login alias')
+    elif login.exists():
+        if not login.is_file() or not login.stat().st_mode & 0o111:
+            raise ValueError('Unexpected recovery login identity')
+        return  # Preserve an existing executable supplied by upstream.
+    busybox = root/'usr/bin/busybox'
+    if busybox.is_symlink() or not busybox.is_file() or not busybox.stat().st_mode & 0o111:
+        raise ValueError('Recovery login requires the pinned BusyBox executable')
+    if not login.is_symlink():
+        login.symlink_to('busybox')
+
+
 def configure_recovery_password(root):
     """Owner-selected recovery convenience account; normal-host policy unchanged."""
     policy = json.loads((REPO/'configs/host-os/recovery-password.json').read_text())
     if policy['username']!='recovery' or policy['password']!='recovery' or not policy['password_hash'].startswith('$6$'):
         raise ValueError('Unexpected recovery password policy')
-    for name,line in [('passwd','recovery:x:1000:1000:SV08 recovery:/run/recovery-home:/bin/bash'),
+    configure_recovery_login(root)
+    for name,line in [('passwd','recovery:x:1000:1000:SV08 recovery:/run/recovery-user:/bin/bash'),
                       ('group','recovery:x:1000:'),
                       ('shadow','recovery:'+policy['password_hash']+':20000:0:99999:7:::')]:
         path = root/'etc'/name
@@ -283,6 +303,10 @@ def configure_recovery_password(root):
         if name!='shadow' and any(row.split(':')[2]=='1000' for row in rows):
             raise ValueError('Recovery account identity is already occupied')
         write(path,'\n'.join(rows+[line])+'\n',0o640 if name=='shadow' else 0o644)
+    # systemd-tmpfiles-setup creates this on the volatile /run before logins.
+    # Keep the public console account separate from the root GUI's private HOME.
+    write(root/'usr/lib/tmpfiles.d/sv08-recovery-user.conf',
+          'd /run/recovery-user 0700 1000 1000 -\n')
 
 
 def stage_recovery_units(units):

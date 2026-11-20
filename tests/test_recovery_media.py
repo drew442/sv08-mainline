@@ -407,6 +407,7 @@ class RecoveryMediaTests(unittest.TestCase):
 
     def test_only_exact_selected_kernel_api_mounts_are_admitted(self):
         text = '''
+33 27 0:6 / /sys/fs/selinux rw,nosuid,noexec,relatime - selinuxfs selinuxfs rw
 34 27 0:7 / /sys/kernel/security rw,nosuid,nodev,noexec,relatime - securityfs securityfs rw
 37 27 0:31 / /sys/fs/pstore rw,nosuid,nodev,noexec,relatime - pstore pstore rw
 38 27 0:32 / /sys/fs/bpf rw,nosuid,nodev,noexec,relatime - bpf bpf rw,mode=700
@@ -436,6 +437,16 @@ class RecoveryMediaTests(unittest.TestCase):
             mount_table(line+line.replace('41 ', '42 ', 1))
         with self.assertRaisesRegex(ValueError, 'non-block'):
             Kernel().block({'device':'0:35'})
+
+    def test_measured_selinux_mount_rejects_extra_options(self):
+        mount = dict(path='/sys/fs/selinux', root='/', filesystem='selinuxfs',
+                     source='selinuxfs', options=['noexec', 'nosuid', 'relatime', 'rw'],
+                     super_options=['rw'], optional=[])
+        self.assertTrue(admitted_system_mount(mount, set()))
+        for field, value in (('options', ['nodev', *mount['options']]),
+                             ('super_options', ['rw', 'unreviewed'])):
+            with self.subTest(field=field):
+                self.assertFalse(admitted_system_mount({**mount, field:value}, set()))
 
     @staticmethod
     def proc_fixture(root, namespace='mnt:[1]', pid_namespace='pid:[1]'):

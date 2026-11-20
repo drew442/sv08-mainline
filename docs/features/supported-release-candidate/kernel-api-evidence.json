@@ -1,0 +1,69 @@
+{
+  "format_version": 1,
+  "base_source_revision": "0c8aad2b21b26a3d52cfdcef99b0a02e48b3e3ed",
+  "stage": "source-validated; new recovery build and actual login pending",
+  "defects": [
+    "Recorded H616 /sys/fs/selinux selinuxfs tuple rejected by strict API census",
+    "Actual VT2 getty cannot exec missing /bin/login; recoveryaccount HOME was rootGUIprivate"
+  ],
+  "changes": [
+    "Finite exact SELinux API tuple admitted; changed path/root/fs/source/options still rejected",
+    "Pinned BusyBox login applet alias, existing upstream executables preserved and badaliases rejected",
+    "Distinct volatile UID/GID1000 home via upstream tmpfiles; GUIroot HOME and init unchanged"
+  ],
+  "source_sha256": {
+    "runtime/sv08_recovery_media.py": "c71600dc68832f29cac4224b039386c31b9a45cc5951a58bb5bf5a3be75e7a3c",
+    "scripts/recovery_image.py": "9fc9f3825893d1249d7a7d84496225a0d7692a0dee0d0df9a6a7a1df45b075de",
+    "tests/test_recovery_media.py": "0988e76303d64d39cca62732264d8984daeeeb287a4f9c1c6e56888583b74cd6",
+    "tests/test_recovery_image.py": "860fb29ee9811b139ea4317114c13da529e095db856c637a867b4df5b9ea2c9d"
+  },
+  "checks": [
+    {
+      "command": "PYTHONPATH=runtime:tests python3 -m unittest test_recovery_image test_recovery_media",
+      "passed": 74,
+      "exit_code": 0,
+      "evidence": "coordinator-assigned worker self-validation"
+    },
+    {
+      "command": "PYTHONPATH=runtime:tests python3 -m unittest test_recovery_prepare test_recovery_restore_prepare test_recovery_restore_media test_recovery_activation test_supported_candidate test_recovery_owner -v",
+      "passed": 45,
+      "errors": 16,
+      "exit_code": 1,
+      "reason": "Activation fixture used /tmp with forbidden writable ancestry",
+      "log_sha256": "c60ddd96156132d19ce368179fd0dd8cc97517cb7d21a31fcbc09ed2208a4cc0"
+    },
+    {
+      "command": "TMPDIR=<private assigned fixture> PYTHONPATH=runtime:tests python3 -m unittest test_recovery_activation -v",
+      "passed": 16,
+      "exit_code": 0,
+      "log_sha256": "e97083273a4d495af394e8b8ce72ec04ebbc45148d09ee5da9f1241a68784fa1"
+    },
+    {
+      "command": "systemd-tmpfiles --root=<disposable> --create sv08-recovery-user.conf",
+      "exit_code": 0,
+      "result": "UID1000 GID1000 mode0700; actual writeprobe passes on developmenthost, not printer"
+    }
+  ],
+  "unique_relevant_checks_passed": 135,
+  "attempts_preserved": true,
+  "limits": [
+    "No rebuilt image or actual recoverylogin yet",
+    "No normal/internalrecovery/OTA source relabel; corrected standalone recovery component needs new source identity",
+    "Quarantined profile-only image must not be staged or booted",
+    "No new hardware/printing/release qualification or protection bypass"
+  ],
+  "agents": [
+    {
+      "role": "project_implementer",
+      "requested_effort": "medium",
+      "effective": "not independently observable",
+      "purpose": "kernel API/login source repair"
+    },
+    {
+      "role": "project_researcher",
+      "requested_effort": "medium",
+      "effective": "not independently observable",
+      "purpose": "component source/rebuild guard trace"
+    }
+  ]
+}
