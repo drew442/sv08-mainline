@@ -421,3 +421,52 @@ inventory must match the immutable export policy; any mismatch stops admission.
 After successful export, independently preserve/verify the original archive before
 conversion or installation. No physical printer/service, firmware, heater or
 motion changes have been made.
+
+
+## First recovery session, 2026-11-20
+
+Owner confirms: “nothing is printing, the heaters are off, you may proceed as needed”
+in response to the requested orderly shutdown/first recovery boot/export phase.
+The previously tested rescue SD remains available. These facts and the completed
+new-card write satisfy the corresponding conditions of the existing exact-operation
+assessment; image, policy, loader, protected media and stop conditions are unchanged.
+
+Fresh preflight observed original stable immutableB/`0.1.0-physical-update.2`,
+release-revision2, no trial/pending image transaction, terminal historical update
+phasefailed, automatic updatesdisabled, no package/firmware processes and inactive
+Klipper. The first disposable collector refused all systemd jobs, including the
+normal web-auth/Mainsail/graphical startup chain. The diagnosed correction permits
+only those observed non-installation start jobs; all update/package/firmware and
+unknown-job protections remain. No product code or service configuration changed.
+
+An ordinary `systemctl poweroff` was issued once at04:58:15UTC. SSH closed before
+the requester could acknowledge completion (exit255); positive independent serial
+observations confirm all filesystems unmounted, all swaps deactivated, final sync
+and `reboot: Power down`. This is not an inferred halt from SSH loss.
+Immutable console prefix18,086bytes has SHA256
+`c203a7d9ad20258d7d090f418bf16d3ebf710e0366b301d6929553d4d55b0d7a`.
+Private shutdown confirmation, request transcript and collector-attempt diagnosis
+are retained under `.sv08-release-20261117/first-export-20261120/`. No raw UART
+transcript or private data is published.
+
+The existing receive-only collector remains source SHA256
+`5c4e6cd4f1e8039949c83654c1265ffad51c269230268ca445e4491d7bf2b0ed`:1152008N1,
+no transmit and noHUPCL. Beelink transient unit
+`sv08-export-capture-20261120.service`, mainPID107941, started04:56:30UTC;
+RuntimeMaxSec900 and32MiB per-file limit bound its two log files to64MiB. This
+is a live handle, not evidence of a new boot. Owner was given power-isolated
+new-SD/USB transfer instructions, using the host slot used by the rescue SD;
+stand the printer upright, keep Ethernet/PSUoff and reconnect USB serial only
+after media is fitted. New boot/GUI/media admission/export are still unproven.
+
+Before this phase, the coordinator allocated a bounded1,800seconds/4GiB continuation
+for one capped capture, actual500MiB-class export and independently verified copies.
+Cumulative native ceiling is19,800seconds/172GiB; previous17,150seconds/167GiB,
+all attempts and logical32GiB workspace remain carried without deletion credit.
+Source allowance is unchanged. Reuse current artifacts; no new OS image.
+
+Stop on unexpected outputs, repeated boot, policy/auth/inventory/mount errors.
+Actual complete media inventory, including expected SD-removable status, must match
+the immutable policy. Preserve and independently verify the completed original
+archive before target-bound preparation or any later installation. The allocation
+and authority here do not claim commissioning, printing or release qualification.

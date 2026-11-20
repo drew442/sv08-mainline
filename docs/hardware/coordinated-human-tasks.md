@@ -17,29 +17,30 @@ H12 attended SD reimage, H13 physical automatic update/fallback and PR17 native
 software recovery have completed evidence. Reuse applicable results; final-artifact
 or physical boundaries still need their own acceptance. Do not repeat destructive
 recovery/fallback merely to start printing. No physical task is marked passed here.
-Current physical state, 2026-11-19T08:13Z: the owner authorised the exact new-SD
-write and confirmed the tested rescue SD is available. The reviewed704MiB export
-image was written once to the distinct blank SC16G card in Beelink. Full direct
-prefix readback matches; expected FAT/ext4 geometry/UUIDs and no mounts, holders
-or open users are confirmed. USB FAT remains unmounted and unchanged. No printer
-shutdown, boot, service/output, MCU or eMMC operation has occurred.
+Current attended session, 2026-11-20: the owner confirmed nothing is printing,
+heaters are off and authorised proceeding with the requested shutdown/recovery
+backup phase. Fresh passive checks found stable immutable B/revision2, no pending
+image transaction, terminal failed historical update, disabled automatic updates,
+no package/firmware process and inactive Klipper. Normal authentication startup
+jobs were pending; these were cancelled by the ordinary shutdown path.
 
-[Write/readback receipts and next boundary](test-sv08-01-commissioning-session.md#sd-card-written-2026-11-19)
-supersede earlier unwritten-media statements. Validated source evidence/hashes and
-PR39 remain at their stated source checkpoint; no historical hashes are refreshed.
-Native charges now17,150seconds/167GiB within18,000seconds/168GiB, carrying all
-prior attempts and the one physical write. Package/app/kernel/license caches and
-the independently tested rescue SD are preserved.
+Orderly shutdown is positively observed: console reports all filesystems unmounted,
+all swaps deactivated and `reboot: Power down`. SSH closed during shutdown; it is
+not the sole halt evidence. The reviewed receive-only collector is active under
+`sv08-export-capture-20261120.service` on Beelink, capped900seconds/64MiB total
+file allowance. Owner has the staged instructions: remove PSU/USB back-power,
+move only prepared new SD and USB, stand upright, retain Ethernet/PSUoff and then
+reconnect USB serial for one initial recovery boot. Keep tested rescue SD unchanged.
+Boot, actual inventory admission and export remain unproven; do not select other
+recovery operations or repeat a failed boot. No eMMC install or output action.
 
-Next dependency is the attended first recovery boot/export. Reconfirm current
-printer idle/outputs/source state and obtain authority for orderly shutdown before
-PSU/USB back-power removal and physical card/USB moves. Use the exact written image
-and reviewed immutable policy; actual complete inventory must match or admission
-stops. No topology repair/bypass, repeated boot, eMMC installation, heater/motion
-or MCU action is authorised by the SD-write answer. Preserve and independently
-verify the completed original archive before later conversion or installation.
-Owner instructions must be a concrete staged sequence; do not ask them to
-improvise Linux commands. No full physical H phase is marked passed.
+[Current shutdown/session evidence](test-sv08-01-commissioning-session.md#first-recovery-session-2026-11-20)
+supersedes prior pending-authority/power-state notes. Earlier SD write/direct
+readback remains valid; USB was unmounted and unchanged before the move.
+A bounded continuation adds1,800process-seconds/4GiB for receive-only capture,
+one actual export and independently verified preserved copies: cumulative ceiling
+19,800seconds/172GiB, carrying previous17,150seconds/167GiB and logical32GiB
+workspace/all attempts without deletion credit. No new OS image is planned.
 
 **Historical731 checkpoint below:** its then-current missing-USB statements and
 artifact bindings retain their original scope; the continuation above supersedes
