@@ -3,6 +3,8 @@ import importlib.util
 import json
 import hashlib
 import io
+import os
+import subprocess
 from contextlib import contextmanager
 from pathlib import Path
 import tempfile
@@ -20,6 +22,84 @@ SPEC=importlib.util.spec_from_file_location('recovery_image',Path(__file__).reso
 m=importlib.util.module_from_spec(SPEC);SPEC.loader.exec_module(m)
 
 class RecoveryImageTests(unittest.TestCase):
+    def login_fixture(self, root):
+        (root/'usr/bin').mkdir(parents=True)
+        (root/'bin').symlink_to('usr/bin')
+        busybox=root/'usr/bin/busybox'
+        busybox.write_text('pinned executable fixture')
+        busybox.chmod(0o755)
+        return root/'usr/bin/login'
+
+    def test_recovery_login_applet_serves_exact_getty_path_and_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);login=self.login_fixture(root)
+            m.configure_recovery_login(root)
+            self.assertEqual(os.readlink(login),'busybox')
+            self.assertEqual((root/'bin/login').resolve(),root/'usr/bin/busybox')
+            self.assertEqual((root/'bin/login').stat().st_mode & 0o7777,0o755)
+            m.configure_recovery_login(root)
+            login.unlink();login.write_text('upstream login');login.chmod(0o755)
+            m.configure_recovery_login(root)
+            self.assertFalse(login.is_symlink())
+            self.assertEqual(login.read_text(),'upstream login')
+
+    def test_recovery_login_refuses_bad_aliases_or_nonexecutables(self):
+        for kind in ('alias','dangling','directory','nonexecutable','missing-busybox','bad-layout'):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
+                root=Path(directory);login=self.login_fixture(root)
+                if kind=='alias':login.symlink_to('/usr/bin/login')
+                elif kind=='dangling':login.symlink_to('missing')
+                elif kind=='directory':login.mkdir()
+                elif kind=='nonexecutable':login.write_text('not executable')
+                elif kind=='missing-busybox':(root/'usr/bin/busybox').unlink()
+                else:
+                    (root/'bin').unlink();(root/'bin').mkdir()
+                with self.assertRaises(ValueError):m.configure_recovery_login(root)
+                self.assertFalse(login.is_symlink() and os.readlink(login)=='busybox')
+
+    def test_recovery_account_uses_separate_volatile_home(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);self.login_fixture(root)
+            repo=root/'source';policy=repo/'configs/host-os/recovery-password.json'
+            policy.parent.mkdir(parents=True)
+            # Synthetic policy only: never inspect the source password hash.
+            policy.write_text(json.dumps(dict(username='recovery',password='recovery',password_hash='$6$fixture')))
+            (root/'etc').mkdir()
+            original='root:x:0:0:root:/root:/bin/bash\n'
+            (root/'etc/passwd').write_text(original)
+            with patch.object(m,'REPO',repo):m.configure_recovery_password(root)
+            self.assertEqual((root/'etc/passwd').read_text(),original+
+                'recovery:x:1000:1000:SV08 recovery:/run/recovery-user:/bin/bash\n')
+
+    def test_console_home_uses_upstream_tmpfiles_and_preserves_gui_home(self):
+        source=(m.REPO/'configs/host-os/recovery-init').read_text()
+        self.assertIn('/bin/busybox chmod 0700 /run/recovery-home',source)
+        self.assertNotIn('/run/recovery-user',source)
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);self.login_fixture(root)
+            repo=root/'source';policy=repo/'configs/host-os/recovery-password.json'
+            policy.parent.mkdir(parents=True)
+            policy.write_text(json.dumps(dict(username='recovery',password='recovery',password_hash='$6$fixture')))
+            (root/'etc').mkdir()
+            with patch.object(m,'REPO',repo):m.configure_recovery_password(root)
+            config=root/'usr/lib/tmpfiles.d/sv08-recovery-user.conf'
+            self.assertEqual(config.read_text(),'d /run/recovery-user 0700 1000 1000 -\n')
+            if shutil.which('systemd-tmpfiles') and os.geteuid() in (0,1000) and os.getegid() in (0,1000):
+                # Run only our staged rule against a disposable root. Numeric
+                # identities avoid consulting the host's account database.
+                subprocess.run(['systemd-tmpfiles','--root='+str(root),'--create',
+                    'sv08-recovery-user.conf'],check=True)
+                home=root/'run/recovery-user';info=home.stat()
+                self.assertEqual((info.st_uid,info.st_gid,info.st_mode & 0o777),(1000,1000,0o700))
+                if os.geteuid()==1000:
+                    (home/'write-probe').write_text('volatile account data')
+                self.assertFalse((root/'run/recovery-home').exists())
+            units=root/'etc/systemd/system';units.mkdir(parents=True)
+            m.stage_recovery_units(units)
+            display=(units/'sv08-recovery-display.service.d/independent.conf').read_text()
+            self.assertIn('Environment=HOME=/run/recovery-home\n',display)
+            self.assertNotIn('/run/recovery-user',display)
+
     @contextmanager
     def build_fixture(self):
         # Redirect only fixture storage; production path checks remain enabled.

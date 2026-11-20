@@ -32,6 +32,8 @@ PROC_DISAPPEARED = (FileNotFoundError, ProcessLookupError)
 # this selected-userspace composition finite: a filesystem type alone never
 # authorizes another path, and generic /sys or /dev ancestry is insufficient.
 KERNEL_API_MOUNTS = {
+    '/sys/fs/selinux': ('selinuxfs', 'selinuxfs',
+        ('noexec', 'nosuid', 'relatime', 'rw'), ('rw',)),
     '/sys/kernel/security': ('securityfs', 'securityfs',
         ('nodev', 'noexec', 'nosuid', 'relatime', 'rw'), ('rw',)),
     '/sys/fs/pstore': ('pstore', 'pstore',
