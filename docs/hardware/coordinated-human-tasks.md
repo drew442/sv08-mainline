@@ -21,15 +21,18 @@ the convenience account therefore has no working login through that path.
 
 A separately assessed single GLKVM Power-key request produced clean unmount and
 `Power down`. USB power was then held off and observed absent; PSU remains OFF.
-The diagnostic SD was written once to the freshly identified new card on Beelink;
-full direct readback matched, and the postcheck confirms unmounted/no open users.
-Its independent action assessment passed with conditions. Current owner action is
-to return **only the new SD** to the printer's host slot and explicitly confirm
-fitted/hands clear. Keep the old tested rescue aside, backup USB in the printer
-and Beelink powered. PSU OFF and USB hold-off were freshly observed; no new boot
-has occurred. Receive-only capture must be ready before the reviewed one-time
-restoration. Preserve the historical stop on UART-input variants; no new serial
-input was sent. See the [write and handoff record](test-sv08-01-commissioning-session.md#diagnostic-sd-written-2026-11-20).
+The fitted diagnostic SD booted and its attended console collected the actual
+inventory. The mismatch is proven: SD removable false and final CID byte `e1`
+versus the policy's true/reader `01`; all other media fields match. Exact measured
+values now replace all SD role references, without relaxing the identity guard.
+Only read-only SD root/userspace were mounted; SD/eMMC/USB write counters were zero.
+
+The diagnostic host was cleanly shut down and USB power held off again. No media
+move is requested yet. A corrected export SD is being prepared from the identical
+cached userspace; normal/internal-recovery/OTA images stay unchanged. Finish byte
+checks and changed-policy action assessment before requesting another card move.
+Keep Beelink powered, tested rescue aside and backup USB in the printer. See the
+[measured continuation](test-sv08-01-commissioning-session.md#measured-policy-continuation-2026-11-20).
 
 | Existing H scope | Remaining action | Before requesting attendance |
 | --- | --- | --- |

@@ -628,3 +628,77 @@ Conservative cumulative native charge is now 20,150 process-seconds/171 GiB
 against the unchanged 21,600 seconds/176 GiB ceiling, including prior attempts,
 transient FAT, staged copy and physical prefix, without deletion credits. This
 passes only the SD-write step; export, installation and printing remain open.
+
+
+## Measured-policy continuation, 2026-11-20
+
+The diagnostic measured two SD-policy differences: removable false rather than
+true, and a different final CID byte (printer `e1`, reader `01`), with the other
+15 bytes unchanged. No identity normalization or relaxed comparison is introduced.
+The correction uses the exact printer observation for the recovery/media/SD-boot
+roles; source and USB destination identities stay unchanged. Actual normalized
+media now exactly matches the corrected profile. The old profile is preserved.
+
+The diagnostic boot observed only SD root and `/usr` persistent mounts, both RO,
+and zero SD/eMMC/USB block-write counters. An ordinary reviewed Power-key request
+produced clean unmount and `Power down`; USB was then held off and observed absent.
+No export occurred. Preserve the evidence before preparing the next SD image.
+The missing `/bin/login` remains an explicit supported-recovery follow-up; the
+temporary debug console is diagnostic-only and must not enter the export image.
+
+A bounded continuation adds 1,800 process-seconds/8 GiB for the corrected SD
+policy/envelope/payload/loader/image, staging/write, and actual initial export
+with independently verified preserved copies. Cached userspace and original
+normal/internal-recovery/OTA artifacts stay unchanged. Cumulative native ceiling
+is **23,400 seconds/184 GiB**, carrying all previous attempts and copies without
+deletion credit. Conservative prior charge is 20,800 seconds/172 GiB. Source ceiling
+remains 7,200 seconds/1.25 GiB. Native workspace has 9,543,946,240 bytes free before this
+phase. This grants no new installation, MCU, motion or heater action; changed SD
+bytes/policy require their own operation assessment before a write/boot/export.
+
+
+The diagnostic's actual local tty9 console was observed before the one supplied
+read-only command was entered through GLKVM. Structured output has private SHA256
+`759221f6b9ac255fa486807b0cdd9d41c03cde781091cfe11e94417ad0b947d6`;
+`media-diagnostic-private.json` and `media-mismatch-sanitized.json` retain raw and
+sanitized records in the phase directory. All three media are present; only the
+SD removable flag and CID trailer differ. The SD's partition layout is identical.
+Preparation had inferred removable status from DTB and reused the reader's CID;
+those were not measurements of the printer kernel. Future target policies must
+use actual target-kernel observations rather than assuming reader properties
+are interchangeable. No identity byte is masked or ignored by this repair.
+
+After the single reviewed Power-key request, serial confirmed clean unmount and
+`Power down` at 07:46:14 UTC. The 78,948-byte confirmation prefix SHA256 is
+`c569da8707f6197b0459cb932e4027902918182306bec7f2f822a23e17a8cb14`.
+USB hold-off was observed in five samples at 07:47:05 UTC, with PSU OFF and relay
+present. Capture `sv08-export-capture-20261120d.service` is stopped, MainPID 0.
+There is no remaining diagnostic shell or presumed active receiver. The next
+export image omits the diagnostic flag and preserves both manifest checks.
+
+
+Offline replay of the recorded mount list exposed another concrete failure:
+`admitted_system_mount` rejects `/sys/fs/selinux` (`selinuxfs`) with the measured
+root/source/options tuple. The policy-only image passed construction/readbacks but
+is **quarantined before staging or another card request**. The same source task
+is reopened under its existing run, C1–C5 and allowance history. Its prior
+validation remains historical at `3e4b833`/candidate `0c8aad2`; no old evidence
+hash is refreshed. Source repair admits only the exact measured kernel API and
+restores BusyBox console login with a separate volatile home. No SELinux control
+or media protection is disabled.
+
+The existing component-identity path permits a fresh corrected standalone SD
+recovery at new clean source R while retaining the unchanged c696 normal/internal
+recovery/OTA artifacts. Its stale runtime assembly/cache may not be relabelled:
+fresh assembly/SD derivation/build from cached pinned packages is required.
+No normal 7.8GB image rebuild or mixed-source unified release claim is needed for
+this initial backup component. Final release convergence remains a separate gate.
+
+A further 6 GiB native-output continuation covers the demonstrated source repair's
+fresh recovery roots and superseded policy-only outputs without deletion credit;
+ceiling is now 23,400 seconds/190 GiB, with time unchanged. Source output ceiling
+adds 512 MiB to 1.75 GiB (time 7,200 seconds unchanged) for focused source/disposable
+checks and source-bound records. Native measured old assembly sizes are 801,287,439
+and 923,001,001 bytes; the private workspace has sufficient space for fresh roots.
+Do not use the quarantined image or request media movement until fresh code,
+component-source qualification, byte checks and action assessment pass.
